@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+@theme {
+  /* Ocean depth scale */
+  --color-abyss: #020814;
+  --color-trench: #04101f;
+  --color-deep: #072044;
+  --color-ocean: #0a3358;
+  --color-lagoon: #0d5570;
+  --color-shallow: #10788c;
+
+  /* Accents */
+  --color-turquoise: #2ee6c5;
+  --color-aqua: #5fe3ef;
+  --color-kelp: #0f766e;
+
+  /* Neutrals */
+  --color-foam: #eef8fc;
+  --color-mist: #a9c6d8;
+
+  /* Conservation semantics */
+  --color-status-safe: #34d399;
+  --color-status-watch: #facc15;
+  --color-status-warn: #fb923c;
+  --color-status-alert: #f87171;
+  --color-status-unknown: #94a3b8;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-card: 24px;
+  --radius-xl2: 28px;
+
+  --animate-drift: drift 24s ease-in-out infinite;
+  --animate-rise: rise linear infinite;
+  --animate-sweep: sweep 14s ease-in-out infinite;
+  --animate-scan: scan 2.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  --animate-pulse-ring: pulse-ring 2.6s ease-out infinite;
+  --animate-shimmer: shimmer 2.4s linear infinite;
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: translate3d(-4%, 3%, 0) scale(1.12);
+    opacity: 0.8;
+  }
+}
+
+@keyframes rise {
+  0% {
+    transform: translate3d(0, 110vh, 0) scale(0.6);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--bubble-opacity, 0.35);
+  }
+  90% {
+    opacity: var(--bubble-opacity, 0.35);
+  }
+  100% {
+    transform: translate3d(var(--bubble-drift, 10px), -10vh, 0) scale(1);
+    opacity: 0;
+  }
+}
+
+@keyframes sweep {
+  0%,
+  100% {
+    transform: translateX(-6%) rotate(8deg);
+    opacity: 0.12;
+  }
+  50% {
+    transform: translateX(6%) rotate(12deg);
+    opacity: 0.26;
+  }
+}
+
+@keyframes scan {
+  0% {
+    top: 4%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    top: 96%;
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.92);
+    opacity: 0.7;
+  }
+  70% {
+    transform: scale(1.28);
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  background-color: var(--color-abyss);
+  color: var(--color-foam);
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior-y: none;
+}
+
+/* Keep the app feeling native on mobile: no text selection flash on taps */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-turquoise) 40%, transparent);
+  color: var(--color-foam);
+}
+
+/* Focus ring that stays visible against the dark ocean palette */
+:focus-visible {
+  outline: 2px solid var(--color-turquoise);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@utility glass {
+  background: color-mix(in oklab, var(--color-foam) 6%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid color-mix(in oklab, var(--color-foam) 12%, transparent);
+  box-shadow:
+    0 12px 40px -12px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 0 color-mix(in oklab, var(--color-foam) 8%, transparent);
+}
+
+/*
+ * The navigation bar sits over scrolling content, so it is opaque rather than glassy:
+ * translucency here made body text legible straight through the tab labels.
+ */
+@utility glass-strong {
+  background: #061425;
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  backdrop-filter: blur(28px) saturate(160%);
+  border: 1px solid color-mix(in oklab, var(--color-foam) 14%, transparent);
+  box-shadow: 0 16px 48px -16px rgba(0, 0, 0, 0.85);
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Horizontal rails that still feel native on touch devices */
+@utility snap-rail {
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 20px;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
