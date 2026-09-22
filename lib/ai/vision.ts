@@ -64,7 +64,12 @@ export async function identifyMarineAnimal(
     };
   }
 
-  const client = new Anthropic();
+  // Some keys aren't pinned to a single workspace and need the target workspace named
+  // explicitly, or every request is rejected with a 400 before it reaches the model.
+  const workspaceId = process.env.ANTHROPIC_WORKSPACE_ID;
+  const client = new Anthropic(
+    workspaceId ? { defaultHeaders: { "anthropic-workspace-id": workspaceId } } : undefined,
+  );
 
   try {
     const response = await client.messages.parse({
