@@ -56,18 +56,25 @@ alternatives instead of recipes.
 
 ```bash
 npm install
-npm run dev          # http://localhost:3000
+npm run dev
 ```
+
+Then open http://localhost:3000.
+
+> **zsh users:** run each command on its own line with nothing after it. Interactive zsh
+> doesn't treat a trailing `# comment` as a comment the way bash does, so
+> `npm run dev # some note` gets passed to Next.js as a literal argument and crashes with
+> "Invalid project directory provided."
 
 The app is fully usable with no configuration: Demo Mode, Discover, Saved and all 30
 species pages work out of the box. Live AI identification needs one key (below).
 
-```bash
-npm run build        # production build
-npm run typecheck    # tsc --noEmit
-npm run lint         # eslint
-npm run sync:data    # re-verify conservation data and re-fetch photography
-```
+| Command | Does |
+| --- | --- |
+| `npm run build` | Production build |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm run lint` | ESLint |
+| `npm run sync:data` | Re-verify conservation data and re-fetch photography |
 
 ## Environment variables
 
