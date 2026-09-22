@@ -1,0 +1,603 @@
+{
+  "retrievedAt": "2026-09-22",
+  "species": {
+    "green-sea-turtle": {
+      "gbifKey": 2442225,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "4615",
+      "occurrenceCount": 289442,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Cheloniidae"
+      },
+      "image": "/species/green-sea-turtle.jpg",
+      "imageCredit": "Charles J. Sharp · CC BY-SA 4.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Green_sea_turtle",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/green-sea-turtle",
+      "summary": "The green sea turtle, also known as the green turtle, black sea turtle, and Pacific green turtle, is a species of large sea turtle of the family Cheloniidae. It is the only species in the genus Chelonia. Its range extends throughout tropical and subtropical seas around the world, with two distinct populations in the Atlantic and Pacific Oceans, but it is also found in the Indian Ocean. The common name refers to the usually green fat found beneath its carapace, due to its diet strictly being seagrass, not to the color of its carapace, which is olive to black."
+    },
+    "loggerhead-sea-turtle": {
+      "gbifKey": 8894817,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "3897",
+      "occurrenceCount": 229601,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Cheloniidae"
+      },
+      "image": "/species/loggerhead-sea-turtle.jpg",
+      "imageCredit": "ukanda · CC BY 2.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Loggerhead_sea_turtle",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/loggerhead-sea-turtle",
+      "summary": "The loggerhead sea turtle, loggerhead turtle or loggerhead, is a species of sea turtle distributed throughout the world. It is a marine reptile, belonging to the family Cheloniidae. The average loggerhead measures around 90 cm (35 in) in carapace length when fully grown. The adult loggerhead sea turtle weighs approximately 135 kg (298 lb), with the largest specimens weighing about 200 kg (440 lb). The skin ranges from yellow to brown in color, and the shell is typically reddish brown. No external differences in sex are seen until the turtle becomes an adult, the most obvious difference being the adult males have thicker tails and shorter plastrons than the females."
+    },
+    "leatherback-sea-turtle": {
+      "gbifKey": 9789983,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "6494",
+      "occurrenceCount": 55704,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Dermochelyidae"
+      },
+      "image": "/species/leatherback-sea-turtle.jpg",
+      "imageCredit": "U.S. Fish and Wildlife Service Southeast Region · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Leatherback_sea_turtle",
+      "noaaUrl": null,
+      "summary": "The leatherback sea turtle, sometimes called the lute turtle, leathery turtle or simply the luth, is a large species of sea turtle. The largest of all living turtles and the heaviest non-crocodilian reptile, it reaches lengths of up to 2.7 metres and weights of 500 kilograms (1,100 lb). It is the only living species in the genus Dermochelys and family Dermochelyidae. It can easily be differentiated from other modern sea turtles by its lack of a bony shell; instead, its carapace is covered by oily flesh and flexible, leather-like skin, for which it is named. Leatherback turtles have a global range, although there are multiple distinct subpopulations. The species as a whole is considered vulnerable, and some of its subpopulations are critically endangered."
+    },
+    "hawksbill-sea-turtle": {
+      "gbifKey": 8841716,
+      "iucnCode": "CR",
+      "iucnCategory": "CRITICALLY_ENDANGERED",
+      "iucnTaxonId": "8005",
+      "occurrenceCount": 30284,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Cheloniidae"
+      },
+      "image": "/species/hawksbill-sea-turtle.jpg",
+      "imageCredit": "Thierry Caro · CC BY-SA 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Hawksbill_sea_turtle",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/hawksbill-sea-turtle",
+      "summary": "The hawksbill sea turtle is a critically endangered sea turtle belonging to the family Cheloniidae. It is the only extant species in the genus Eretmochelys. The species has a global distribution that is largely limited to tropical and subtropical marine and estuary ecosystems."
+    },
+    "atlantic-cod": {
+      "gbifKey": 8084280,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "8784",
+      "occurrenceCount": 3378331,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Gadiformes",
+        "family": "Gadidae"
+      },
+      "image": "/species/atlantic-cod.jpg",
+      "imageCredit": "Wilhelm Thomas Fiege · CC BY-SA 4.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Atlantic_cod",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/atlantic-cod",
+      "summary": "The Atlantic cod is a fish of the family Gadidae, widely consumed by humans. It is also commercially known as cod or codling."
+    },
+    "atlantic-bluefin-tuna": {
+      "gbifKey": 2373980,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "21860",
+      "occurrenceCount": 14614,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Scombridae"
+      },
+      "image": "/species/atlantic-bluefin-tuna.jpg",
+      "imageCredit": "Unknown author · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Atlantic_bluefin_tuna",
+      "noaaUrl": null,
+      "summary": "The Atlantic bluefin tuna is a species of tuna in the family Scombridae. It is variously known as the northern bluefin tuna, giant bluefin tuna, and formerly as the tunny."
+    },
+    "yellowfin-tuna": {
+      "gbifKey": 2374013,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "21857",
+      "occurrenceCount": 176310,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Scombridae"
+      },
+      "image": "/species/yellowfin-tuna.jpg",
+      "imageCredit": null,
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Yellowfin_tuna",
+      "noaaUrl": null,
+      "summary": "The yellowfin tuna is a species of tuna found in pelagic waters of tropical and subtropical oceans worldwide."
+    },
+    "atlantic-salmon": {
+      "gbifKey": 7595433,
+      "iucnCode": "NT",
+      "iucnCategory": "NEAR_THREATENED",
+      "iucnTaxonId": "19855",
+      "occurrenceCount": 1437018,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Salmoniformes",
+        "family": "Salmonidae"
+      },
+      "image": "/species/atlantic-salmon.jpg",
+      "imageCredit": "User:Wolfgang Striewski · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Atlantic_salmon",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/atlantic-salmon",
+      "summary": "The Atlantic salmon is a species of ray-finned fish in the family Salmonidae. It is the third largest of the Salmonidae, behind Siberian taimen and Pacific Chinook salmon, growing up to 1 m (3.3 ft) in length. Atlantic salmon are found in the northern Atlantic Ocean and in rivers that flow into it. Most populations are anadromous, hatching in streams and rivers but moving out to sea as they grow where they mature, after which the adults seasonally move upstream again to spawn."
+    },
+    "mahi-mahi": {
+      "gbifKey": 2381939,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "154712",
+      "occurrenceCount": 135270,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Coryphaenidae"
+      },
+      "image": "/species/mahi-mahi.jpg",
+      "imageCredit": "gendereuphorbia · CC0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Mahi-mahi",
+      "noaaUrl": null,
+      "summary": "The mahi-mahi, common dolphinfish, dolphinfish, dolphin or  dorado is a surface-dwelling ray-finned fish found in off-shore temperate, tropical, and subtropical waters worldwide. It is one of two members of the family Coryphaenidae, the other being the pompano dolphinfish. These fish are most commonly found in the waters around the Gulf of Mexico, Costa Rica, Hawaii, and the Indian Ocean. In Italy it is called corifena, lampuga or pesce capone, and has even given its name to the caponata though eggplant has now taken the place of the fish."
+    },
+    "nassau-grouper": {
+      "gbifKey": 2388300,
+      "iucnCode": "CR",
+      "iucnCategory": "CRITICALLY_ENDANGERED",
+      "iucnTaxonId": "7862",
+      "occurrenceCount": 32971,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Serranidae"
+      },
+      "image": "/species/nassau-grouper.jpg",
+      "imageCredit": "q phia · CC BY 2.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Nassau_grouper",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/nassau-grouper",
+      "summary": "The Nassau grouper is one of the large number of perciform fishes in the family Serranidae commonly referred to as groupers. It is the most important of the groupers for commercial fishery in the West Indies, but has been endangered by overfishing."
+    },
+    "red-snapper": {
+      "gbifKey": 2384865,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "194365",
+      "occurrenceCount": 3932,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Lutjanidae"
+      },
+      "image": "/species/red-snapper.jpg",
+      "imageCredit": "Geeklikepi · CC BY-SA 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Northern_red_snapper",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/red-snapper",
+      "summary": "The northern red snapper is a species of marine ray-finned fish, a snapper belonging to the family Lutjanidae. It is native to the western Atlantic Ocean, the Caribbean Sea, and the Gulf of Mexico, where it inhabits environments associated with reefs. This species is commercially important and is also sought after as a game fish."
+    },
+    "swordfish": {
+      "gbifKey": 2397850,
+      "iucnCode": "NT",
+      "iucnCategory": "NEAR_THREATENED",
+      "iucnTaxonId": "23148",
+      "occurrenceCount": 449459,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Xiphiidae"
+      },
+      "image": "/species/swordfish.jpg",
+      "imageCredit": "Naturalis Biodiversity Center · CC0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Swordfish",
+      "noaaUrl": null,
+      "summary": "The swordfish, also known as the broadbill in some countries, are large, highly migratory predatory fish characterized by a long, flat, sword-like, pointed bill. They are the sole member of the family Xiphiidae. They are a popular sport fish of the billfish category. Swordfish are elongated, round-bodied, and lose all teeth and scales by adulthood. These fish are found widely in tropical and temperate parts of the Atlantic, Pacific, and Indian Oceans, and can typically be found from near the surface to a depth of 550 m (1,800 ft), and exceptionally up to depths of 2,878 m (9,442 ft). They commonly reach 3 m (10 ft) in length, and the maximum reported is 4.55 m in length and 650 kg (1,430 lb) in weight."
+    },
+    "atlantic-halibut": {
+      "gbifKey": 2409218,
+      "iucnCode": "NT",
+      "iucnCategory": "NEAR_THREATENED",
+      "iucnTaxonId": "10097",
+      "occurrenceCount": 43056,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Pleuronectiformes",
+        "family": "Pleuronectidae"
+      },
+      "image": "/species/atlantic-halibut.jpg",
+      "imageCredit": null,
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Atlantic_halibut",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/atlantic-halibut",
+      "summary": "The Atlantic halibut is a flatfish of the family Pleuronectidae. They are demersal fish living on or near sand, gravel or clay bottoms at depths of between 50 and 2,000 m. The halibut is among the largest teleost (bony) fish in the world, and is a threatened species owing to a slow rate of growth and overfishing. Halibut are strong swimmers and are able to migrate long distances. Halibut size is not age-specific, but rather tends to follow a cycle related to halibut abundance."
+    },
+    "european-sea-bass": {
+      "gbifKey": 2394622,
+      "iucnCode": "NT",
+      "iucnCategory": "NEAR_THREATENED",
+      "iucnTaxonId": "135606",
+      "occurrenceCount": 54515,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Moronidae"
+      },
+      "image": null,
+      "imageCredit": null,
+      "wikipediaUrl": null,
+      "noaaUrl": null,
+      "summary": null
+    },
+    "atlantic-mackerel": {
+      "gbifKey": 2374149,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "170354",
+      "occurrenceCount": 443097,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Scombridae"
+      },
+      "image": "/species/atlantic-mackerel.jpg",
+      "imageCredit": "Mikael Nyman · CC BY 4.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Atlantic_mackerel",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/atlantic-mackerel",
+      "summary": "The Atlantic mackerel, also known as Boston mackerel, Norwegian mackerel, Scottish mackerel or just mackerel, is a species of mackerel found in the temperate waters of the Mediterranean Sea, the Black Sea, and the northern Atlantic Ocean, where it is extremely common and occurs in huge shoals in the epipelagic zone down to about 200 m (660 ft). It spends the warmer months close to shore and near the ocean surface, appearing along the coast in spring and departing with the arrival of colder weather in the fall and winter months. During the fall and winter, it migrates out into deeper and more southern water, seeking warmer temperatures."
+    },
+    "european-sardine": {
+      "gbifKey": 2413224,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "198580",
+      "occurrenceCount": 42012,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Clupeiformes",
+        "family": "Clupeidae"
+      },
+      "image": "/species/european-sardine.jpg",
+      "imageCredit": "This illustration was made by Citron You must credit this : Citron / CC-BY-SA-3.0 · CC BY-SA 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/European_pilchard",
+      "noaaUrl": null,
+      "summary": "The European pilchard is a species of ray-finned fish in the monotypic genus Sardina. The young of the species are among the many fish that are sometimes called sardines. This common species is found in the northeast Atlantic, the Mediterranean, and the Black Sea at depths of 10–100 m (33–328 ft). It reaches up to 27.5 cm (10.8 in) in length and mostly feeds on planktonic crustaceans. This schooling species is a batch spawner where each female lays 50,000–60,000 eggs."
+    },
+    "european-anchovy": {
+      "gbifKey": 2414031,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "198568",
+      "occurrenceCount": 46771,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Clupeiformes",
+        "family": "Engraulidae"
+      },
+      "image": "/species/european-anchovy.jpg",
+      "imageCredit": "Jschop · CC BY-SA 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/European_anchovy",
+      "noaaUrl": null,
+      "summary": "The European anchovy is a forage fish somewhat related to the herring. It is a type of anchovy; anchovies are placed in the family Engraulidae. It lives off the coasts of Europe and Africa, including in the Mediterranean Sea, the Black Sea, and the Sea of Azov. It is fished by humans throughout much of its range."
+    },
+    "blue-crab": {
+      "gbifKey": 2225646,
+      "iucnCode": "NE",
+      "iucnCategory": "NOT_EVALUATED",
+      "iucnTaxonId": null,
+      "occurrenceCount": 225943,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Arthropoda",
+        "class": "Malacostraca",
+        "order": "Decapoda",
+        "family": "Portunidae"
+      },
+      "image": "/species/blue-crab.jpg",
+      "imageCredit": "CC BY-SA 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Callinectes_sapidus",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/blue-crab",
+      "summary": "Callinectes sapidus, commonly known as the blue crab, Atlantic blue crab, or, regionally, the Maryland blue crab, is a species of crab native to the waters of the western Atlantic Ocean and the Gulf of Mexico, and introduced internationally."
+    },
+    "dungeness-crab": {
+      "gbifKey": 5863764,
+      "iucnCode": "NE",
+      "iucnCategory": "NOT_EVALUATED",
+      "iucnTaxonId": null,
+      "occurrenceCount": 66651,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Arthropoda",
+        "class": "Malacostraca",
+        "order": "Decapoda",
+        "family": "Cancridae"
+      },
+      "image": "/species/dungeness-crab.jpg",
+      "imageCredit": "Dan Boone · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Dungeness_crab",
+      "noaaUrl": null,
+      "summary": "The Dungeness crab is a species of crab in the family Cancridae. It makes up one of the most important seafood industries along the west coast of North America. Its typical range extends from Alaska's Aleutian Islands to Point Conception, near Santa Barbara, California. Dungeness typically grow 6–7 in (150–180 mm) at their widest point and inhabit eelgrass beds and sandy bottoms. Its common name comes from the Dungeness Spit in the Strait of Juan de Fuca, Washington state, United States, which shelters a shallow bay inhabited by the crabs."
+    },
+    "snow-crab": {
+      "gbifKey": 2226639,
+      "iucnCode": "NE",
+      "iucnCategory": "NOT_EVALUATED",
+      "iucnTaxonId": null,
+      "occurrenceCount": 777601,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Arthropoda",
+        "class": "Malacostraca",
+        "order": "Decapoda",
+        "family": "Oregoniidae"
+      },
+      "image": "/species/snow-crab.jpg",
+      "imageCredit": "Totti · CC BY-SA 4.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Chionoecetes_opilio",
+      "noaaUrl": null,
+      "summary": "Chionoecetes opilio, a species of snow crab, also known as opilio crab or opies, is a predominantly epifaunal crustacean native to shelf depths in the northwest Atlantic Ocean and north Pacific Ocean. It is a well-known commercial species of Chionoecetes, often caught with traps or by trawling. Seven species are in the genus Chionoecetes, all of which bear the name \"snow crab\". C. opilio is related to C. bairdi, commonly known as the tanner crab, and other crab species found in the cold, northern oceans."
+    },
+    "red-king-crab": {
+      "gbifKey": 2224359,
+      "iucnCode": "NE",
+      "iucnCategory": "NOT_EVALUATED",
+      "iucnTaxonId": null,
+      "occurrenceCount": 12208,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Arthropoda",
+        "class": "Malacostraca",
+        "order": "Decapoda",
+        "family": "Lithodidae"
+      },
+      "image": "/species/red-king-crab.jpg",
+      "imageCredit": "Dr. Roger Mann, VIMS · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Red_king_crab",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/red-king-crab",
+      "summary": "The red king crab, also called Kamchatka crab or Alaskan king crab, is a species of king crab native to cold waters in the North Pacific Ocean and adjacent seas, but also introduced to the Barents Sea. It grows to a leg span of 1.8 m (5.9 ft), and is heavily targeted by fisheries."
+    },
+    "american-lobster": {
+      "gbifKey": 5972004,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "170009",
+      "occurrenceCount": 934341,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Arthropoda",
+        "class": "Malacostraca",
+        "order": "Decapoda",
+        "family": "Nephropidae"
+      },
+      "image": "/species/american-lobster.jpg",
+      "imageCredit": "OAR/National Undersea Research Program (NURP). · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/American_lobster",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/american-lobster",
+      "summary": "The American lobster is a species of lobster found on the Atlantic coast of North America, chiefly from Labrador to New Jersey. It is also known as Atlantic lobster, Canadian lobster, northern lobster, Canadian Reds, or Maine lobster. It is sometimes called the true lobster or common lobster, but those names are ambiguous. It can reach a body length of 64 cm (25 in), and a mass of over 20 kilograms (44 lb), making it not only the heaviest crustacean in the world, but also the heaviest of all living arthropod species. Its closest relative is the European lobster Homarus gammarus, which can be distinguished by its coloration and the lack of spines on the underside of the rostrum. American lobsters are usually bluish green to brown with red spines, but several color variations have been observed."
+    },
+    "whiteleg-shrimp": {
+      "gbifKey": 2223872,
+      "iucnCode": "NE",
+      "iucnCategory": "NOT_EVALUATED",
+      "iucnTaxonId": null,
+      "occurrenceCount": 1463,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Arthropoda",
+        "class": "Malacostraca",
+        "order": "Decapoda",
+        "family": "Penaeidae"
+      },
+      "image": "/species/whiteleg-shrimp.jpg",
+      "imageCredit": "Herman Gunawan, Bangka, Indonesia. · CC BY-SA 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Whiteleg_shrimp",
+      "noaaUrl": null,
+      "summary": "Whiteleg shrimp, also known as Pacific white shrimp or King prawn or White shrimp, is a species of prawn of the eastern Pacific Ocean commonly caught or farmed for food."
+    },
+    "common-octopus": {
+      "gbifKey": 2289671,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "162571",
+      "occurrenceCount": 26621,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Mollusca",
+        "class": "Cephalopoda",
+        "order": "Octopoda",
+        "family": "Octopodidae"
+      },
+      "image": "/species/common-octopus.jpg",
+      "imageCredit": null,
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Common_octopus",
+      "noaaUrl": null,
+      "summary": "The common octopus is a mollusk belonging to the class Cephalopoda. Octopus vulgaris is one of the most studied of all the octopus species, and also one of the most intelligent. It ranges from the eastern Atlantic, extends from the Mediterranean Sea, Black sea and the southern coast of England, to the southern coast of South Africa. It also occurs off the Azores, Canary Islands, and Cape Verde Islands. The species is also common in the Western Atlantic."
+    },
+    "european-squid": {
+      "gbifKey": 2290374,
+      "iucnCode": "DD",
+      "iucnCategory": "DATA_DEFICIENT",
+      "iucnTaxonId": "190946",
+      "occurrenceCount": 41305,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Mollusca",
+        "class": "Cephalopoda",
+        "order": "Myopsida",
+        "family": "Loliginidae"
+      },
+      "image": "/species/european-squid.jpg",
+      "imageCredit": null,
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/European_squid",
+      "noaaUrl": null,
+      "summary": "The European squid or common squid is a large squid belonging to the family Loliginidae. It occurs abundantly in coastal waters from the North Sea to at least the west coast of Africa. This species lives from sea level to depths of 500 m (1,600 ft). Its mantle is up to 40 cm (16 in) long. The species is extensively exploited by commercial fisheries."
+    },
+    "great-white-shark": {
+      "gbifKey": 2420694,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "3855",
+      "occurrenceCount": 19414,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Elasmobranchii",
+        "order": "Lamniformes",
+        "family": "Lamnidae"
+      },
+      "image": "/species/great-white-shark.jpg",
+      "imageCredit": "Pterantula (Terry Goss) at en.wikipedia · CC BY 2.5 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Great_white_shark",
+      "noaaUrl": null,
+      "summary": "The great white shark, also known as the white shark, white pointer, or great white, is a large shark. It is closely related to the mako sharks, the porbeagle, and the salmon shark. It is a robustly built species with a grayish upperside and a white underside. The white shark is one of the largest living shark and fish species, though it is still smaller than the whale shark and basking shark. It has about 300 triangular, serrated teeth that are continuously replaced. Its massive, fatty liver can reach over a quarter of its body weight, providing buoyancy and storing energy. The species is partially warm-blooded, an adaptation that allows it to remain active in colder waters."
+    },
+    "giant-manta-ray": {
+      "gbifKey": 9548142,
+      "iucnCode": "EN",
+      "iucnCategory": "ENDANGERED",
+      "iucnTaxonId": "198921",
+      "occurrenceCount": 20683,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Elasmobranchii",
+        "order": "Myliobatiformes",
+        "family": "Myliobatidae"
+      },
+      "image": "/species/giant-manta-ray.jpg",
+      "imageCredit": "jon hanson from london, UK · CC BY-SA 2.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Giant_oceanic_manta_ray",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/giant-manta-ray",
+      "summary": "The giant oceanic manta ray, giant manta ray, oceanic manta ray, or pelagic manta ray is a species of ray in the family Mobulidae and the largest type of ray in the world. It is circumglobal and is typically found in tropical and subtropical waters but can also be found in temperate waters. Until 2017, the species was classified in the genus Manta, along with the smaller reef manta ray. DNA testing revealed that both mantas are closer related to some Mobula species than these are to other Mobula, being claded together. As a result, the two Manta species were absorbed into Mobula to reflect the new classification."
+    },
+    "bottlenose-dolphin": {
+      "gbifKey": 2440447,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "22563",
+      "occurrenceCount": 192124,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Mammalia",
+        "order": "Cetacea",
+        "family": "Delphinidae"
+      },
+      "image": "/species/bottlenose-dolphin.jpg",
+      "imageCredit": "NASA · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Common_bottlenose_dolphin",
+      "noaaUrl": null,
+      "summary": "The common bottlenose dolphin or Atlantic bottlenose dolphin is one of three species of bottlenose dolphin in the genus Tursiops. While formerly known simply as the bottlenose dolphin, this term is now applied to the genus Tursiops as a whole. As considerable genetic variation has been described within this species, even between neighboring populations, many experts think additional species may be recognized and split out."
+    },
+    "humpback-whale": {
+      "gbifKey": 5220086,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "13006",
+      "occurrenceCount": 527494,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Mammalia",
+        "order": "Cetacea",
+        "family": "Balaenopteridae"
+      },
+      "image": "/species/humpback-whale.jpg",
+      "imageCredit": "Juan Cruzado Cortés · CC BY 4.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Humpback_whale",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/humpback-whale",
+      "summary": "The humpback whale is a species of baleen whale. It is a rorqual and is the only species in the genus Megaptera. Adults range in length from 14–17 m (46–56 ft) and weigh up to 40 metric tons. The humpback has a distinctive body shape, with long pectoral fins and tubercles on its head. It is known for breaching and other distinctive surface behaviors, making it popular with whale watchers. Males produce a complex song that typically lasts from 4 to 33 minutes."
+    },
+    "clownfish": {
+      "gbifKey": 5212106,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "188321",
+      "occurrenceCount": 3926,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Pomacentridae"
+      },
+      "image": "/species/clownfish.jpg",
+      "imageCredit": "Ritiks · CC BY-SA 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Ocellaris_clownfish",
+      "noaaUrl": null,
+      "summary": "The ocellaris clownfish, also known as the false percula clownfish or common clownfish, is a marine fish belonging to the family Pomacentridae, which includes clownfishes and damselfishes. A. ocellaris are found in different colors, depending on where they are located. For example, black A. ocellaris with white bands can be found near northern Hawaii, USA, North America, Australia, Southeast Asia, and Japan. Orange or red-brown A. ocellaris also exist with three similar white bands on the body and head. A. ocellaris can be distinguished from other Amphiprion species based on the number of pectoral rays and dorsal spines. A. ocellaris are known to grow about 11 cm long. Females are larger than males. The life cycle of A. ocellaris varies in whether they reside at the surface or bottom of the ocean. When they initially hatch, they reside near the surface. However, when A. ocellaris enter into the juvenile stage of life, they travel down to the bottom to find shelter in a host anemone. Once they find their anemone, they form a symbiotic relationship with them."
+    }
+  },
+  "media": {
+    "fish-and-chips": {
+      "image": "/media/fish-and-chips.jpg",
+      "credit": "Matthias Meckel · CC BY-SA 4.0 · via Wikimedia Commons"
+    },
+    "ceviche": {
+      "image": "/media/ceviche.jpg",
+      "credit": "Picanteria karol · CC BY-SA 4.0 · via Wikimedia Commons"
+    },
+    "fish-taco": {
+      "image": "/media/fish-taco.jpg",
+      "credit": null
+    },
+    "crab-cake": {
+      "image": "/media/crab-cake.jpg",
+      "credit": null
+    },
+    "calamari": {
+      "image": "/media/calamari.jpg",
+      "credit": "Jeffrey_Allen · CC BY 2.0 · via Wikimedia Commons"
+    },
+    "chowder": {
+      "image": "/media/chowder.jpg",
+      "credit": "Leszek Leszczynski · CC BY 2.0 · via Wikimedia Commons"
+    },
+    "pan-fried": {
+      "image": "/media/pan-fried.jpg",
+      "credit": "Jay Cross from Berkeley, California, US · CC BY 2.0 · via Wikimedia Commons"
+    },
+    "grilled-whole": {
+      "image": "/media/grilled-whole.jpg",
+      "credit": "Gunawan Kartapranata · CC BY-SA 4.0 · via Wikimedia Commons"
+    },
+    "cioppino": {
+      "image": "/media/cioppino.jpg",
+      "credit": "Kelly Sue DeConnick · CC BY-SA 2.0 · via Wikimedia Commons"
+    },
+    "bouillabaisse": {
+      "image": "/media/bouillabaisse.jpg",
+      "credit": "Slastic · CC BY 3.0 · via Wikimedia Commons"
+    },
+    "hero-seagrass": {
+      "image": "/media/hero-seagrass.jpg",
+      "credit": "Daderot · CC0 · via Wikimedia Commons"
+    }
+  }
+}
