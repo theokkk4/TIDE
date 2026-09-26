@@ -112,8 +112,13 @@ export default function HomePage() {
 
       <RecentIdentifications />
 
-      <p className="mt-10 px-6 pb-4 text-center text-[13px] text-mist/70">
+      <p className="mt-10 px-6 text-center text-[13px] text-mist/70">
         Explore the ocean, one species at a time.
+      </p>
+      <p className="mt-2 px-6 pb-4 text-center text-[11px] text-mist/50">
+        <Link href="/credits" className="underline-offset-2 hover:text-mist hover:underline">
+          Photo credits
+        </Link>
       </p>
     </PageTransition>
   );

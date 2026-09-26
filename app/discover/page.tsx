@@ -192,7 +192,10 @@ export default function DiscoverPage() {
       </section>
 
       <p className="mt-9 px-6 pb-2 text-center text-[12px] text-mist/60">
-        {SPECIES.length} species · conservation data from the IUCN Red List via GBIF
+        {SPECIES.length} species · conservation data from the IUCN Red List via GBIF ·{" "}
+        <Link href="/credits" className="underline-offset-2 hover:text-mist hover:underline">
+          Photo credits
+        </Link>
       </p>
     </PageTransition>
   );

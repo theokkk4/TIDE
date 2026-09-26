@@ -1,12 +1,12 @@
 {
-  "retrievedAt": "2026-09-22",
+  "retrievedAt": "2026-09-26",
   "species": {
     "green-sea-turtle": {
       "gbifKey": 2442225,
       "iucnCode": "LC",
       "iucnCategory": "LEAST_CONCERN",
       "iucnTaxonId": "4615",
-      "occurrenceCount": 289442,
+      "occurrenceCount": 289448,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -24,7 +24,7 @@
       "iucnCode": "VU",
       "iucnCategory": "VULNERABLE",
       "iucnTaxonId": "3897",
-      "occurrenceCount": 229601,
+      "occurrenceCount": 229602,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -114,7 +114,7 @@
       "iucnCode": "LC",
       "iucnCategory": "LEAST_CONCERN",
       "iucnTaxonId": "21857",
-      "occurrenceCount": 176310,
+      "occurrenceCount": 176304,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -122,7 +122,7 @@
         "family": "Scombridae"
       },
       "image": "/species/yellowfin-tuna.jpg",
-      "imageCredit": null,
+      "imageCredit": "Unknown author · Public domain · via Wikimedia Commons",
       "wikipediaUrl": "https://en.wikipedia.org/wiki/Yellowfin_tuna",
       "noaaUrl": null,
       "summary": "The yellowfin tuna is a species of tuna found in pelagic waters of tropical and subtropical oceans worldwide."
@@ -132,7 +132,7 @@
       "iucnCode": "NT",
       "iucnCategory": "NEAR_THREATENED",
       "iucnTaxonId": "19855",
-      "occurrenceCount": 1437018,
+      "occurrenceCount": 1435413,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -204,7 +204,7 @@
       "iucnCode": "NT",
       "iucnCategory": "NEAR_THREATENED",
       "iucnTaxonId": "23148",
-      "occurrenceCount": 449459,
+      "occurrenceCount": 449461,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -230,7 +230,7 @@
         "family": "Pleuronectidae"
       },
       "image": "/species/atlantic-halibut.jpg",
-      "imageCredit": null,
+      "imageCredit": "Vsevolod Rudyi · CC BY 4.0 · via Wikimedia Commons",
       "wikipediaUrl": "https://en.wikipedia.org/wiki/Atlantic_halibut",
       "noaaUrl": "https://www.fisheries.noaa.gov/species/atlantic-halibut",
       "summary": "The Atlantic halibut is a flatfish of the family Pleuronectidae. They are demersal fish living on or near sand, gravel or clay bottoms at depths of between 50 and 2,000 m. The halibut is among the largest teleost (bony) fish in the world, and is a threatened species owing to a slow rate of growth and overfishing. Halibut are strong swimmers and are able to migrate long distances. Halibut size is not age-specific, but rather tends to follow a cycle related to halibut abundance."
@@ -247,18 +247,18 @@
         "order": "Perciformes",
         "family": "Moronidae"
       },
-      "image": null,
-      "imageCredit": null,
-      "wikipediaUrl": null,
+      "image": "/species/european-sea-bass.jpg",
+      "imageCredit": "Miguel Mendez from Malahide, Ireland · CC BY 2.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/European_seabass",
       "noaaUrl": null,
-      "summary": null
+      "summary": "European seabass, also known as branzino, European bass, sea bass, common bass, white bass, capemouth, white salmon, white mullet, sea dace, levrek or loup de mer, is a primarily ocean-going fish native to the waters off Europe's western and southern and Africa's northern coasts, though it can also be found in shallow coastal waters and river mouths during the summer months and late autumn. It is one of only six species in its family, Moronidae, collectively called the temperate basses."
     },
     "atlantic-mackerel": {
       "gbifKey": 2374149,
       "iucnCode": "LC",
       "iucnCategory": "LEAST_CONCERN",
       "iucnTaxonId": "170354",
-      "occurrenceCount": 443097,
+      "occurrenceCount": 443094,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -312,7 +312,7 @@
       "iucnCode": "NE",
       "iucnCategory": "NOT_EVALUATED",
       "iucnTaxonId": null,
-      "occurrenceCount": 225943,
+      "occurrenceCount": 225947,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Arthropoda",
@@ -407,7 +407,7 @@
       "iucnCode": "NE",
       "iucnCategory": "NOT_EVALUATED",
       "iucnTaxonId": null,
-      "occurrenceCount": 1463,
+      "occurrenceCount": 1461,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Arthropoda",
@@ -435,7 +435,7 @@
         "family": "Octopodidae"
       },
       "image": "/species/common-octopus.jpg",
-      "imageCredit": null,
+      "imageCredit": "albert kok · CC BY-SA 3.0 · via Wikimedia Commons",
       "wikipediaUrl": "https://en.wikipedia.org/wiki/Common_octopus",
       "noaaUrl": null,
       "summary": "The common octopus is a mollusk belonging to the class Cephalopoda. Octopus vulgaris is one of the most studied of all the octopus species, and also one of the most intelligent. It ranges from the eastern Atlantic, extends from the Mediterranean Sea, Black sea and the southern coast of England, to the southern coast of South Africa. It also occurs off the Azores, Canary Islands, and Cape Verde Islands. The species is also common in the Western Atlantic."
@@ -454,7 +454,7 @@
         "family": "Loliginidae"
       },
       "image": "/species/european-squid.jpg",
-      "imageCredit": null,
+      "imageCredit": "Hans Hillewaert · CC BY-SA 4.0 · via Wikimedia Commons",
       "wikipediaUrl": "https://en.wikipedia.org/wiki/European_squid",
       "noaaUrl": null,
       "summary": "The European squid or common squid is a large squid belonging to the family Loliginidae. It occurs abundantly in coastal waters from the North Sea to at least the west coast of Africa. This species lives from sea level to depths of 500 m (1,600 ft). Its mantle is up to 40 cm (16 in) long. The species is extensively exploited by commercial fisheries."
@@ -464,7 +464,7 @@
       "iucnCode": "VU",
       "iucnCategory": "VULNERABLE",
       "iucnTaxonId": "3855",
-      "occurrenceCount": 19414,
+      "occurrenceCount": 19416,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -502,7 +502,7 @@
       "iucnCode": "LC",
       "iucnCategory": "LEAST_CONCERN",
       "iucnTaxonId": "22563",
-      "occurrenceCount": 192124,
+      "occurrenceCount": 192117,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -521,7 +521,7 @@
       "iucnCode": "LC",
       "iucnCategory": "LEAST_CONCERN",
       "iucnTaxonId": "13006",
-      "occurrenceCount": 527494,
+      "occurrenceCount": 527475,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -565,11 +565,23 @@
     },
     "fish-taco": {
       "image": "/media/fish-taco.jpg",
-      "credit": null
+      "credit": "Larry Miller · CC BY-SA 2.0 · via Wikimedia Commons"
     },
     "crab-cake": {
       "image": "/media/crab-cake.jpg",
-      "credit": null
+      "credit": "Kathleen Conklin · CC BY 2.0 · via Wikimedia Commons"
+    },
+    "lobster-roll": {
+      "image": "/media/lobster-roll.jpg",
+      "credit": "Maguy23 · CC BY-SA 4.0 · via Wikimedia Commons"
+    },
+    "paella": {
+      "image": "/media/paella.jpg",
+      "credit": "Jan Harenburg · CC BY-SA 4.0 · via Wikimedia Commons"
+    },
+    "sashimi": {
+      "image": "/media/sashimi.jpg",
+      "credit": "663highland · CC BY-SA 4.0 · via Wikimedia Commons"
     },
     "calamari": {
       "image": "/media/calamari.jpg",
@@ -594,6 +606,30 @@
     "bouillabaisse": {
       "image": "/media/bouillabaisse.jpg",
       "credit": "Slastic · CC BY 3.0 · via Wikimedia Commons"
+    },
+    "salmon-dish": {
+      "image": "/media/salmon-dish.jpg",
+      "credit": "Vee Satayamas from Bangkok, Thailand · CC BY 2.0 · via Wikimedia Commons"
+    },
+    "poke": {
+      "image": "/media/poke.jpg",
+      "credit": "Aquateamhungerforce · CC BY-SA 4.0 · via Wikimedia Commons"
+    },
+    "seafood-boil": {
+      "image": "/media/seafood-boil.jpg",
+      "credit": "Matthew Ginger · CC BY 2.0 · via Wikimedia Commons"
+    },
+    "pulpo": {
+      "image": "/media/pulpo.jpg",
+      "credit": "Freecat (José Antonio Gil Martínez) from Vigo , Galicia · CC BY 2.0 · via Wikimedia Commons"
+    },
+    "hero-reef": {
+      "image": "/media/hero-reef.jpg",
+      "credit": "Richard Ling · CC BY-SA 3.0 · via Wikimedia Commons"
+    },
+    "hero-kelp": {
+      "image": "/media/hero-kelp.jpg",
+      "credit": "Kip Evans · Public domain · via Wikimedia Commons"
     },
     "hero-seagrass": {
       "image": "/media/hero-seagrass.jpg",

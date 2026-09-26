@@ -167,4 +167,6 @@ on the analysis stages, 44px+ touch targets, and full `prefers-reduced-motion` s
 ## Photography
 
 Species and dish photography comes from Wikimedia Commons under its respective licences.
-Attribution is fetched with each image and displayed on the species page.
+Attribution is fetched with each image; species pages credit their photo inline, and
+`/credits` lists every image in the app. `npm run sync:data` warns if any photo lacks a
+credit, and a failed refresh keeps the previously verified record rather than dropping it.
