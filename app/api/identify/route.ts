@@ -5,6 +5,8 @@ import { resolveStatusCode } from "@/lib/conservation";
 import type { IdentifyResponse } from "@/lib/types";
 
 export const runtime = "nodejs";
+/** Gemini fallbacks can take a while when a model is overloaded; stay inside one function call. */
+export const maxDuration = 60;
 /** Photos are user data — never cache an identification response. */
 export const dynamic = "force-dynamic";
 

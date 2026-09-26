@@ -84,11 +84,13 @@ export async function identifyMarineAnimal(imageBase64: string, mediaType: Media
 }
 
 function finish(parsed: z.infer<typeof IdentificationSchema>): VisionResult {
+  // Some models answer on a 0–1 scale despite being asked for 0–100.
+  const confidence = parsed.confidence <= 1 ? parsed.confidence * 100 : parsed.confidence;
   return {
     ok: true,
     identification: {
       ...parsed,
-      confidence: Math.max(0, Math.min(99, Math.round(parsed.confidence))),
+      confidence: Math.max(0, Math.min(99, Math.round(confidence))),
       possible_alternatives: parsed.possible_alternatives.slice(0, 3),
     },
   };
@@ -138,11 +140,34 @@ const FIELD_GUIDE = Object.entries(IdentificationSchema.shape)
   .map(([key, field]) => `- ${key}: ${field.description ?? ""}`)
   .join("\n");
 
-/** Set once a working model has been discovered, so later requests skip the lookup. */
-let discoveredGeminiModel: string | null = null;
+/**
+ * Current Flash models, best first. The "-latest" aliases follow Google's releases, so the
+ * list keeps working when a model is retired; the preview is there for when both are
+ * overloaded. GEMINI_MODEL, when set, is tried before any of them.
+ */
+const GEMINI_MODELS = ["gemini-flash-latest", "gemini-flash-lite-latest", "gemini-3-flash-preview"];
+
+/** Everything, fallbacks included, has to finish inside the route's time limit. */
+const DEADLINE_MS = 30_000;
+const ATTEMPT_MS = 14_000;
+/** A model that answered 429 or 5xx is skipped for a minute, so the next photo isn't slowed by it. */
+const COOLDOWN_MS = 60_000;
+
+const coolingUntil = new Map<string, number>();
+/** Models this key can't use (404). Never retried. */
+const unavailable = new Set<string>();
+
+function modelOrder() {
+  const pinned = process.env.GEMINI_MODEL?.trim();
+  const models = [...new Set([...(pinned ? [pinned] : []), ...GEMINI_MODELS])].filter((m) => !unavailable.has(m));
+  const now = Date.now();
+  const cooling = (model: string) => (coolingUntil.get(model) ?? 0) > now;
+  // If every model is cooling down, try them anyway, in order.
+  return [...models.filter((m) => !cooling(m)), ...models.filter(cooling)];
+}
 
 /**
- * If Google retires the default alias, ask the API which Flash models this key can use
+ * If Google retires every model above, ask the API which Flash models this key can use
  * and pick the newest stable one, rather than failing on demo day.
  */
 async function discoverGeminiModel(apiKey: string): Promise<string | null> {
@@ -155,7 +180,8 @@ async function discoverGeminiModel(apiKey: string): Promise<string | null> {
     const candidates = (data.models ?? [])
       .filter((m) => m.supportedGenerationMethods?.includes("generateContent"))
       .map((m) => m.name.replace(/^models\//, ""))
-      .filter((name) => /flash/.test(name) && !/(lite|image|tts|audio|live|embedding|thinking)/.test(name));
+      .filter((name) => /^gemini-.*flash/.test(name) && !/(lite|image|tts|audio|live|omni|embedding|thinking|transcribe)/.test(name))
+      .filter((name) => !unavailable.has(name));
     const score = (name: string) => {
       const version = Number.parseFloat(/gemini-(\d+(?:\.\d+)?)/.exec(name)?.[1] ?? "0");
       const unstable = /(preview|exp)/.test(name) ? 1 : 0;
@@ -192,92 +218,118 @@ function geminiRequest(model: string, imageBase64: string, mediaType: MediaType,
   });
 }
 
-async function identifyWithGemini(imageBase64: string, mediaType: MediaType): Promise<VisionResult> {
-  // The "latest" alias tracks Google's current Flash model, which is fast enough for the
-  // capture flow. Pin a specific model with GEMINI_MODEL if you need reproducibility.
-  const pinned = process.env.GEMINI_MODEL;
-  const model = pinned ?? discoveredGeminiModel ?? "gemini-flash-latest";
+/** One try against one model. `retry` outcomes move on to the next model; `final` ones don't. */
+type Attempt =
+  | { outcome: "ok"; result: VisionResult }
+  | { outcome: "final"; result: VisionResult; detail: string }
+  | { outcome: "retry"; reason: "busy" | "gone" | "timeout" | "failed"; detail: string };
+
+const failure = (failure: VisionFailure, message: string): VisionResult => ({
+  ok: false,
+  identification: null,
+  failure,
+  message,
+});
+
+async function attemptGemini(model: string, imageBase64: string, mediaType: MediaType, timeoutMs: number): Promise<Attempt> {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30_000);
-
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
-    let response = await geminiRequest(model, imageBase64, mediaType, controller.signal);
-
-    // The default model name no longer exists: find one this key can use and retry once.
-    if (response.status === 404 && !pinned) {
-      const fallback = await discoverGeminiModel(process.env.GEMINI_API_KEY ?? "");
-      if (fallback && fallback !== model) {
-        discoveredGeminiModel = fallback;
-        response = await geminiRequest(fallback, imageBase64, mediaType, controller.signal);
-      }
-    }
+    const response = await geminiRequest(model, imageBase64, mediaType, controller.signal);
 
     if (!response.ok) {
-      const detail = await response.text().catch(() => "");
-      if (response.status === 401 || response.status === 403 || /API_KEY_INVALID|API key not valid/i.test(detail)) {
+      const body = await response.text().catch(() => "");
+      let reason = "";
+      try {
+        reason = (JSON.parse(body) as { error?: { message?: string } }).error?.message ?? "";
+      } catch {
+        /* not JSON */
+      }
+      const detail = `${response.status} ${reason}`.trim();
+      if (response.status === 404) return { outcome: "retry", reason: "gone", detail };
+      if (response.status === 429 || response.status >= 500) return { outcome: "retry", reason: "busy", detail };
+      if (/denied access/i.test(reason)) {
         return {
-          ok: false,
-          identification: null,
-          failure: "no_credentials",
-          message: "The configured Gemini API key was rejected.",
+          outcome: "final",
+          detail,
+          result: failure("no_credentials", "Google has blocked the project this Gemini key belongs to. A key from another project will work."),
         };
       }
-      if (response.status === 429) {
-        return {
-          ok: false,
-          identification: null,
-          failure: "provider_error",
-          message: "Identification is busy right now. Try again in a moment.",
-        };
+      if (/API_KEY_INVALID|API key not valid|API key expired/i.test(body)) {
+        return { outcome: "final", detail, result: failure("no_credentials", "The Gemini API key isn't valid.") };
       }
-      return {
-        ok: false,
-        identification: null,
-        failure: "provider_error",
-        message: `Gemini returned ${response.status}.`,
-      };
+      if (response.status === 401 || response.status === 403) {
+        return { outcome: "final", detail, result: failure("no_credentials", "This Gemini API key can't use the Gemini API.") };
+      }
+      return { outcome: "final", detail, result: failure("unreadable", "We couldn't analyze this image.") };
     }
 
     const data = (await response.json()) as {
       candidates?: { finishReason?: string; content?: { parts?: { text?: string }[] } }[];
       promptFeedback?: { blockReason?: string };
     };
-    const candidate = data.candidates?.[0];
-    const text = candidate?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
+    const text = data.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
     if (data.promptFeedback?.blockReason || !text) {
-      return {
-        ok: false,
-        identification: null,
-        failure: "unreadable",
-        message: "We couldn't analyse this image.",
-      };
+      return { outcome: "final", detail: "no content", result: failure("unreadable", "We couldn't analyze this image.") };
     }
 
-    const parsed = IdentificationSchema.safeParse(JSON.parse(text));
-    if (!parsed.success) {
-      return {
-        ok: false,
-        identification: null,
-        failure: "unreadable",
-        message: "We couldn't read a result from this image.",
-      };
+    let json: unknown;
+    try {
+      json = JSON.parse(text);
+    } catch {
+      return { outcome: "retry", reason: "failed", detail: "malformed JSON" };
     }
-    return finish(parsed.data);
+    const parsed = IdentificationSchema.safeParse(json);
+    if (!parsed.success) return { outcome: "retry", reason: "failed", detail: "response didn't match the schema" };
+    return { outcome: "ok", result: finish(parsed.data) };
   } catch (error) {
-    return {
-      ok: false,
-      identification: null,
-      failure: "provider_error",
-      message:
-        error instanceof Error && error.name === "AbortError"
-          ? "Identification timed out. Try again."
-          : error instanceof Error
-            ? error.message
-            : "Identification failed.",
-    };
+    if (error instanceof Error && error.name === "AbortError") {
+      return { outcome: "retry", reason: "timeout", detail: `no answer in ${Math.round(timeoutMs / 1000)}s` };
+    }
+    return { outcome: "retry", reason: "failed", detail: "network error" };
   } finally {
-    clearTimeout(timeout);
+    clearTimeout(timer);
   }
+}
+
+async function identifyWithGemini(imageBase64: string, mediaType: MediaType): Promise<VisionResult> {
+  const started = Date.now();
+  let models = modelOrder();
+  let discovered = false;
+  let last: Extract<Attempt, { outcome: "retry" }> | null = null;
+
+  for (let index = 0; index < models.length; index++) {
+    const model = models[index];
+    const remaining = DEADLINE_MS - (Date.now() - started);
+    if (remaining < 2_000) break;
+
+    const attempt = await attemptGemini(model, imageBase64, mediaType, Math.min(ATTEMPT_MS, remaining));
+    if (attempt.outcome === "ok") {
+      coolingUntil.delete(model);
+      return attempt.result;
+    }
+    if (attempt.outcome === "final") {
+      console.warn(`[identify] ${model}: ${attempt.detail}`);
+      return attempt.result;
+    }
+
+    last = attempt;
+    if (attempt.reason === "gone") unavailable.add(model);
+    if (attempt.reason === "busy" || attempt.reason === "timeout") coolingUntil.set(model, Date.now() + COOLDOWN_MS);
+
+    // Every model we know about has been retired: ask Google for a current one.
+    if (index === models.length - 1 && !discovered && models.every((m) => unavailable.has(m))) {
+      discovered = true;
+      const found = await discoverGeminiModel(process.env.GEMINI_API_KEY ?? "");
+      if (found) models = [...models, found];
+    }
+    const next = models[index + 1];
+    console.warn(`[identify] ${model}: ${attempt.detail}${next ? ` — trying ${next}` : ""}`);
+  }
+
+  if (last?.reason === "timeout") return failure("provider_error", "Identification timed out. Try again.");
+  if (last?.reason === "gone") return failure("provider_error", "None of Gemini's Flash models are available to this key.");
+  return failure("provider_error", "Gemini is busy right now. Try again in a moment.");
 }
 
 /* ─────────────  Claude (fallback)  ───────────── */
@@ -321,7 +373,7 @@ async function identifyWithClaude(imageBase64: string, mediaType: MediaType): Pr
         ok: false,
         identification: null,
         failure: "unreadable",
-        message: "We couldn't analyse this image.",
+        message: "We couldn't analyze this image.",
       };
     }
 
