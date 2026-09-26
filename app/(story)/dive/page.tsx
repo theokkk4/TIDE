@@ -122,8 +122,8 @@ const STORY_STEPS = [
 
 /** Photos from Theodore's camera roll, shown when the files are in public/dive/story. */
 const FIELD_PHOTOS = [
-  { file: "crab.jpg", caption: "Blue crab, back-bay marsh" },
-  { file: "bay.jpg", caption: "Out on the back bay" },
+  { file: "beach.jpg", caption: "Summer on the Jersey Shore" },
+  { file: "crab.jpg", caption: "Blue crab, off the back-bay marsh" },
   { file: "moon.jpg", caption: "Moonrise over the bay" },
 ];
 

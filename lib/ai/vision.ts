@@ -138,39 +138,79 @@ const FIELD_GUIDE = Object.entries(IdentificationSchema.shape)
   .map(([key, field]) => `- ${key}: ${field.description ?? ""}`)
   .join("\n");
 
+/** Set once a working model has been discovered, so later requests skip the lookup. */
+let discoveredGeminiModel: string | null = null;
+
+/**
+ * If Google retires the default alias, ask the API which Flash models this key can use
+ * and pick the newest stable one, rather than failing on demo day.
+ */
+async function discoverGeminiModel(apiKey: string): Promise<string | null> {
+  try {
+    const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=200", {
+      headers: { "x-goog-api-key": apiKey },
+    });
+    if (!res.ok) return null;
+    const data = (await res.json()) as { models?: { name: string; supportedGenerationMethods?: string[] }[] };
+    const candidates = (data.models ?? [])
+      .filter((m) => m.supportedGenerationMethods?.includes("generateContent"))
+      .map((m) => m.name.replace(/^models\//, ""))
+      .filter((name) => /flash/.test(name) && !/(lite|image|tts|audio|live|embedding|thinking)/.test(name));
+    const score = (name: string) => {
+      const version = Number.parseFloat(/gemini-(\d+(?:\.\d+)?)/.exec(name)?.[1] ?? "0");
+      const unstable = /(preview|exp)/.test(name) ? 1 : 0;
+      return version * 10 - unstable * 5;
+    };
+    return candidates.sort((a, b) => score(b) - score(a))[0] ?? null;
+  } catch {
+    return null;
+  }
+}
+
+function geminiRequest(model: string, imageBase64: string, mediaType: MediaType, signal: AbortSignal) {
+  return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    method: "POST",
+    signal,
+    headers: { "content-type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY ?? "" },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: `${SYSTEM_PROMPT}\n\nFields:\n${FIELD_GUIDE}` }] },
+      contents: [
+        {
+          role: "user",
+          parts: [
+            { inline_data: { mime_type: mediaType, data: imageBase64 } },
+            { text: "Identify the animal in this photograph." },
+          ],
+        },
+      ],
+      generationConfig: {
+        temperature: 0.2,
+        responseMimeType: "application/json",
+        responseSchema: GEMINI_SCHEMA,
+      },
+    }),
+  });
+}
+
 async function identifyWithGemini(imageBase64: string, mediaType: MediaType): Promise<VisionResult> {
   // The "latest" alias tracks Google's current Flash model, which is fast enough for the
   // capture flow. Pin a specific model with GEMINI_MODEL if you need reproducibility.
-  const model = process.env.GEMINI_MODEL ?? "gemini-flash-latest";
+  const pinned = process.env.GEMINI_MODEL;
+  const model = pinned ?? discoveredGeminiModel ?? "gemini-flash-latest";
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30_000);
 
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`,
-      {
-        method: "POST",
-        signal: controller.signal,
-        headers: { "content-type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY ?? "" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: `${SYSTEM_PROMPT}\n\nFields:\n${FIELD_GUIDE}` }] },
-          contents: [
-            {
-              role: "user",
-              parts: [
-                { inline_data: { mime_type: mediaType, data: imageBase64 } },
-                { text: "Identify the marine animal in this photograph." },
-              ],
-            },
-          ],
-          generationConfig: {
-            temperature: 0.2,
-            responseMimeType: "application/json",
-            responseSchema: GEMINI_SCHEMA,
-          },
-        }),
-      },
-    );
+    let response = await geminiRequest(model, imageBase64, mediaType, controller.signal);
+
+    // The default model name no longer exists: find one this key can use and retry once.
+    if (response.status === 404 && !pinned) {
+      const fallback = await discoverGeminiModel(process.env.GEMINI_API_KEY ?? "");
+      if (fallback && fallback !== model) {
+        discoveredGeminiModel = fallback;
+        response = await geminiRequest(fallback, imageBase64, mediaType, controller.signal);
+      }
+    }
 
     if (!response.ok) {
       const detail = await response.text().catch(() => "");
@@ -269,7 +309,7 @@ async function identifyWithClaude(imageBase64: string, mediaType: MediaType): Pr
             { type: "image", source: { type: "base64", media_type: mediaType, data: imageBase64 } },
             {
               type: "text",
-              text: "Identify the marine animal in this photograph.",
+              text: "Identify the animal in this photograph.",
             },
           ],
         },
