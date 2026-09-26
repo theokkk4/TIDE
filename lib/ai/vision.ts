@@ -26,18 +26,29 @@ const IdentificationSchema = z.object({
   possible_alternatives: z
     .array(z.string())
     .describe("Up to three other species the photo could plausibly show, most likely first."),
-  is_marine_animal: z.boolean().describe("False if the photo does not show a marine animal at all."),
+  is_supported_animal: z
+    .boolean()
+    .describe(
+      "True for fish, crabs, lobsters, shrimp and other shellfish, turtles (sea, freshwater or land), frogs, toads, salamanders, newts, and other aquatic or shoreline animals. False for anything else.",
+    ),
+  egg_mass_visible: z
+    .enum(["yes", "no", "unknown"])
+    .describe("Crabs and lobsters only: is an egg mass ('sponge') visible under the body? 'unknown' if the underside isn't visible or it isn't a crustacean."),
+  crab_sex: z
+    .enum(["male", "female", "unknown"])
+    .describe("Crabs only, when the apron or claw tips show it (e.g. blue crab: narrow T-shaped apron = male; wide apron or red claw tips = female). Otherwise 'unknown'."),
 });
 
-const SYSTEM_PROMPT = `You identify marine animals from photographs for TIDE, a marine conservation app.
+const SYSTEM_PROMPT = `You identify animals from photographs for TIDE, an app that helps anglers and crabbers decide what to keep and what to release, and helps people who find a turtle or amphibian know what to do.
 
 Rules:
 - Report calibrated confidence. A clear, close photo of a distinctive species may justify 90+; a blurry or partial photo should be well below 70. Never report 100.
 - When several species are plausible, say so in possible_alternatives rather than committing to one.
 - Identify to species level only when visible features support it. Otherwise give the genus or the common group name and lower the confidence accordingly.
-- Base visual_reasoning strictly on features visible in the image: shell scute pattern, fin shape and placement, colouration, body proportions, claw form.
-- Set is_marine_animal to false for land animals, freshwater-only species, people, food on a plate, or images with no animal in them.
-- Cooked or plated seafood is not a live marine animal: set is_marine_animal to false.`;
+- Base visual_reasoning strictly on features visible in the image: shell scute pattern, fin shape and placement, colouration, body proportions, claw form, apron shape.
+- Never estimate the animal's size or length: legal size limits are decided by the person measuring, not from a photo.
+- Only report egg_mass_visible or crab_sex from what is actually visible. When unsure, say "unknown" — the person will be asked to check.
+- Set is_supported_animal to false for mammals on land, birds, insects, people, food on a plate, or images with no animal in them. Cooked or plated seafood is not a live animal.`;
 
 export type VisionFailure = "no_credentials" | "provider_error" | "unreadable";
 
@@ -95,7 +106,9 @@ const GEMINI_SCHEMA = {
     animal_type: { type: "STRING" },
     visual_reasoning: { type: "STRING" },
     possible_alternatives: { type: "ARRAY", items: { type: "STRING" } },
-    is_marine_animal: { type: "BOOLEAN" },
+    is_supported_animal: { type: "BOOLEAN" },
+    egg_mass_visible: { type: "STRING", enum: ["yes", "no", "unknown"] },
+    crab_sex: { type: "STRING", enum: ["male", "female", "unknown"] },
   },
   required: [
     "species_common_name",
@@ -104,7 +117,9 @@ const GEMINI_SCHEMA = {
     "animal_type",
     "visual_reasoning",
     "possible_alternatives",
-    "is_marine_animal",
+    "is_supported_animal",
+    "egg_mass_visible",
+    "crab_sex",
   ],
   propertyOrdering: [
     "species_common_name",
@@ -113,7 +128,9 @@ const GEMINI_SCHEMA = {
     "animal_type",
     "visual_reasoning",
     "possible_alternatives",
-    "is_marine_animal",
+    "is_supported_animal",
+    "egg_mass_visible",
+    "crab_sex",
   ],
 };
 

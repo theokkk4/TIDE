@@ -241,7 +241,11 @@ async function fetchWikiSummary(candidates) {
 }
 
 async function loadSpeciesList() {
-  const src = await readFile(path.join(ROOT, "lib", "data", "species.ts"), "utf8");
+  const src = (
+    await Promise.all(
+      ["species.ts", "species-local.ts"].map((file) => readFile(path.join(ROOT, "lib", "data", file), "utf8")),
+    )
+  ).join("\n");
   const entries = [];
   const slugRe =
     /slug:\s*"([^"]+)"[\s\S]*?commonName:\s*"([^"]+)"[\s\S]*?scientificName:\s*"([^"]+)"[\s\S]*?iucnCode:\s*"([^"]+)"/g;

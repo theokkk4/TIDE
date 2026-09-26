@@ -26,6 +26,9 @@ import {
 } from "@/components/species/panels";
 import { AlternativesSection, RecipeSection } from "@/components/species/seafood-sections";
 import { Reveal } from "@/components/ui/motion";
+import { KeepOrRelease } from "@/components/species/keep-or-release";
+import { FoundIt } from "@/components/species/found-it";
+import { encounterMode } from "@/lib/decision";
 import { ButtonLink } from "@/components/ui/primitives";
 
 export function generateStaticParams() {
@@ -81,6 +84,12 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
 
       <div className="mt-4 space-y-4">
         <ScanSummary slug={species.slug} />
+
+        {encounterMode(species) === "catch" ? (
+          <KeepOrRelease species={species} edible={verdict.showRecipes} />
+        ) : (
+          <FoundIt species={species} />
+        )}
 
         <LiveDataBadge
           scientificName={species.scientificName}

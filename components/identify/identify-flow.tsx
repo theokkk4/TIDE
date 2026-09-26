@@ -113,6 +113,7 @@ export function IdentifyFlow({
         photo: dataUrl,
         alternatives: identification.possible_alternatives,
         reasoning: identification.visual_reasoning,
+        hints: { eggs: identification.egg_mass_visible, sex: identification.crab_sex },
         source: "ai",
         createdAt: Date.now(),
       };

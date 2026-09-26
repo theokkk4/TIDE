@@ -94,14 +94,14 @@ export async function POST(request: Request) {
 
   const identification = result.identification;
 
-  if (!identification.is_marine_animal) {
+  if (!identification.is_supported_animal) {
     return NextResponse.json<IdentifyResponse>({
       ok: false,
       identification,
       matchedSlug: null,
       source: "ai",
-      error: "not_marine",
-      message: "That doesn't look like a marine animal.",
+      error: "not_supported",
+      message: "That's outside TIDE's field guide.",
     });
   }
 

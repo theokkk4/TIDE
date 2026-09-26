@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import Link from "next/link";
 import {
-  AnimatePresence,
   motion,
   useMotionValue,
   useMotionValueEvent,
@@ -12,7 +11,7 @@ import {
   type MotionValue,
 } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { DrawLine, EXPO_OUT } from "./reveal";
+import { DrawLine } from "./reveal";
 import { useSmoothScroll } from "./smooth-scroll";
 
 export interface ChapterMarker {
@@ -89,16 +88,6 @@ export function DepthProvider({ children }: { children: ReactNode }) {
 
   return <DepthContext.Provider value={{ depth, progress, chapter }}>{children}</DepthContext.Provider>;
 }
-
-const ZONE_NOTES: Record<string, string> = {
-  Surface: "Back in the light",
-  "Sunlight zone": "0–200 m · enough light for photosynthesis",
-  "Twilight zone": "200–1,000 m · sunlight fades to blue, then black",
-  "Midnight zone": "1,000–4,000 m · the only light is living light",
-  "Abyssal zone": "4,000–6,000 m · near freezing, crushing pressure",
-  "Hadal zone": "6,000 m+ · the ocean's deepest trenches",
-  "Challenger Deep": "10,935 m · the deepest point on Earth",
-};
 
 export function zoneFor(depth: number) {
   if (depth < 10) return "Surface";
@@ -266,24 +255,6 @@ export function DepthHud({ chapters }: { chapters: ChapterMarker[] }) {
   });
 
   const smooth = useSmoothScroll();
-  const zoneSeen = useRef<string | null>(null);
-  const [toast, setToast] = useState<{ zone: string; key: number } | null>(null);
-
-  // Crossing into a new zone gets a brief title card, the dive's chapter breaks.
-  useMotionValueEvent(depth, "change", (value) => {
-    const zone = zoneFor(value);
-    if (zoneSeen.current === null) zoneSeen.current = zone;
-    if (zone === zoneSeen.current) return;
-    zoneSeen.current = zone;
-    setToast({ zone, key: Date.now() });
-  });
-
-  useEffect(() => {
-    if (!toast) return;
-    const timer = setTimeout(() => setToast(null), 2600);
-    return () => clearTimeout(timer);
-  }, [toast]);
-
   const current = chapters[chapter];
   const jump = (id: string) => {
     const target = document.getElementById(id);
@@ -322,32 +293,6 @@ export function DepthHud({ chapters }: { chapters: ChapterMarker[] }) {
           </Link>
         </div>
       </header>
-
-      <AnimatePresence>
-        {toast && (
-          <motion.div
-            key={toast.key}
-            aria-hidden
-            initial={{ opacity: 0, x: -24, filter: "blur(8px)" }}
-            animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, x: 16, filter: "blur(6px)" }}
-            transition={{ duration: 0.9, ease: EXPO_OUT }}
-            className="pointer-events-none fixed top-24 left-5 z-40 md:top-1/2 md:left-10 md:-translate-y-1/2"
-          >
-            <p className="font-mono text-[10px] tracking-[0.24em] text-turquoise/90 uppercase">
-              {toast.zone === "Surface" ? "▲ Surfacing" : "▼ Entering"}
-            </p>
-            <p className="mt-1 text-[22px] font-semibold tracking-tight text-foam md:text-[28px]">{toast.zone}</p>
-            <motion.span
-              className="mt-2 block h-px w-40 origin-left bg-turquoise/60"
-              initial={{ scaleX: 0 }}
-              animate={{ scaleX: 1 }}
-              transition={{ duration: 1.2, ease: EXPO_OUT, delay: 0.1 }}
-            />
-            <p className="mt-2 font-mono text-[11px] text-mist/80">{ZONE_NOTES[toast.zone]}</p>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       <nav
         aria-label="Chapters"

@@ -10,6 +10,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { GlassCard, Pill, SectionHeading } from "@/components/ui/primitives";
 import { PageTransition, Reveal } from "@/components/ui/motion";
 import type { Species } from "@/lib/types";
+import { LOCAL_SPECIES } from "@/lib/data/species-local";
+import { encounterMode } from "@/lib/decision";
 
 export const metadata = {
   title: "Discover — TIDE",
@@ -65,6 +67,14 @@ export default function DiscoverPage() {
     return verdict.key === "COMMONLY_CONSUMED" || verdict.key === "SUSTAINABILITY_CONCERN";
   });
 
+  const onTheLine = [
+    ...LOCAL_SPECIES.filter((species) => encounterMode(species) === "catch"),
+    ...SPECIES.filter((species) => ["blue-crab", "american-lobster"].includes(species.slug)),
+  ];
+  const onTheTrail = LOCAL_SPECIES.filter(
+    (species) => encounterMode(species) === "find" && (species.category === "turtle" || species.category === "amphibian"),
+  );
+
   const protectedSpecies = SPECIES.filter(
     (species) => getSeafoodVerdict(species, resolveStatusCode(species)).key === "PROTECTED",
   );
@@ -74,7 +84,7 @@ export default function DiscoverPage() {
       <header className="px-6 pt-[max(24px,env(safe-area-inset-top))]">
         <p className="text-[11px] font-semibold tracking-[0.18em] text-turquoise/80 uppercase">Discover</p>
         <h1 className="mt-1 text-[28px] leading-tight font-semibold tracking-tight text-foam">
-          Explore the ocean, one species at a time.
+          What you&apos;ll meet on the water — and what to do about it.
         </h1>
       </header>
 
@@ -112,7 +122,29 @@ export default function DiscoverPage() {
       </section>
 
       <section className="mt-9 px-6">
-        <SectionHeading eyebrow="Under pressure" title="Endangered Marine Life" />
+        <SectionHeading eyebrow="On the line" title="Anglers &amp; crabbers" />
+        <Reveal>
+          <Rail>
+            {onTheLine.map((species) => (
+              <SpeciesRailCard key={species.slug} species={species} />
+            ))}
+          </Rail>
+        </Reveal>
+      </section>
+
+      <section className="mt-9 px-6">
+        <SectionHeading eyebrow="On the trail" title="Turtles &amp; amphibians" />
+        <Reveal>
+          <Rail>
+            {onTheTrail.map((species) => (
+              <SpeciesRailCard key={species.slug} species={species} />
+            ))}
+          </Rail>
+        </Reveal>
+      </section>
+
+      <section className="mt-9 px-6">
+        <SectionHeading eyebrow="Under pressure" title="Endangered species" />
         <Reveal>
           <Rail>
             {endangered.map((species) => (

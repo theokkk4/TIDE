@@ -18,44 +18,52 @@ export interface DemoScan {
  */
 export const DEMO_SCANS: DemoScan[] = [
   {
+    slug: "blue-crab",
+    confidence: 94,
+    alternatives: ["Lady Crab", "European Green Crab"],
+    reasoning:
+      "Flattened rear swimming paddles, a row of lateral spines ending in one long spike on each side, and blue claw joints point to Callinectes sapidus.",
+    hook: "Keep or release? Size, eggs and sex",
+  },
+  {
+    slug: "striped-bass",
+    confidence: 92,
+    alternatives: ["White Perch", "White Bass"],
+    reasoning:
+      "Seven or eight unbroken dark stripes running the length of a silvery body, two separate dorsal fins and a large mouth — Morone saxatilis.",
+    hook: "Inside the slot — or over it?",
+  },
+  {
+    slug: "northern-snakehead",
+    confidence: 88,
+    alternatives: ["Bowfin", "Burbot"],
+    reasoning:
+      "A long, cylindrical body with a single long dorsal fin, blotchy python-like markings and scales on the head — the scaled head rules out the native bowfin.",
+    hook: "Invasive — don't put it back",
+  },
+  {
+    slug: "eastern-box-turtle",
+    confidence: 95,
+    alternatives: ["Wood Turtle", "Spotted Turtle"],
+    reasoning:
+      "A high, domed shell with yellow-orange blotches and a hinged lower shell that closes completely — Terrapene carolina.",
+    hook: "Found one on the road?",
+  },
+  {
+    slug: "eastern-hellbender",
+    confidence: 90,
+    alternatives: ["Common Mudpuppy"],
+    reasoning:
+      "A flat head and body, loose wrinkled skin folds along the flanks and tiny eyes — Cryptobranchus alleganiensis, without the external gills a mudpuppy has.",
+    hook: "Protected in PA — leave it",
+  },
+  {
     slug: "green-sea-turtle",
     confidence: 96,
     alternatives: ["Hawksbill Sea Turtle", "Loggerhead Sea Turtle"],
     reasoning:
       "Smooth, non-overlapping carapace scutes in four pairs, a single pair of prefrontal scales, and a blunt, rounded beak — all diagnostic of Chelonia mydas rather than the pointed beak of a hawksbill.",
     hook: "Least Concern — and still protected",
-  },
-  {
-    slug: "blue-crab",
-    confidence: 82,
-    alternatives: ["Jonah Crab", "Dungeness Crab"],
-    reasoning:
-      "Flattened rear swimming paddles, nine lateral spines along each side of the carapace and bright blue claw articulation point to Callinectes sapidus.",
-    hook: "Explore seafood information",
-  },
-  {
-    slug: "common-octopus",
-    confidence: 91,
-    alternatives: ["Caribbean Reef Octopus", "Giant Pacific Octopus"],
-    reasoning:
-      "Eight arms with two rows of suckers, a bulbous mantle and mottled skin texture held against a rocky den — consistent with Octopus vulgaris.",
-    hook: "Discover a marine species",
-  },
-  {
-    slug: "atlantic-cod",
-    confidence: 88,
-    alternatives: ["Haddock", "Pollock"],
-    reasoning:
-      "Three dorsal fins, a prominent chin barbel and a pale lateral line curving over the pectoral fin — the classic Gadus morhua profile.",
-    hook: "Where status and sustainability split",
-  },
-  {
-    slug: "atlantic-bluefin-tuna",
-    confidence: 93,
-    alternatives: ["Yellowfin Tuna", "Albacore"],
-    reasoning:
-      "Deep, torpedo-shaped body with short pectoral fins and dark metallic blue dorsal colouring fading to silver — Thunnus thynnus rather than the long-finned yellowfin.",
-    hook: "Not endangered, still avoid",
   },
 ];
 

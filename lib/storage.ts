@@ -2,11 +2,14 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 import type { IucnCode, ScanRecord } from "@/lib/types";
+import type { RegionCode } from "@/lib/data/regulations";
 
 const SAVED_KEY = "tide.saved.v1";
 const RECENT_KEY = "tide.recent.v1";
 const SCAN_KEY = "tide.scan.current.v1";
 const CHANGE_EVENT = "tide:storage";
+const REGION_KEY = "tide.region.v1";
+const GAUGE_KEY = "tide.gauge.v1";
 
 export interface SavedSpecies {
   slug: string;
@@ -107,6 +110,16 @@ export function useSavedSpecies() {
   const isSaved = useCallback((slug: string) => saved.some((item) => item.slug === slug), [saved]);
 
   return { saved, toggle, remove, isSaved };
+}
+
+/** The state the person fishes in, remembered so every verdict uses it. */
+export function useRegion() {
+  return useStored<RegionCode | null>(REGION_KEY, null);
+}
+
+/** Screen pixels per inch, calibrated against a bank card, for the on-screen crab gauge. */
+export function useGaugeCalibration() {
+  return useStored<number | null>(GAUGE_KEY, null);
 }
 
 export function useRecentScans() {

@@ -28,9 +28,10 @@ export class Anglerfish extends Creature {
   }
 
   update(f: Frame) {
-    const wanderX = f.width * (0.7 + 0.14 * Math.sin(f.time * 0.21));
-    const wanderY = f.height * (0.6 + 0.16 * Math.sin(f.time * 0.29 + 1));
-    const follow = f.pointer.active && !f.reduced;
+    // When it isn't following you, it waits in the left margin, clear of the text column.
+    const wanderX = f.width * (f.small ? 0.12 : 0.08) + 18 * Math.sin(f.time * 0.21);
+    const wanderY = f.height * (0.62 + 0.14 * Math.sin(f.time * 0.29 + 1));
+    const follow = f.pointer.active && !f.pointer.overContent && !f.reduced;
     const tx = follow ? f.pointer.x : wanderX;
     const ty = follow ? f.pointer.y : wanderY;
     if (!this.started) {
