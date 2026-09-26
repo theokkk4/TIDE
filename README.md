@@ -8,7 +8,7 @@ you honestly whether it belongs on your plate.
 
 > See it. Identify it. Understand it. Protect it.
 
-Built for OwlHacks (theme: Deep Sea Aquatics).
+Built for OwlHacks (theme: Deep Sea Aquatics) by Theodore, Issaka and Oliver.
 
 ---
 
@@ -32,7 +32,7 @@ alternatives instead of recipes.
 
 ## What it does
 
-- **Identify** — camera capture or photo upload, analysed by a vision model that returns
+- **Identify** — camera capture or photo upload, analysed by Google Gemini vision, which returns
   structured JSON with a calibrated confidence score and alternative candidates.
 - **Never overclaims** — below 75% confidence the result leads with "We aren't completely
   sure" and lists what else it could be. Confidence is never rounded up to certainty.
@@ -80,11 +80,24 @@ species pages work out of the box. Live AI identification needs one key (below).
 
 A scroll-driven submission page: scrolling is a dive from the surface to Challenger Deep
 (10,935 m) and back, with a live depth gauge, a chapter per idea, and an interactive piece in
-each — reveal three species' verdicts, try the seafood rules on all 30 species, and use the
-real app running inside a phone frame. Every number on it is computed from the verified data.
+each — reveal three species' verdicts, try the seafood rules on all 30 species, drag a
+drifting river of every species photo, and use the real app running inside a phone frame.
+Every number on it is computed from the verified data.
 
+- **Living ocean.** Canvas-drawn creatures swim at their real depths: a sardine bait ball
+  that scatters from your cursor, a green sea turtle, a humpback, moon and comb jellies,
+  lanternfish, siphonophores, a diving sperm whale, Atolla (which flashes its blue "burglar
+  alarm" when you come close), a dumbo octopus, snailfish and hadal amphipods, and a manta
+  overhead when you resurface. Below 2,000 m an anglerfish follows your cursor and its lure
+  is the only light.
+- **Hover to identify.** Point at any creature and TIDE's scanner locks on with a field ID.
+  Statuses come from the verified dataset or were checked against the IUCN Red List via GBIF
+  (`lib/dive/creatures.ts`); species in the app link through to their verdict.
+- **Motion.** Lenis smooth scrolling, masked word reveals, cards that stand up out of the
+  water, zone-crossing title cards, and a CSS-only intro curtain. All of it respects
+  `prefers-reduced-motion`.
 - Team names, hackathon tracks and impact numbers live in `lib/dive/content.ts`. The impact
-  chapter stays hidden until one of those lists has entries.
+  chapter stays hidden until tracks or numbers are added.
 - Drop a portrait screen recording at `public/dive/demo.mp4` and the deep chapter adds a
   "Watch the demo" view alongside the live app.
 
@@ -94,8 +107,12 @@ Copy `.env.example` to `.env.local`:
 
 | Variable | Required | Purpose |
 | --- | --- | --- |
-| `ANTHROPIC_API_KEY` | For live identification | Claude vision call in `lib/ai/vision.ts`. Get one at [console.anthropic.com](https://console.anthropic.com). |
-| `TIDE_VISION_MODEL` | No | Overrides the model (default `claude-opus-5`). |
+| `GEMINI_API_KEY` | For live identification | Google Gemini vision call in `lib/ai/vision.ts`. Get one at [aistudio.google.com/apikey](https://aistudio.google.com/apikey). |
+| `GEMINI_MODEL` | No | Overrides the model (default `gemini-flash-latest`). |
+| `ANTHROPIC_API_KEY` | No | Fallback provider (Claude), used only when `GEMINI_API_KEY` is empty. |
+
+On Vercel, add `GEMINI_API_KEY` under Project → Settings → Environment Variables and
+redeploy.
 
 **No key configured?** `/api/identify` returns a clean `no_credentials` response and the UI
 explains that live identification isn't set up and points at Demo Mode. It never fabricates
@@ -126,8 +143,8 @@ explains that this is an absence of data, not a clean bill of health.
 
 **Production-ready**
 
-- Vision identification via the Anthropic SDK with structured outputs, typed error handling
-  (auth, rate limit, refusal), and size/format validation on upload.
+- Vision identification via the Google Gemini API with structured JSON output, typed error
+  handling (bad key, rate limit, blocked image, timeout), and size/format validation on upload.
 - GBIF enrichment endpoint with a 4s timeout and cached fallback.
 - The species dataset, conservation logic, seafood classification and recipe gating.
 - Camera capture with client-side downscaling, permission and no-camera fallbacks.
@@ -157,7 +174,8 @@ app/
   api/enrich/               GBIF verification endpoint
 components/
   ocean-background, bottom-nav, ui/, identify/, species/, home/
-  dive/                     depth engine + interactive chapters for /dive
+  dive/                     depth HUD, reveals, species river, interactive chapters
+  dive/ocean/               the creature engine (canvas) for /dive
 lib/
   dive/content.ts           team, tracks and impact numbers for /dive
   data/species.ts           the curated dataset
@@ -170,7 +188,7 @@ scripts/sync-data.mjs       data verification + photo sync
 
 ## Deploying
 
-Deploys to Vercel as-is. Push the repo, import it, and set `ANTHROPIC_API_KEY` in project
+Deploys to Vercel as-is. Push the repo, import it, and set `GEMINI_API_KEY` in project
 settings if you want live identification. The generated data cache and photography are
 committed, so a fresh clone builds without network access to the data APIs.
 

@@ -207,3 +207,89 @@ a {
     scroll-behavior: auto !important;
   }
 }
+
+/* ─────────────  /dive: intro curtain, scanner cursor  ───────────── */
+
+/*
+ * The opening curtain is pure CSS so it can never strand a visitor behind it: the surface
+ * shimmers, the wordmark settles, then the waterline sweeps up and away.
+ */
+.dive-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  background: linear-gradient(180deg, #7fe9f2 0%, #1c95a8 38%, #0d5570 100%);
+  animation: curtain-lift 1.25s cubic-bezier(0.87, 0, 0.13, 1) 1.05s forwards;
+}
+
+.dive-curtain__mark {
+  color: var(--color-foam);
+  font-weight: 600;
+  font-size: clamp(44px, 9vw, 96px);
+  letter-spacing: 0.5em;
+  margin-right: -0.5em;
+  animation: curtain-mark 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.dive-curtain__note {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--color-foam) 75%, transparent);
+  animation: curtain-note 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.25s both;
+}
+
+.dive-curtain__wave {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 0;
+  width: 200%;
+  height: 90px;
+  animation: curtain-wave 2.4s linear infinite;
+}
+
+@keyframes curtain-lift {
+  to {
+    transform: translate3d(0, calc(-100% - 100px), 0);
+    visibility: hidden;
+  }
+}
+
+@keyframes curtain-mark {
+  from {
+    opacity: 0;
+    letter-spacing: 1.1em;
+    filter: blur(14px);
+  }
+}
+
+@keyframes curtain-note {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+
+@keyframes curtain-wave {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dive-curtain {
+    display: none;
+  }
+}
+
+/* While TIDE's scanner is locked on a creature, the cursor becomes a crosshair. */
+html.dive-scan,
+html.dive-scan body {
+  cursor: crosshair;
+}

@@ -3,7 +3,7 @@
  * stay hidden while they are empty, so the page is always safe to share.
  */
 
-export const TEAM: string[] = [];
+export const TEAM: string[] = ["Theodore", "Issaka", "Oliver"];
 
 /** Hackathon tracks, each with one sentence on how TIDE fits. */
 export const TRACKS: { name: string; fit: string }[] = [];
