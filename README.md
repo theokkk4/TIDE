@@ -88,8 +88,8 @@ Every number on it is computed from the verified data.
   `prefers-reduced-motion`.
 - Team names and hackathon tracks live in `lib/dive/content.ts`.
 - **Theodore's chapter** tells the South Jersey crabbing story with his night-crabbing Live
-  Photo. Drop more photos at `public/dive/story/crab.jpg`, `bay.jpg` or `moon.jpg` and they
-  appear automatically.
+  Photo. Photos in `public/dive/story/` (`beach.jpg`, `crab.jpg`, `moon.jpg`)
+  appear in the chapter automatically.
 - **Three catches**, **Found one?** and **Plot twist** run on the app's own decision engine.
 - **The Impact** pairs sourced baselines (RBFF, NOAA, IUCN, Gibbs & Shriver, SERC) with an
   adjustable projection model — the assumptions are sliders, labelled as projections.
