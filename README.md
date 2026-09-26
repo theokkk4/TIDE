@@ -13,7 +13,7 @@ starting from Theodore's summers crabbing and bass fishing in South Jersey.
 
 ## What it does
 
-- **Identify** — camera or upload, analysed by Google Gemini vision with a calibrated
+- **Identify** — camera or upload, analyzed by Google Gemini vision with a calibrated
   confidence score and look-alikes. Below 75% it leads with "We aren't completely sure."
 - **Keep or release** — for anything caught on a line or in a pot. Pick New Jersey,
   Pennsylvania or Maryland and TIDE applies that state's size limit, slot, season, egg-bearing
@@ -55,7 +55,7 @@ Then open http://localhost:3000 for the app and http://localhost:3000/dive for t
 > `npm run dev # some note` gets passed to Next.js as a literal argument and crashes with
 > "Invalid project directory provided."
 
-The app is fully usable with no configuration: Demo Mode, Discover, Saved and all 30
+The app is fully usable with no configuration: Demo Mode, Discover, Saved and all 50
 species pages work out of the box. Live AI identification needs one key (below).
 
 | Command | Does |
@@ -65,36 +65,45 @@ species pages work out of the box. Live AI identification needs one key (below).
 | `npm run lint` | ESLint |
 | `npm run sync:data` | Re-verify conservation data and re-fetch photography |
 
-## The story site — `/dive`
+## The presentation — `/dive`
 
-A scroll-driven submission page: scrolling is a dive from the surface to Challenger Deep
-(10,935 m) and back, with a live depth gauge, a chapter per idea, and an interactive piece in
-each — judge three real catches under NJ and MD rules, a found-turtle quiz, the recipe plot
-twist, the rules explorer for all 50 species, a drifting river of every species photo, and
-the real app running inside a phone frame.
-Every number on it is computed from the verified data.
+The Dive page is the pitch. It's a scroll-driven site that doubles as the slide deck: each
+chapter sits at a depth on the way down to Challenger Deep and back up.
 
-- **Living ocean.** Canvas-drawn creatures swim at their real depths: a sardine bait ball
-  that scatters from your cursor, a green sea turtle, a humpback, moon and comb jellies,
-  lanternfish, siphonophores, a diving sperm whale, Atolla (which flashes its blue "burglar
-  alarm" when you come close), a dumbo octopus, snailfish and hadal amphipods, and a manta
-  overhead when you resurface. Below 2,000 m an anglerfish follows your cursor and its lure
-  is the only light.
-- **Hover to identify.** Point at any creature and TIDE's scanner locks on with a field ID.
-  Statuses come from the verified dataset or were checked against the IUCN Red List via GBIF
-  (`lib/dive/creatures.ts`); species in the app link through to their verdict.
-- **Motion.** Lenis smooth scrolling, masked word reveals, cards that stand up out of the
-  water, and a CSS-only intro curtain. All of it respects
-  `prefers-reduced-motion`.
-- Team names and hackathon tracks live in `lib/dive/content.ts`.
-- **Theodore's chapter** tells the South Jersey crabbing story with his night-crabbing Live
-  Photo. Photos in `public/dive/story/` (`beach.jpg`, `crab.jpg`, `moon.jpg`)
-  appear in the chapter automatically.
-- **Three catches**, **Found one?** and **Plot twist** run on the app's own decision engine.
-- **The Impact** pairs sourced baselines (RBFF, NOAA, IUCN, Gibbs & Shriver, SERC) with an
-  adjustable projection model — the assumptions are sliders, labelled as projections.
-- Drop a portrait screen recording at `public/dive/demo.mp4` and the deep chapter adds a
-  "Watch the demo" view alongside the live app.
+| # | Chapter | What's on it |
+| --- | --- | --- |
+| 01 | TIDE | The opening. |
+| 02 | The problem | FAO figures: 3.1 billion people, 89%, 600M+ livelihoods, 64.5% of stocks within sustainable levels — each with its source and date. |
+| 03 | Why it matters | Food, fishing, conservation, families, future generations. |
+| 04 | The people | Oliver, Theodore and Issaka, with their baby photos. |
+| 05 | The idea | Photo → AI → Species → Conservation → Sustainability → Action. |
+| 06 | The app | The real app, live in a phone frame, plus a link to open it. |
+| 07 | Live identification | Theodore's crab photo sent through Gemini, inside the phone. |
+| 08 | Conservation vs. seafood | Five cases, all judged by the app's own logic, then every species. |
+| 09 | Projected outcomes | Published data on one side, our 12-month targets on the other — labelled as projections, with how we'd measure each. |
+| 10 | Resurface | The closing. |
+
+**Presenting.** → ↓ PageDown go forward and ← ↑ PageUp go back, which is what most
+presentation clickers send; Home and End jump to the first and last stop. Long chapters get
+extra stops so nothing is skipped, and the clicker keeps working after someone taps inside
+the embedded app. Typing in a field or using a slider keeps its own arrow keys. Mouse and
+touch scrolling are never taken over. The header shows where you are ("04 / 10 · The people").
+
+**Team content** lives in `lib/dive/content.ts`:
+
+- **Baby photos** — drop `oliver.jpg`, `theodore.jpg` and `issaka.jpg` into `public/dive/team/`
+  (`.png` and `.webp` work too). They appear automatically; until then each frame shows an
+  initial.
+- **Issaka's story** — fill in `ISSAKA.paragraphs` (and optionally `quote` and `tagline`).
+  Until then the page shows a clearly marked "Story coming soon" box. Nothing is made up for him.
+- **Demo video** — save a portrait screen recording as `public/dive/demo.mp4` and the phone in
+  chapters 06–07 gets a "Recording / Live app" switch.
+
+The creatures are drawn on canvas and swim at their real depths — sardines and a green sea
+turtle near the surface, lanternfish and siphonophores in the twilight, an anglerfish whose
+lure follows your cursor in the dark, and a herd of sea pigs (*Scotoplanes globosa*) on the
+seafloor. Hover one and TIDE's scanner identifies it (`lib/dive/creatures.ts`). All motion
+respects `prefers-reduced-motion`.
 
 ## Environment variables
 
@@ -103,15 +112,22 @@ Copy `.env.example` to `.env.local`:
 | Variable | Required | Purpose |
 | --- | --- | --- |
 | `GEMINI_API_KEY` | For live identification | Google Gemini vision call in `lib/ai/vision.ts`. Get one at [aistudio.google.com/apikey](https://aistudio.google.com/apikey). |
-| `GEMINI_MODEL` | No | Overrides the model (default `gemini-flash-latest`). |
+| `GEMINI_MODEL` | No | Tried first, before the built-in list. Leave unset normally. |
 | `ANTHROPIC_API_KEY` | No | Fallback provider (Claude), used only when `GEMINI_API_KEY` is empty. |
 
-On Vercel, add `GEMINI_API_KEY` under Project → Settings → Environment Variables and
-redeploy.
+The key is only ever read on the server, in `/api/identify`; it never reaches the browser and
+is never logged. `.env.local` is git-ignored — keep the key there, and in Vercel's settings.
 
-**No key configured?** `/api/identify` returns a clean `no_credentials` response and the UI
-explains that live identification isn't set up and points at Demo Mode. It never fabricates
-a result.
+**Which model.** TIDE asks `gemini-flash-latest` first — Google's current Flash model. If it's
+overloaded (429/5xx) TIDE moves on to `gemini-flash-lite-latest`, then `gemini-3-flash-preview`,
+and skips an overloaded model for a minute so the next photo isn't slowed down. If Google
+retires all of them, it asks the API for a current Flash model. Every attempt stays inside the
+route's 60-second limit.
+
+**When it can't identify.** Each failure has its own screen: offline (no key, or a blocked
+Google project), busy (try again with the same photo), a photo problem (with tips), or an
+animal outside TIDE's guide. The Dive page's crab sample also offers the result Gemini gave for
+that photo when it was added, labelled as a demo scan. Nothing is ever faked as a live result.
 
 No database, no auth, no Supabase — saved species and history use `localStorage`, and the
 in-flight scan uses `sessionStorage`. That was a deliberate scope decision: nothing in the
@@ -143,7 +159,7 @@ explains that this is an absence of data, not a clean bill of health.
 - GBIF enrichment endpoint with a 4s timeout and cached fallback.
 - The species dataset, conservation logic, seafood classification and recipe gating.
 - Camera capture with client-side downscaling, permission and no-camera fallbacks.
-- Static generation of all 30 species pages.
+- Static generation of all 50 species pages.
 
 **Mocked or curated**
 
@@ -161,7 +177,7 @@ app/
   (app)/                    the mobile app, framed in a phone-width column
     page.tsx                home
     identify/               camera + analysis flow
-    species/[slug]/         species result page (static, 30 pages)
+    species/[slug]/         species result page (static, 50 pages)
     species/unknown/        graceful result for species outside the dataset
     discover/  saved/  demo/  credits/
   (story)/dive/             the scroll-story submission site, full width
@@ -187,9 +203,15 @@ Deploys to Vercel as-is. Push the repo, import it, and set `GEMINI_API_KEY` in p
 settings if you want live identification. The generated data cache and photography are
 committed, so a fresh clone builds without network access to the data APIs.
 
+1. Vercel → the project → Settings → Environment Variables → add `GEMINI_API_KEY`, ticked for
+   Production, Preview and Development.
+2. Deployments → ⋯ on the latest → Redeploy (environment changes only apply to new builds).
+3. Settings → Domains lists the public production address. Share that address plus `/dive`.
+   The `…-projects.vercel.app` preview links ask for a Vercel login.
+
 ## Accessibility
 
-Conservation status is never colour alone — every badge carries an icon, the category code
+Conservation status is never color alone — every badge carries an icon, the category code
 and the written label. Semantic HTML, labelled controls, visible focus rings, `aria-live`
 on the analysis stages, 44px+ touch targets, and full `prefers-reduced-motion` support.
 

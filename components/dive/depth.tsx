@@ -256,6 +256,7 @@ export function DepthHud({ chapters }: { chapters: ChapterMarker[] }) {
 
   const smooth = useSmoothScroll();
   const current = chapters[chapter];
+  const last = chapters[chapters.length - 1];
   const jump = (id: string) => {
     const target = document.getElementById(id);
     if (target) smooth.scrollTo(target);
@@ -264,6 +265,12 @@ export function DepthHud({ chapters }: { chapters: ChapterMarker[] }) {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-40 flex items-center justify-between gap-4 bg-abyss/40 px-5 py-4 backdrop-blur-md md:px-10">
+        {/* How far through the presentation you are. */}
+        <motion.div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-px origin-left bg-turquoise/60"
+          style={{ scaleX: progress }}
+        />
         <button
           type="button"
           onClick={() => jump(chapters[0].id)}
@@ -274,7 +281,12 @@ export function DepthHud({ chapters }: { chapters: ChapterMarker[] }) {
         </button>
 
         <p className="hidden font-mono text-[12px] text-mist/80 md:block" aria-live="polite">
-          {current ? `${current.number} / ${String(chapters.length - 1).padStart(2, "0")} · ${current.title}` : null}
+          {current ? (
+            <>
+              <span className="text-turquoise">{current.number}</span> / {last.number} ·{" "}
+              <span className="text-foam">{current.title}</span>
+            </>
+          ) : null}
         </p>
 
         <div className="flex items-center gap-4">
@@ -287,6 +299,7 @@ export function DepthHud({ chapters }: { chapters: ChapterMarker[] }) {
           </p>
           <Link
             href="/"
+            target="_blank"
             className="hidden rounded-full border border-foam/20 px-4 py-2 text-[13px] font-medium text-foam transition-colors hover:border-turquoise/60 hover:text-turquoise sm:inline-flex"
           >
             Open the app ↗
@@ -331,7 +344,22 @@ export function DepthHud({ chapters }: { chapters: ChapterMarker[] }) {
   );
 }
 
-/** A chapter of the dive. `depth` is where in the water column this chapter sits. */
+export function ChapterLabel({ number, title, depth }: { number: string; title: string; depth: number }) {
+  return (
+    <p className="mb-6 flex items-center gap-3 font-mono text-[12px] tracking-[0.16em] text-turquoise/80 uppercase">
+      <span>{number}</span>
+      <DrawLine className="h-px w-10 bg-turquoise/40" />
+      <span>{title}</span>
+      <span className="hidden text-mist/40 sm:inline">· {depth.toLocaleString("en-US")} m</span>
+    </p>
+  );
+}
+
+/**
+ * A chapter of the dive — and a stop in the presentation. `depth` is where in the water
+ * column it sits. On wide screens each chapter is at least a screen tall with its content
+ * centred, so arrow-key navigation lands on one clean "slide" at a time.
+ */
 export function Chapter({
   id,
   depth,
@@ -351,16 +379,13 @@ export function Chapter({
     <section
       id={id}
       data-depth={depth}
-      className={cn("relative z-10 mx-auto w-full max-w-6xl px-5 py-28 md:px-10 md:py-40", className)}
-    >
-      {number && title && (
-        <p className="mb-6 flex items-center gap-3 font-mono text-[12px] tracking-[0.16em] text-turquoise/80 uppercase">
-          <span>{number}</span>
-          <DrawLine className="h-px w-10 bg-turquoise/40" />
-          <span>{title}</span>
-          <span className="text-mist/40">· {depth.toLocaleString("en-US")} m</span>
-        </p>
+      data-slide=""
+      className={cn(
+        "relative z-10 mx-auto w-full max-w-6xl px-5 py-24 md:flex md:min-h-dvh md:flex-col md:justify-center md:px-10 md:py-28",
+        className,
       )}
+    >
+      {number && title && <ChapterLabel number={number} title={title} depth={depth} />}
       {children}
     </section>
   );

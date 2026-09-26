@@ -128,11 +128,11 @@ export const CREATURE_GUIDE: CreatureGuide[] = [
     iucn: "NE",
   },
   {
-    id: "hadal-amphipod",
-    name: "Hadal amphipod",
-    scientificName: "Hirondellea gigas",
-    zone: "Challenger Deep · 10,900 m",
-    fact: "Scavenges the floor of the deepest place on Earth.",
+    id: "sea-pig",
+    name: "Sea pig",
+    scientificName: "Scotoplanes globosa",
+    zone: "Deep seafloor · usually below 1,000 m",
+    fact: "A sea cucumber that walks on water-filled tube feet. Herds tend to face into the current, likely to catch food drifting their way.",
     iucn: "NE",
   },
   {

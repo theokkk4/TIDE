@@ -2,38 +2,37 @@ import { onTick } from "@/lib/dive/ticker";
 import { Creature, smoothstep, type Frame } from "./kit";
 import { CombJelly, HumpbackWhale, MantaRay, MoonJelly, SardineSchool, SeaTurtle } from "./shallow";
 import { DeepJelly, LanternfishSchool, Siphonophore, SpermWhale } from "./twilight";
-import { Amphipods, Anglerfish, DumboOctopus, Snailfish } from "./deep";
+import { Anglerfish, DumboOctopus, SeaPigs, Snailfish } from "./deep";
 
 /**
  * Who lives where. Each creature sits in the chapter whose depth matches its real habitat,
  * so the cast changes as you dive: bait balls and turtles near the surface, lanternfish and
- * siphonophores in the twilight, the anglerfish and Atolla in the midnight zone, snailfish
- * and amphipods at the bottom — and a manta overhead when you come back up.
+ * siphonophores in the twilight, the anglerfish and Atolla in the midnight zone, a herd of
+ * sea pigs on the seafloor — and a manta overhead when you come back up.
  */
 function cast(): Creature[] {
   return [
     new SardineSchool({ section: "surface", at: 0.82, x: 0.74, parallax: 0.9 }, 64, 3),
-    new SeaTurtle({ section: "question", at: 0.12, x: 0.82, parallax: 0.72 }),
-    new HumpbackWhale({ section: "question", at: 0.95, x: 0.5, parallax: 0.34 }),
-    new MoonJelly({ section: "question", at: 0.42, x: 0.9, parallax: 0.95 }, 38, 11),
-    new MoonJelly({ section: "question", at: 0.78, x: 0.08, parallax: 1.1 }, 28, 12),
-    new CombJelly({ section: "question", at: 0.62, x: 0.93, parallax: 1.05 }, 4),
-    new SardineSchool({ section: "split", at: 0.05, x: 0.8, parallax: 1 }, 48, 8),
-    new LanternfishSchool({ section: "split", at: 0.5, x: 0.2, parallax: 1.05 }, 16, 5),
-    new DeepJelly({ section: "split", at: 0.9, x: 0.9, parallax: 0.95 }, "helmet", 30, 21),
-    new Siphonophore({ section: "scatter", at: 0.3, x: 0.7, parallax: 0.8 }, 6),
-    new LanternfishSchool({ section: "scatter", at: 0.78, x: 0.78, parallax: 0.9 }, 18, 9),
-    new DeepJelly({ section: "scatter", at: 0.95, x: 0.1, parallax: 1.1 }, "helmet", 24, 22),
-    new SpermWhale({ section: "lens", at: 0.3, x: 0.5, parallax: 0.3 }),
-    new Siphonophore({ section: "lens", at: 0.85, x: 0.12, parallax: 0.75 }, 13, 34),
-    new DeepJelly({ section: "verdict", at: 0.25, x: 0.92, parallax: 0.9 }, "atolla", 34, 31),
-    new Siphonophore({ section: "verdict", at: 0.8, x: 0.08, parallax: 0.8 }, 17),
-    new DeepJelly({ section: "evidence", at: 0.2, x: 0.07, parallax: 1 }, "atolla", 28, 32),
-    new DumboOctopus({ section: "evidence", at: 0.6, x: 0.9, parallax: 0.9 }, 2),
-    new Snailfish({ section: "evidence", at: 0.95, x: 0.2, parallax: 0.85 }, 3),
-    new Snailfish({ section: "deep", at: 0.12, x: 0.8, parallax: 1 }, 4),
-    new Amphipods({ section: "deep", at: 0.9, x: 0.3, parallax: 1 }, 7, 44),
-    new MantaRay({ section: "resurface", at: 0.25, x: 0.78, parallax: 0.6 }),
+    new SeaTurtle({ section: "problem", at: 0.15, x: 0.84, parallax: 0.72 }),
+    new MoonJelly({ section: "problem", at: 0.7, x: 0.06, parallax: 1.1 }, 28, 12),
+    new HumpbackWhale({ section: "why", at: 0.9, x: 0.5, parallax: 0.34 }),
+    new MoonJelly({ section: "why", at: 0.3, x: 0.92, parallax: 0.95 }, 38, 11),
+    new CombJelly({ section: "why", at: 0.62, x: 0.94, parallax: 1.05 }, 4),
+    new SardineSchool({ section: "crew", at: 0.02, x: 0.82, parallax: 1 }, 48, 8),
+    new LanternfishSchool({ section: "crew", at: 0.55, x: 0.08, parallax: 1.05 }, 16, 5),
+    new DeepJelly({ section: "crew", at: 0.92, x: 0.93, parallax: 0.95 }, "helmet", 30, 21),
+    new Siphonophore({ section: "idea", at: 0.25, x: 0.92, parallax: 0.8 }, 6),
+    new LanternfishSchool({ section: "idea", at: 0.85, x: 0.8, parallax: 0.9 }, 18, 9),
+    new SpermWhale({ section: "product", at: 0.35, x: 0.5, parallax: 0.3 }),
+    new DeepJelly({ section: "product", at: 0.9, x: 0.06, parallax: 1.1 }, "helmet", 24, 22),
+    new DeepJelly({ section: "live", at: 0.3, x: 0.05, parallax: 0.9 }, "atolla", 34, 31),
+    new Siphonophore({ section: "live", at: 0.85, x: 0.06, parallax: 0.75 }, 13, 34),
+    new DeepJelly({ section: "seafood", at: 0.2, x: 0.95, parallax: 1 }, "atolla", 28, 32),
+    new Siphonophore({ section: "seafood", at: 0.7, x: 0.05, parallax: 0.8 }, 17),
+    new DumboOctopus({ section: "outcomes", at: 0.25, x: 0.92, parallax: 0.9 }, 2),
+    new Snailfish({ section: "outcomes", at: 0.6, x: 0.12, parallax: 0.85 }, 3),
+    new SeaPigs({ section: "outcomes", at: 0.97, x: 0.5, parallax: 1 }, 5, 44),
+    new MantaRay({ section: "resurface", at: 0.25, x: 0.8, parallax: 0.6 }),
     new SardineSchool({ section: "resurface", at: 0.62, x: 0.78, parallax: 0.95 }, 56, 15, "back", true),
     new Anglerfish(),
   ];

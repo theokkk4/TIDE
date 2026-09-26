@@ -1,0 +1,182 @@
+import { existsSync } from "node:fs";
+import path from "node:path";
+import Image from "next/image";
+import type { ReactNode } from "react";
+import type { TeamStory } from "@/lib/dive/content";
+import { cn } from "@/lib/utils";
+import { MaskText, PlaneReveal, SoftReveal } from "./reveal";
+import { FieldPhoto, LivePhoto } from "./story";
+
+const PHOTO_TYPES = ["jpg", "jpeg", "png", "webp"];
+
+/** public/dive/team/<id>.<ext>, if the team has added one. */
+function teamPhoto(id: string) {
+  for (const type of PHOTO_TYPES) {
+    if (existsSync(path.join(process.cwd(), "public", "dive", "team", `${id}.${type}`))) return `/dive/team/${id}.${type}`;
+  }
+  return null;
+}
+
+/** A baby photo in a slightly tilted print, or — until it's added — a quiet frame with their initial. */
+function TeamPhoto({ story, tilt }: { story: Pick<TeamStory, "id" | "name" | "photoAlt" | "photoCaption">; tilt: number }) {
+  const src = teamPhoto(story.id);
+  return (
+    <PlaneReveal>
+      <figure className="mx-auto w-full max-w-[260px]" style={{ rotate: `${tilt}deg` }}>
+        <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] border border-foam/15 bg-[linear-gradient(160deg,#0d5570,#072044_70%)] p-2.5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)]">
+          <div className="relative h-full w-full overflow-hidden rounded-[14px]">
+            {src ? (
+              <Image src={src} alt={story.photoAlt} fill sizes="260px" className="object-cover" />
+            ) : (
+              <div aria-hidden className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_30%_20%,rgba(95,227,239,0.25),transparent_60%),linear-gradient(180deg,#0a3a5c,#04101f)]">
+                <span className="font-serif text-[96px] leading-none text-foam/80 italic">{story.name[0]}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        {src && story.photoCaption && (
+          <figcaption className="mt-3 text-center font-mono text-[11px] text-mist/70">{story.photoCaption}</figcaption>
+        )}
+      </figure>
+    </PlaneReveal>
+  );
+}
+
+function PersonHeader({ story }: { story: Pick<TeamStory, "name" | "tagline"> }) {
+  return (
+    <SoftReveal>
+      {story.tagline && (
+        <p className="font-mono text-[12px] tracking-[0.16em] text-turquoise/80 uppercase">{story.tagline}</p>
+      )}
+      <h3 className="mt-2 text-[clamp(36px,4.6vw,60px)] leading-none font-semibold tracking-tight text-foam">
+        {story.name}
+      </h3>
+    </SoftReveal>
+  );
+}
+
+function Person({ story, tilt, flip = false, children }: { story: TeamStory; tilt: number; flip?: boolean; children?: ReactNode }) {
+  return (
+    <article
+      data-slide="sub"
+      className={cn(
+        "grid items-center gap-10 md:gap-16",
+        flip ? "md:grid-cols-[minmax(0,1fr)_minmax(0,0.38fr)]" : "md:grid-cols-[minmax(0,0.38fr)_minmax(0,1fr)]",
+      )}
+    >
+      <div className={cn(flip && "md:order-2")}>
+        <TeamPhoto story={story} tilt={tilt} />
+      </div>
+      <div>
+        <PersonHeader story={story} />
+        {children}
+      </div>
+    </article>
+  );
+}
+
+/** Oliver — and anyone else whose story is plain paragraphs and a quote. */
+export function StoryPerson({ story, tilt, flip }: { story: TeamStory; tilt: number; flip?: boolean }) {
+  return (
+    <Person story={story} tilt={tilt} flip={flip}>
+      {story.paragraphs ? (
+        <>
+          <SoftReveal delay={0.1}>
+            <div className="mt-6 max-w-xl space-y-5 text-[18px] leading-relaxed text-mist">
+              {story.paragraphs.map((paragraph) => (
+                <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+              ))}
+            </div>
+          </SoftReveal>
+          {story.quote && (
+            <SoftReveal delay={0.2}>
+              <blockquote className="mt-8 max-w-2xl border-l-2 border-turquoise/50 pl-5 font-serif text-[clamp(26px,3vw,38px)] leading-[1.15] text-foam italic">
+                “{story.quote}”
+              </blockquote>
+            </SoftReveal>
+          )}
+        </>
+      ) : (
+        // Placeholder until their story is written — see lib/dive/content.ts.
+        <SoftReveal delay={0.1}>
+          <div className="mt-6 max-w-xl rounded-[22px] border border-dashed border-foam/20 px-6 py-5">
+            <p className="font-mono text-[11px] tracking-[0.16em] text-mist/60 uppercase">Story coming soon</p>
+            <p className="mt-2 text-[16px] leading-relaxed text-mist">{story.name}&apos;s part of this story will go here.</p>
+          </div>
+        </SoftReveal>
+      )}
+    </Person>
+  );
+}
+
+/** Theodore's chapter, as he told it — the words and photos are his. */
+export function TheodoreStory({
+  story,
+  fieldPhotos,
+}: {
+  story: Pick<TeamStory, "id" | "name" | "tagline" | "photoAlt" | "photoCaption">;
+  fieldPhotos: { src: string; caption: string }[];
+}) {
+  return (
+    <div>
+      <Person story={{ ...story, paragraphs: [] }} tilt={2.5} flip>
+        <MaskText
+          className="mt-6 max-w-3xl text-[clamp(30px,3.6vw,46px)] leading-[1.05] font-semibold tracking-tight text-foam"
+          segments={["I grew up on the water", { text: "in South Jersey.", className: "font-serif font-normal italic" }]}
+        />
+        <SoftReveal delay={0.1}>
+          <div className="mt-6 max-w-xl space-y-5 text-[18px] leading-relaxed text-mist">
+            <p>
+              I&apos;ve been fishing with my grandparents and my friends my whole life. I&apos;d go out for bass
+              sometimes, but mostly we crabbed — lines and pots off the marsh, from the first warm mornings until we
+              were pulling traps by moonlight.
+            </p>
+            <p>
+              Every crabber knows the moment. You pull one up and hold it against the gauge.{" "}
+              <span className="text-foam">
+                Is it four and a half inches? Is that a sponge under her? Is this one even legal here?
+              </span>{" "}
+              Guess wrong and you&apos;ve either broken the law, or taken a crab that should have gone back to make more
+              crabs.
+            </p>
+            <p>
+              TIDE is the tool I wish I&apos;d had. My phone becomes the crab gauge, so I don&apos;t have to buy one. It
+              knows the rules for the water I&apos;m standing in. And when I&apos;m fishing salt water and hook something
+              endangered, it tells me to let it go — before it&apos;s too late.{" "}
+              <span className="text-foam">I care about this water.</span>
+            </p>
+          </div>
+        </SoftReveal>
+      </Person>
+
+      <div
+        data-slide="sub"
+        className="mt-14 grid items-start gap-6 sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.25fr)]"
+      >
+        <LivePhoto
+          still="/dive/story/night-crabbing.webp"
+          video="/dive/story/night-crabbing.mp4"
+          alt="Theodore and a friend holding up a blue crab at night"
+          caption="Night crabbing in South Jersey — the one that made it into the bushel"
+        />
+        {fieldPhotos.map((photo, index) => (
+          <FieldPhoto key={photo.src} src={photo.src} caption={photo.caption} index={index + 1} />
+        ))}
+        <SoftReveal delay={0.1} className="sm:col-span-2 md:col-span-1">
+          <figure className="glass rounded-[28px] p-7">
+            <p className="font-mono text-[11px] tracking-[0.16em] text-status-watch uppercase">The fish that started it</p>
+            <blockquote className="mt-4 font-serif text-[clamp(22px,2.4vw,30px)] leading-[1.2] text-foam italic">
+              “When I was a kid I brought home a pet fish, put him in the wrong kind of water, and he was gone in about an
+              hour. I cried.”
+            </blockquote>
+            <figcaption className="mt-5 text-[15px] leading-relaxed text-mist">
+              It&apos;s a funny story now. But it taught me that the right answer depends on details you can&apos;t see
+              just by looking at an animal — what water it needs, how big it has to be, whether it&apos;s carrying eggs,
+              whether it&apos;s protected. That&apos;s what TIDE sees for you.
+            </figcaption>
+          </figure>
+        </SoftReveal>
+      </div>
+    </div>
+  );
+}
