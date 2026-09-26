@@ -76,6 +76,18 @@ species pages work out of the box. Live AI identification needs one key (below).
 | `npm run lint` | ESLint |
 | `npm run sync:data` | Re-verify conservation data and re-fetch photography |
 
+## The story site — `/dive`
+
+A scroll-driven submission page: scrolling is a dive from the surface to Challenger Deep
+(10,935 m) and back, with a live depth gauge, a chapter per idea, and an interactive piece in
+each — reveal three species' verdicts, try the seafood rules on all 30 species, and use the
+real app running inside a phone frame. Every number on it is computed from the verified data.
+
+- Team names, hackathon tracks and impact numbers live in `lib/dive/content.ts`. The impact
+  chapter stays hidden until one of those lists has entries.
+- Drop a portrait screen recording at `public/dive/demo.mp4` and the deep chapter adds a
+  "Watch the demo" view alongside the live app.
+
 ## Environment variables
 
 Copy `.env.example` to `.env.local`:
@@ -134,16 +146,20 @@ explains that this is an absence of data, not a clean bill of health.
 
 ```
 app/
-  page.tsx                  home
-  identify/                 camera + analysis flow
-  species/[slug]/           species result page (static, 30 pages)
-  species/unknown/          graceful result for species outside the dataset
-  discover/  saved/  demo/
+  (app)/                    the mobile app, framed in a phone-width column
+    page.tsx                home
+    identify/               camera + analysis flow
+    species/[slug]/         species result page (static, 30 pages)
+    species/unknown/        graceful result for species outside the dataset
+    discover/  saved/  demo/  credits/
+  (story)/dive/             the scroll-story submission site, full width
   api/identify/             vision endpoint
   api/enrich/               GBIF verification endpoint
 components/
   ocean-background, bottom-nav, ui/, identify/, species/, home/
+  dive/                     depth engine + interactive chapters for /dive
 lib/
+  dive/content.ts           team, tracks and impact numbers for /dive
   data/species.ts           the curated dataset
   data/generated/           API-verified cache (written by sync:data)
   seafood.ts                the eat / don't-eat decision
