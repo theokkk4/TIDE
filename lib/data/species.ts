@@ -1,11 +1,12 @@
 import type { Species } from "@/lib/types";
+import { LOCAL_SPECIES } from "@/lib/data/species-local";
 
 /**
  * Curated MVP dataset. Conservation codes here are fallbacks — `npm run sync:data`
  * verifies every one against GBIF's IUCN Red List mapping and regenerates
  * lib/data/generated/verified.json, which takes precedence at runtime.
  */
-export const SPECIES: Species[] = [
+const MARINE_SPECIES: Species[] = [
   // ─────────────────────────────  TURTLES  ─────────────────────────────
   {
     slug: "green-sea-turtle",
@@ -714,6 +715,13 @@ export const SPECIES: Species[] = [
     ],
     humanImpact:
       "Blue crab management is unusually responsive: an annual survey feeds directly into that season's rules, which is why the fishery has survived repeated crashes.",
+    eggCheck: true,
+    measure: "point-to-point",
+    keepTips: [
+      "Keep crabs alive, cool and damp — in a cooler on ice under a wet towel, not sitting in melted water — until you cook them.",
+      "Cook only crabs that were alive; discard any that died on the way home.",
+    ],
+    releaseTips: ["Lower undersized crabs and sponge crabs back into the water rather than tossing them."],
     aliases: ["blue crab", "callinectes sapidus", "crab", "soft shell crab"],
   },
   {
@@ -753,6 +761,8 @@ export const SPECIES: Species[] = [
     ],
     humanImpact:
       "Dungeness is a case study in adaptive management: the same fishery that fixed its stock problem is now redesigning gear to solve a whale problem.",
+    eggCheck: true,
+    measure: "carapace-length",
     aliases: ["dungeness", "dungeness crab", "metacarcinus magister", "cancer magister"],
   },
   {
@@ -879,6 +889,9 @@ export const SPECIES: Species[] = [
     humanImpact:
       "Lobster is where a healthy stock and a serious conservation problem coexist. The fish are fine; the ropes are the issue — and ropeless gear trials are the response.",
     alternatives: ["blue-crab", "dungeness-crab", "european-sardine"],
+    eggCheck: true,
+    measure: "carapace-length",
+    releaseTips: ["Release egg-bearing and V-notched females straight away — they are the breeding stock."],
     aliases: ["lobster", "american lobster", "maine lobster", "homarus americanus"],
   },
   {
@@ -1108,6 +1121,12 @@ export const SPECIES: Species[] = [
     humanImpact:
       "Feeding wild dolphins is illegal because it works: fed dolphins learn to approach boats, and their calves inherit a habit that gets them injured or killed.",
     alternatives: ["european-sardine", "atlantic-mackerel", "mahi-mahi"],
+    encounter: "find",
+    findSteps: [
+      "Keep your distance — NOAA recommends staying at least 100 yards from whales, and 50 yards from dolphins, seals and sea turtles.",
+      "Never feed, touch or swim toward it.",
+      "Stranded, injured or entangled? Call NOAA's hotline at (866) 755-6622.",
+    ],
     aliases: ["dolphin", "bottlenose dolphin", "tursiops truncatus", "porpoise"],
   },
   {
@@ -1143,6 +1162,12 @@ export const SPECIES: Species[] = [
     humanImpact:
       "The humpback recovery is the strongest evidence in the ocean that protection works. It took a global ban and forty years — and the population came back.",
     alternatives: ["european-sardine", "atlantic-mackerel"],
+    encounter: "find",
+    findSteps: [
+      "Keep your distance — NOAA recommends staying at least 100 yards from whales, and 50 yards from dolphins, seals and sea turtles.",
+      "Never feed, touch or swim toward it.",
+      "Stranded, injured or entangled? Call NOAA's hotline at (866) 755-6622.",
+    ],
     aliases: ["humpback", "humpback whale", "whale", "megaptera novaeangliae"],
   },
   {
@@ -1177,6 +1202,9 @@ export const SPECIES: Species[] = [
     aliases: ["clownfish", "clown anemonefish", "nemo", "anemonefish", "amphiprion ocellaris"],
   },
 ];
+
+/** The marine field guide plus the Mid-Atlantic anglers', crabbers' and walkers' guide. */
+export const SPECIES: Species[] = [...MARINE_SPECIES, ...LOCAL_SPECIES];
 
 export const SPECIES_BY_SLUG: Record<string, Species> = Object.fromEntries(
   SPECIES.map((s) => [s.slug, s]),

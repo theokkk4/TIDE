@@ -8,7 +8,17 @@ export type SpeciesCategory =
   | "cephalopod"
   | "mammal"
   | "ray"
+  | "amphibian"
   | "other";
+
+/**
+ * How people meet an animal decides what TIDE leads with. Anglers and crabbers "catch"
+ * and need a keep-or-release call; hikers and drivers "find" and need to know what to do.
+ */
+export type EncounterMode = "catch" | "find";
+
+/** How a size limit is measured, so the app can show the right diagram. */
+export type MeasureMethod = "total-length" | "point-to-point" | "carapace-length" | "curved-carapace";
 
 /**
  * Seafood state is deliberately separate from conservation status: a species can be
@@ -79,6 +89,23 @@ export interface Species {
   noaaSlug?: string;
   /** Search terms the vision model may return that should resolve to this species. */
   aliases?: string[];
+  /** Overrides the default mode (turtles and amphibians are found; everything else is caught). */
+  encounter?: EncounterMode;
+  /** Non-native and harmful here: releasing it alive is the wrong call. */
+  invasive?: string;
+  /** Checks that apply before any state rule: egg-bearing females go back. */
+  eggCheck?: boolean;
+  /** How to measure it against a size limit. */
+  measure?: MeasureMethod;
+  /** Handling advice once the call is made. */
+  keepTips?: string[];
+  releaseTips?: string[];
+  /** For found animals: what to do right now, in order. */
+  findSteps?: string[];
+  /** Hazards to the finder (bites, toxins, Salmonella). */
+  safety?: string[];
+  /** Where sightings or incidents should be reported. */
+  report?: { label: string; url: string };
 }
 
 export interface VerifiedRecord {
@@ -113,7 +140,12 @@ export interface AiIdentification {
   animal_type: string;
   visual_reasoning: string;
   possible_alternatives: string[];
-  is_marine_animal: boolean;
+  /** Fish, shellfish, turtles, amphibians and other aquatic or shoreline animals. */
+  is_supported_animal: boolean;
+  /** Crabs and lobsters only: an egg mass ("sponge") visible under the body. */
+  egg_mass_visible?: "yes" | "no" | "unknown";
+  /** Crabs only, when the apron or claw tips show it. */
+  crab_sex?: "male" | "female" | "unknown";
 }
 
 export interface MatchedSpeciesSummary {
@@ -132,7 +164,7 @@ export interface IdentifyResponse {
   /** Curated naming and status, resolved server-side so the client needs no dataset. */
   matched?: MatchedSpeciesSummary | null;
   source: "ai" | "demo";
-  error?: "no_credentials" | "provider_error" | "not_marine" | "unreadable";
+  error?: "no_credentials" | "provider_error" | "not_supported" | "unreadable";
   message?: string;
 }
 
@@ -164,6 +196,8 @@ export interface ScanRecord {
   photo: string | null;
   alternatives: string[];
   reasoning?: string;
+  /** What the photo suggested about eggs and sex — prompts for the user to confirm, never a verdict. */
+  hints?: { eggs?: "yes" | "no" | "unknown"; sex?: "male" | "female" | "unknown" };
   source: "ai" | "demo";
   createdAt: number;
 }

@@ -23,7 +23,7 @@ export function IdentifyError({
   onRetry: () => void;
 }) {
   const notConfigured = reason === "no_credentials";
-  const notMarine = reason === "not_marine";
+  const notSupported = reason === "not_supported";
 
   return (
     <div className="flex min-h-dvh flex-col justify-center px-6 py-12">
@@ -47,16 +47,16 @@ export function IdentifyError({
       <h1 className="mt-5 text-center text-[24px] font-semibold tracking-tight text-foam">
         {notConfigured
           ? "Live identification isn't set up"
-          : notMarine
-            ? "That doesn't look like marine life"
+          : notSupported
+            ? "That's outside TIDE's field guide"
             : "We couldn't identify this one"}
       </h1>
 
       <p className="mx-auto mt-3 max-w-[320px] text-center text-[14px] leading-relaxed text-mist">
         {notConfigured
           ? "This deployment has no AI vision key configured, so photos can't be analysed. Demo Mode runs the full experience without one."
-          : notMarine
-            ? (message ?? "Try a photo of a fish, turtle, crab or other ocean animal.")
+          : notSupported
+            ? "TIDE covers fish, crabs and other shellfish, turtles, frogs, toads and salamanders. Try a clear photo of one of those."
             : (message ?? "The photo was hard to read. A clearer shot usually fixes it.")}
       </p>
 

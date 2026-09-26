@@ -12,7 +12,7 @@ import { Amphipods, Anglerfish, DumboOctopus, Snailfish } from "./deep";
  */
 function cast(): Creature[] {
   return [
-    new SardineSchool({ section: "surface", at: 0.82, x: 0.74, parallax: 0.9 }, 64, 3, "front"),
+    new SardineSchool({ section: "surface", at: 0.82, x: 0.74, parallax: 0.9 }, 64, 3),
     new SeaTurtle({ section: "question", at: 0.12, x: 0.82, parallax: 0.72 }),
     new HumpbackWhale({ section: "question", at: 0.95, x: 0.5, parallax: 0.34 }),
     new MoonJelly({ section: "question", at: 0.42, x: 0.9, parallax: 0.95 }, 38, 11),
@@ -67,7 +67,7 @@ export function startOcean(
     dt: 0,
     scroll: window.scrollY,
     depth: 0,
-    pointer: { x: -9999, y: -9999, active: false },
+    pointer: { x: -9999, y: -9999, active: false, overContent: false },
     light: { x: -9999, y: -9999, strength: 0 },
     ambient: 1,
     small: false,
@@ -126,16 +126,9 @@ export function startOcean(
   /* Scanner state. */
   let target: Creature | null = null;
   let lockedAt = 0;
-  let announced = false;
-  let announceUntil = 0;
 
   const pick = (now: number) => {
     const touch = pointerKind === "touch";
-    if (!announced && angler.strength > 0.85 && angler.visible) {
-      announced = true;
-      announceUntil = now + 4500;
-    }
-    if (now < announceUntil) return angler;
     const scanning = touch ? now < touchUntil : frame.pointer.active && !overContent;
     if (!scanning) return null;
     const { x, y } = frame.pointer;
@@ -167,6 +160,7 @@ export function startOcean(
     frame.ambient = 1 - smoothstep(150, 1800, frame.depth) * 0.88;
     frame.pointer.active =
       pointerKind === "touch" ? now < touchUntil : !left && now - lastMove < 8000;
+    frame.pointer.overContent = overContent;
 
     // Reduced motion: a still ocean, redrawn only when the page moves.
     if (options.reduced && !moved && time > 500) return;

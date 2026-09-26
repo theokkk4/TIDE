@@ -204,7 +204,7 @@
       "iucnCode": "NT",
       "iucnCategory": "NEAR_THREATENED",
       "iucnTaxonId": "23148",
-      "occurrenceCount": 449461,
+      "occurrenceCount": 449462,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -258,7 +258,7 @@
       "iucnCode": "LC",
       "iucnCategory": "LEAST_CONCERN",
       "iucnTaxonId": "170354",
-      "occurrenceCount": 443094,
+      "occurrenceCount": 443096,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -294,7 +294,7 @@
       "iucnCode": "LC",
       "iucnCategory": "LEAST_CONCERN",
       "iucnTaxonId": "198568",
-      "occurrenceCount": 46771,
+      "occurrenceCount": 46773,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -502,7 +502,7 @@
       "iucnCode": "LC",
       "iucnCategory": "LEAST_CONCERN",
       "iucnTaxonId": "22563",
-      "occurrenceCount": 192117,
+      "occurrenceCount": 192118,
       "taxonomy": {
         "kingdom": "Animalia",
         "phylum": "Chordata",
@@ -552,6 +552,372 @@
       "wikipediaUrl": "https://en.wikipedia.org/wiki/Ocellaris_clownfish",
       "noaaUrl": null,
       "summary": "The ocellaris clownfish, also known as the false percula clownfish or common clownfish, is a marine fish belonging to the family Pomacentridae, which includes clownfishes and damselfishes. A. ocellaris are found in different colors, depending on where they are located. For example, black A. ocellaris with white bands can be found near northern Hawaii, USA, North America, Australia, Southeast Asia, and Japan. Orange or red-brown A. ocellaris also exist with three similar white bands on the body and head. A. ocellaris can be distinguished from other Amphiprion species based on the number of pectoral rays and dorsal spines. A. ocellaris are known to grow about 11 cm long. Females are larger than males. The life cycle of A. ocellaris varies in whether they reside at the surface or bottom of the ocean. When they initially hatch, they reside near the surface. However, when A. ocellaris enter into the juvenile stage of life, they travel down to the bottom to find shelter in a host anemone. Once they find their anemone, they form a symbiotic relationship with them."
+    },
+    "striped-bass": {
+      "gbifKey": 2394612,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "192942",
+      "occurrenceCount": 157905,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Moronidae"
+      },
+      "image": "/species/striped-bass.jpg",
+      "imageCredit": "D Ross Robertson · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Striped_bass",
+      "noaaUrl": null,
+      "summary": "The striped bass, also called the Atlantic striped bass, striper, linesider, rock, or rockfish, is an anadromous perciform fish of the family Moronidae found primarily along the Atlantic coast of North America. It has also been widely introduced into inland recreational fisheries across the United States. Striped bass found in the Gulf of Mexico are a separate strain referred to as Gulf Coast striped bass."
+    },
+    "summer-flounder": {
+      "gbifKey": 2408866,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "154983",
+      "occurrenceCount": 15779,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Pleuronectiformes",
+        "family": "Paralichthyidae"
+      },
+      "image": "/species/summer-flounder.jpg",
+      "imageCredit": "Arturodomiao · CC BY-SA 4.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Summer_flounder",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/summer-flounder",
+      "summary": "The summer flounder or fluke is a marine flatfish that is found in the Atlantic Ocean off the East Coast of the United States and Canada. It is especially abundant in waters from North Carolina to Massachusetts."
+    },
+    "black-sea-bass": {
+      "gbifKey": 2387483,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "16435325",
+      "occurrenceCount": 9461,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Serranidae"
+      },
+      "image": "/species/black-sea-bass.jpg",
+      "imageCredit": "Unknown author · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Black_sea_bass",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/black-sea-bass",
+      "summary": "The black sea bass is a species of marine ray-finned fish, a sea bass from the subfamily Serraninae which is part of the family Serranidae, which also includes the groupers and anthias. It is found in the western Atlantic Ocean, where it is an important species for commercial and recreational fisheries."
+    },
+    "bluefish": {
+      "gbifKey": 5208090,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "190279",
+      "occurrenceCount": 18020,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Pomatomidae"
+      },
+      "image": "/species/bluefish.jpg",
+      "imageCredit": "Unknown author · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Bluefish",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/bluefish",
+      "summary": "The bluefish is the only extant species of the family Pomatomidae. It is a marine pelagic fish found around the world in temperate and subtropical waters, except for the northern Pacific Ocean. Bluefish are known as tailor in Australia and New Zealand, elf and shad in South Africa. It is a popular gamefish and food fish."
+    },
+    "american-eel": {
+      "gbifKey": 5212956,
+      "iucnCode": "EN",
+      "iucnCategory": "ENDANGERED",
+      "iucnTaxonId": "191108",
+      "occurrenceCount": 64904,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Anguilliformes",
+        "family": "Anguillidae"
+      },
+      "image": "/species/american-eel.jpg",
+      "imageCredit": "Clinton & Charles Robertson from RAF Lakenheath, UK & San Marcos, TX, USA & UK · CC BY 2.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/American_eel",
+      "noaaUrl": null,
+      "summary": "The American eel is a facultative catadromous eel found on the eastern coast of North America. Freshwater eels are fish belonging to the elopomorph superorder, a group of phylogenetically ancient teleosts. The American eel has a slender, supple, snake-like body that is covered with a mucus layer, which makes the eel appear to be naked and slimy despite the presence of minute scales. A long dorsal fin runs from the middle of the back and is continuous with a similar ventral fin. Pelvic fins are absent, and relatively small pectoral fins can be found near the midline, followed by the head and gill covers. Variations exist in coloration, from olive green, brown shading to greenish-yellow and light gray or white on the belly. Eels from clear water are often lighter than those from dark, tannic acid streams."
+    },
+    "northern-snakehead": {
+      "gbifKey": 4284921,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "13151166",
+      "occurrenceCount": 8001,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Perciformes",
+        "family": "Channidae"
+      },
+      "image": "/species/northern-snakehead.jpg",
+      "imageCredit": "Joe Girgente · CC BY 4.0 · via iNaturalist",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Northern_snakehead",
+      "noaaUrl": null,
+      "summary": "The northern snakehead also known as Chesapeake Channa in Maryland U.S is a species of snakehead fish native to temperate East Asia, in China, Russia, North Korea, and South Korea. Their natural range goes from the Amur River watershed in Siberia and Manchuria down to Hainan. It is an important food fish and one of the most cultivated in its native region, with 510,000 tonnes annual production worldwide. Due to this, the northern snakehead has been exported throughout the world and has managed to establish non-native populations in Central Asia and North America. In the United States, it is found in Pennsylvania, Virginia, West Virginia, Delaware, Maryland, North Carolina, Arkansas, Missouri, and Mississippi."
+    },
+    "atlantic-sturgeon": {
+      "gbifKey": 4287132,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "245",
+      "occurrenceCount": 74966,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "order": "Acipenseriformes",
+        "family": "Acipenseridae"
+      },
+      "image": "/species/atlantic-sturgeon.jpg",
+      "imageCredit": "Jiaqian AirplaneFan · CC BY 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Atlantic_sturgeon",
+      "noaaUrl": "https://www.fisheries.noaa.gov/species/atlantic-sturgeon",
+      "summary": "The Atlantic sturgeon is a large species of sturgeon native to both sides of the Atlantic Ocean, and associated river basins. It is a member of the family Acipenseridae, and, along with other sturgeon, it is sometimes considered a living fossil. The main range of the Atlantic sturgeon is in eastern North America, extending from New Brunswick, Canada, to the eastern coast of Florida, United States. A highly endangered disjunct population occurs in the Baltic region of Europe."
+    },
+    "horseshoe-crab": {
+      "gbifKey": 1010610,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "11987",
+      "occurrenceCount": 38852,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Arthropoda",
+        "class": "Merostomata",
+        "order": "Xiphosurida",
+        "family": "Limulidae"
+      },
+      "image": "/species/horseshoe-crab.jpg",
+      "imageCredit": "Hans Hillewaert · CC BY-SA 4.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Atlantic_horseshoe_crab",
+      "noaaUrl": null,
+      "summary": "The Atlantic horseshoe crab, also known as the American horseshoe crab, is a species of horseshoe crab, a kind of marine and brackish chelicerate arthropod. It is found in the Gulf of Mexico and along the Atlantic coast of North America. The main area of annual migration is Delaware Bay along the South Jersey Delaware Bayshore."
+    },
+    "eastern-box-turtle": {
+      "gbifKey": 2443173,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "21641",
+      "occurrenceCount": 89456,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Emydidae"
+      },
+      "image": "/species/eastern-box-turtle.jpg",
+      "imageCredit": "“Jonathan Zander ( Digon3 )\" · CC BY-SA 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Common_box_turtle",
+      "noaaUrl": null,
+      "summary": "The common box turtle is a species of box turtle with five existing subspecies. It is found throughout the Eastern United States and Mexico. The box turtle has a distinctive hinged lower shell that allows it to completely enclose itself, like a box. Its upper jaw is hooked. \nThe turtle is primarily terrestrial and eats a wide variety of plants and animals. The females lay their eggs in the summer. Turtles in the northern part of their range hibernate over the winter."
+    },
+    "wood-turtle": {
+      "gbifKey": 2443115,
+      "iucnCode": "EN",
+      "iucnCategory": "ENDANGERED",
+      "iucnTaxonId": "4965",
+      "occurrenceCount": 8857,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Emydidae"
+      },
+      "image": "/species/wood-turtle.jpg",
+      "imageCredit": "Ltshears · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Wood_turtle",
+      "noaaUrl": null,
+      "summary": "The wood turtle is a species of land turtle in the family Emydidae. The species is native to northeastern North America. The genus Glyptemys contains only one other species of turtle: the bog turtle. The wood turtle reaches a straight carapace length of 14 to 20 centimeters, its defining characteristic being the pyramidal shape of the scutes on its upper shell. Morphologically, it is similar to the bog turtle, spotted turtle, and Blanding's turtle. The wood turtle exists in a broad geographic range extending from Nova Scotia in the north to Minnesota in the west and Virginia in the south. In the past, it was forced south by encroaching glaciers: skeletal remains have been found as far south as Georgia."
+    },
+    "bog-turtle": {
+      "gbifKey": 2443122,
+      "iucnCode": "CR",
+      "iucnCategory": "CRITICALLY_ENDANGERED",
+      "iucnTaxonId": "4967",
+      "occurrenceCount": 2086,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Emydidae"
+      },
+      "image": "/species/bog-turtle.jpg",
+      "imageCredit": "U.S. Fish and Wildlife Service Southeast Region · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Bog_turtle",
+      "noaaUrl": null,
+      "summary": "The bog turtle, also known commonly as Muhlenberg's turtle, is a critically endangered species of semiaquatic turtle in the family Emydidae. The species is native to the eastern United States. It was first scientifically described in 1801 after an 18th-century survey of Pennsylvania. The smallest North American turtle, it measures about 10 centimeters (4 in) in straight carapace length when fully grown. Although the bog turtle is similar in appearance to the painted turtle and the spotted turtle, its closest relative is actually the somewhat larger wood turtle. The bog turtle can be found from Vermont in the north, south to Georgia, and west to Pennsylvania. Diurnal and secretive, it spends most of its time buried in mud and – during the winter months – in hibernation. The bog turtle is omnivorous, feeding mainly on small invertebrates. The bog turtle is the state reptile of New Jersey."
+    },
+    "common-snapping-turtle": {
+      "gbifKey": 2441905,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "163424",
+      "occurrenceCount": 98994,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Chelydridae"
+      },
+      "image": "/species/common-snapping-turtle.jpg",
+      "imageCredit": "Chuck Homler, Focus On Wildlife · CC BY-SA 4.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Common_snapping_turtle",
+      "noaaUrl": null,
+      "summary": "The common snapping turtle is a species of large, freshwater turtles in the family Chelydridae. Its natural range extends from southeastern Canada, southwest to the edge of the Rocky Mountains, as far east as Nova Scotia, and Florida. The present-day C. serpentina population in the Middle Rio Grande suggests that the common snapping turtle has been present in this drainage since at least the 17th century and is likely native. The three species of Chelydra and the larger alligator snapping turtles are the only extant chelydrids, a family now restricted to the Americas. The common snapping turtle, as its name implies, is the most widespread."
+    },
+    "eastern-painted-turtle": {
+      "gbifKey": 2443133,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "163467",
+      "occurrenceCount": 150643,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Emydidae"
+      },
+      "image": "/species/eastern-painted-turtle.jpg",
+      "imageCredit": "MH Herpetology · CC BY-SA 4.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Painted_turtle",
+      "noaaUrl": null,
+      "summary": "The painted turtle is North America's most widespread native turtle, with a rich evolutionary history that stretches back 15 million years. As resilient survivors belonging to the pond turtle family Emydidae, these turtles adapted creatively to the planet's changing climate. During the last Ice Age, they split into distinct groups and evolved into three regionally unique subspecies: the Eastern painted turtle, the Midland painted turtle, and the Western painted turtle. Scientists still debate whether a fourth group, the Southern painted turtle, is its own separate species or another subspecies. Because they are highly adaptable and widely distributed across fresh waters from Canada to Mexico, their conservation status is listed as Least Concern, meaning they are currently thriving in the wild. "
+    },
+    "red-eared-slider": {
+      "gbifKey": 2443002,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "22028",
+      "occurrenceCount": 255179,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Emydidae"
+      },
+      "image": "/species/red-eared-slider.jpg",
+      "imageCredit": "Happyswissman · CC BY 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Pond_slider",
+      "noaaUrl": null,
+      "summary": "The pond slider is a species of common, medium-sized, semiaquatic turtle. Three subspecies are described, the most recognizable of which is the red-eared slider, which is popular in the pet trade and has been introduced to other parts of the world by people releasing it to the wild. Hatchling and juvenile pond sliders have a green upper shell (carapace), yellow bottom shell (plastron), and green and yellow stripes and markings on their skin. These patterns and colors in the skin and shell fade with age until the carapace is a muted olive green to brown and the plastron is a dull yellow or darker. Some sliders become almost black with few visible markings.\nThe carapace is oval with a bit of rounding and a central crest with knobs, but these features soften and fade with age, adults being smoother and flatter. For determining an adult slider's sex, males typically have much longer front claws than adult females, while females usually have shorter, more slender tails than males. Their lifespans range from 20 to 50 years."
+    },
+    "diamondback-terrapin": {
+      "gbifKey": 2443212,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "12695",
+      "occurrenceCount": 12331,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Testudines",
+        "family": "Emydidae"
+      },
+      "image": "/species/diamondback-terrapin.jpg",
+      "imageCredit": "Ryan Hagerty · Public domain · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Diamondback_terrapin",
+      "noaaUrl": null,
+      "summary": "The diamondback terrapin or simply terrapin is a species of terrapin native to the brackish coastal tidal marshes of the East Coast of the United States and the Gulf of Mexico coast, as well as in Bermuda. It belongs to the monotypic genus Malaclemys. It has one of the largest ranges of all turtles in North America, stretching as far south as the Florida Keys and as far north as Cape Cod."
+    },
+    "eastern-hellbender": {
+      "gbifKey": 2432031,
+      "iucnCode": "VU",
+      "iucnCategory": "VULNERABLE",
+      "iucnTaxonId": "59077",
+      "occurrenceCount": 2372,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Amphibia",
+        "order": "Caudata",
+        "family": "Cryptobranchidae"
+      },
+      "image": "/species/eastern-hellbender.jpg",
+      "imageCredit": "Brian Gratwicke · CC BY 2.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Hellbender",
+      "noaaUrl": null,
+      "summary": "The hellbender, also known as the hellbender salamander, is a species of aquatic giant salamander endemic to the eastern and central United States. It is the largest salamander in North America. A member of the family Cryptobranchidae, the hellbender is the only extant member of the genus Cryptobranchus. Other closely related salamanders in the same family are in the genus Andrias, which contains the Japanese and Chinese giant salamanders. The hellbender is much larger than any other salamander in its geographic range, and employs an unusual adaption for respiration through cutaneous gas exchange via capillaries found in its lateral skin folds. It fills a particular niche—both as a predator and prey—in its ecosystem, which either it or its ancestors have occupied for around 65 million years. The species is listed as Vulnerable on the IUCN Red List of Threatened Species due to the impacts of disease and widespread habitat loss and degradation throughout much of its range. Eastern hellbender populations are dropping quickly across most of their range, nearly 80% are declining or disappearing altogether. A reason for this is the loss of forest along streams, which they rely on to keep their habitats stable and clean. In many places, the populations are mostly older individuals, with few young hellbenders showing up to replace them."
+    },
+    "american-bullfrog": {
+      "gbifKey": 2427091,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "58565_2",
+      "occurrenceCount": 175615,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Amphibia",
+        "order": "Anura",
+        "family": "Ranidae"
+      },
+      "image": "/species/american-bullfrog.jpg",
+      "imageCredit": "Carl D. Howe · CC BY-SA 2.5 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/American_bullfrog",
+      "noaaUrl": null,
+      "summary": "The American bullfrog, often simply known as the bullfrog in Canada and the United States, is a species of large frog in the family Ranidae. The species is native to eastern North America. It typically inhabits large permanent water bodies such as swamps, ponds, and lakes. The bullfrog can also be found in manmade habitats such as pools, koi ponds, canals, ditches, reservoirs and culverts. The bullfrog gets its common name from the sound the male makes during the breeding season, which sounds similar to a bull bellowing. It is a generalist carnivore, consuming a wide variety of prey. In turn, it is eaten by predators such as alligators, snakes, and birds."
+    },
+    "spotted-salamander": {
+      "gbifKey": 2431951,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "59064",
+      "occurrenceCount": 49566,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Amphibia",
+        "order": "Caudata",
+        "family": "Ambystomatidae"
+      },
+      "image": "/species/spotted-salamander.jpg",
+      "imageCredit": "D. Gordon E. Robertson · CC BY-SA 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Spotted_salamander",
+      "noaaUrl": null,
+      "summary": "The spotted salamander, also known commonly as the yellow-spotted salamander, is a species of mole salamander in the family Ambystomatidae. The species is native to the eastern United States and Canada. It is the state amphibian of Ohio and South Carolina. The species ranges from Nova Scotia, to Lake Superior, to southern Georgia and Texas. Its embryos have been found to have symbiotic algae, Chlorococcum amblystomatis, living in and around them, the only known example of vertebrate cells hosting an endosymbiont microbe."
+    },
+    "red-spotted-newt": {
+      "gbifKey": 5218390,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "59453",
+      "occurrenceCount": 100463,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Amphibia",
+        "order": "Caudata",
+        "family": "Salamandridae"
+      },
+      "image": "/species/red-spotted-newt.jpg",
+      "imageCredit": "Brian Gratwicke · CC BY 2.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/Eastern_newt",
+      "noaaUrl": null,
+      "summary": "The eastern newt is a common newt of eastern North America. It frequents small lakes, ponds, vernal ponds and streams or nearby wooded areas. The eastern newt produces tetrodotoxin, which makes the species unpalatable to predatory fish and crayfish. It has a lifespan of 12 to 15 years in the wild, and it may grow to 5 in (13 cm) in length. These animals are common aquarium pets, being either collected from the wild or sold commercially. The striking bright orange juvenile stage, which is land-dwelling, is known as a red eft. Some sources blend the general name of the species and that of the red-spotted newt subspecies into the eastern red-spotted newt."
+    },
+    "american-toad": {
+      "gbifKey": 2422872,
+      "iucnCode": "LC",
+      "iucnCategory": "LEAST_CONCERN",
+      "iucnTaxonId": "54570",
+      "occurrenceCount": 183901,
+      "taxonomy": {
+        "kingdom": "Animalia",
+        "phylum": "Chordata",
+        "class": "Amphibia",
+        "order": "Anura",
+        "family": "Bufonidae"
+      },
+      "image": "/species/american-toad.jpg",
+      "imageCredit": "Cephas · CC BY-SA 3.0 · via Wikimedia Commons",
+      "wikipediaUrl": "https://en.wikipedia.org/wiki/American_toad",
+      "noaaUrl": null,
+      "summary": "The American toad is a common species of toad found throughout the eastern half of Canada and the United States. It is divided into three subspecies: the eastern American toad, the dwarf American toad and the rare Hudson Bay toad. Taxonomic treatments in 2006 placed this species in the genus Anaxyrus instead of Bufo."
     }
   },
   "media": {

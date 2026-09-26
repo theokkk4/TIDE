@@ -15,7 +15,6 @@ import {
   DemoPhone,
   PhoneStory,
   SourceConverge,
-  SpeciesSplit,
   VerdictExplorer,
   type SpeciesCardData,
 } from "@/components/dive/interactives";
@@ -23,11 +22,17 @@ import { CreatureLayer } from "@/components/dive/creature-layer";
 import { ClipReveal, MaskText, PlaneReveal, SoftReveal } from "@/components/dive/reveal";
 import { SmoothScrollProvider } from "@/components/dive/smooth-scroll";
 import { SpeciesRiver } from "@/components/dive/species-river";
+import { CatchSplit, type CatchScenario } from "@/components/dive/catch-split";
+import { FoundQuiz } from "@/components/dive/found-quiz";
+import { ImpactModel } from "@/components/dive/impact-model";
+import { BASELINES } from "@/lib/dive/impact";
+import { FieldPhoto, LivePhoto } from "@/components/dive/story";
+import { getRecipesFor } from "@/lib/data/recipes";
 
 export const metadata: Metadata = {
-  title: "TIDE — A dive into what lives beneath the surface",
+  title: "TIDE — Keep it or let it go?",
   description:
-    "An interactive dive through the ocean: why 'not endangered' doesn't mean 'safe to eat', and how TIDE answers both questions from a single photo.",
+    "Built by a South Jersey crabber: snap your catch, and TIDE checks your state's rules and tells you whether to keep it, release it or leave it be — with recipes when it's legal and not endangered.",
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -38,6 +43,8 @@ const CATEGORY_LABELS: Record<string, string> = {
   crustacean: "crustaceans",
   cephalopod: "cephalopods",
   mammal: "mammals",
+  amphibian: "amphibians",
+  other: "other",
 };
 
 function toCard(species: Species, context?: string): SpeciesCardData {
@@ -61,46 +68,63 @@ function toCard(species: Species, context?: string): SpeciesCardData {
   };
 }
 
-const SPLIT: { slug: string; context: string }[] = [
+/** Three catches for the split chapter, judged live by the app's engine. */
+const CATCHES: { slug: string; setup: string; input: CatchScenario["input"] }[] = [
   {
-    slug: "green-sea-turtle",
-    context: "Protected under the US Endangered Species Act and CITES Appendix I.",
+    slug: "blue-crab",
+    setup: "A fat 5½-inch blue crab. You flip her over — there's an orange sponge under the apron.",
+    input: { length: 5.5, eggs: true, female: true },
   },
   {
-    slug: "atlantic-bluefin-tuna",
-    context: "Moved from Endangered to Least Concern in 2021.",
+    slug: "striped-bass",
+    setup: "A 22-inch striped bass, hooked in the lip on a circle hook. Dinner?",
+    input: { length: 22, eggs: null, female: null },
   },
   {
-    slug: "atlantic-cod",
-    context: "Some stocks are certified sustainable while others remain overfished.",
+    slug: "northern-snakehead",
+    setup: "Something long, blotchy and toothy with scales on its head. Your buddy says throw it back.",
+    input: { length: null, eggs: null, female: null },
   },
 ];
 
 const STORY_STEPS = [
   {
-    title: "Capture",
-    body: "Point your phone at the animal, or upload a photo. It runs in any mobile browser — nothing to install.",
+    title: "Snap it",
+    body: "Point your phone at the catch, or the turtle on the trail. Runs in any mobile browser — nothing to install.",
     image: "/dive/01-home.webp",
-    alt: "TIDE home screen asking 'What did you find?'",
+    alt: "TIDE home screen asking 'Caught it? Found it?'",
   },
   {
     title: "Identify",
     body: "Google Gemini vision names the species with a confidence score and look-alikes. Below 75%, TIDE says “We aren't completely sure.”",
     image: "/dive/02-analyzing.webp",
-    alt: "TIDE scanning a photo of a green sea turtle",
+    alt: "TIDE analysing a photo",
   },
   {
-    title: "Verify",
-    body: "The name is checked live against GBIF and the IUCN Red List, with cited sources on every species.",
-    image: "/dive/03-turtle-result.webp",
-    alt: "Green sea turtle result showing Least Concern and 96% confidence",
+    title: "Check the rules",
+    body: "Pick your state and TIDE applies its size limit, season, egg and female rules — each one cited and dated.",
+    image: "/dive/03-crab-keep.webp",
+    alt: "Blue crab verdict: You can keep it, with the New Jersey rule cited",
   },
   {
-    title: "Advise",
-    body: "Status, threats and human impact — then an honest verdict on whether it belongs on your plate.",
-    image: "/dive/04-turtle-verdict.webp",
-    alt: "TIDE verdict card reading Do Not Consume",
+    title: "Measure on the spot",
+    body: "Calibrate once against a bank card and your phone becomes a crab gauge, with your state's legal line drawn on it.",
+    image: "/dive/04-gauge.webp",
+    alt: "On-screen crab gauge showing the Maryland legal line",
   },
+  {
+    title: "Or leave it be",
+    body: "Found a box turtle on the road? TIDE says what to do, what's illegal, and how to stay safe.",
+    image: "/dive/05-box-turtle.webp",
+    alt: "Box turtle guidance: help it across the way it was heading",
+  },
+];
+
+/** Photos from Theodore's camera roll, shown when the files are in public/dive/story. */
+const FIELD_PHOTOS = [
+  { file: "crab.jpg", caption: "Blue crab, back-bay marsh" },
+  { file: "bay.jpg", caption: "Out on the back bay" },
+  { file: "moon.jpg", caption: "Moonrise over the bay" },
 ];
 
 const SOURCES = [
@@ -113,10 +137,32 @@ const SOURCES = [
 ];
 
 export default function DivePage() {
-  const split = SPLIT.flatMap(({ slug, context }) => {
+  const catches: CatchScenario[] = CATCHES.flatMap(({ slug, setup, input }) => {
     const species = getSpecies(slug);
-    return species ? [toCard(species, context)] : [];
+    if (!species) return [];
+    const verdict = getSeafoodVerdict(species, resolveStatusCode(species));
+    return [{ species, image: speciesImage(species), edible: verdict.showRecipes, setup, input }];
   });
+  const fieldPhotos = FIELD_PHOTOS.filter((photo) =>
+    existsSync(path.join(process.cwd(), "public", "dive", "story", photo.file)),
+  );
+  // Plot twist: recipes only for species that are legal to keep and not endangered.
+  // One dish each, so the cards don't repeat: crab cakes, beer-battered bass, baked fluke.
+  const twist = (
+    [
+      ["blue-crab", "cakes"],
+      ["striped-bass", "beer-battered"],
+      ["summer-flounder", "mediterranean"],
+    ] as const
+  ).flatMap(([slug, dish]) => {
+    const species = getSpecies(slug);
+    if (!species) return [];
+    const verdict = getSeafoodVerdict(species, resolveStatusCode(species));
+    const recipe = verdict.showRecipes ? getRecipesFor(species).find((r) => r.id.endsWith(dish)) : undefined;
+    return recipe ? [{ species, recipe }] : [];
+  });
+  const eel = getSpecies("american-eel");
+  const boxTurtle = getSpecies("eastern-box-turtle");
   const explorer = SPECIES.map((species) => toCard(species));
   // Creatures that are also TIDE species show their live-verified status, not a copy.
   const guide: CreatureGuide[] = CREATURE_GUIDE.map((entry) => {
@@ -128,19 +174,20 @@ export default function DivePage() {
   const occurrences = SPECIES.reduce((sum, s) => sum + (getVerified(s.slug)?.occurrenceCount ?? 0), 0);
 
   const hasVideo = existsSync(path.join(process.cwd(), "public", "dive", "demo.mp4"));
-  const showImpact = TRACKS.length > 0 || IMPACT.length > 0;
-
   const chapters: ChapterMarker[] = [
     { id: "surface", number: "00", title: "Surface", depth: 0 },
-    { id: "question", number: "01", title: "The Question", depth: 150 },
-    { id: "split", number: "02", title: "The Split", depth: 450 },
-    { id: "scatter", number: "03", title: "The Scatter", depth: 900 },
-    { id: "lens", number: "04", title: "The Lens", depth: 1600 },
-    { id: "verdict", number: "05", title: "The Verdict", depth: 3200 },
-    { id: "evidence", number: "06", title: "The Evidence", depth: 5000 },
-    ...(showImpact ? [{ id: "impact", number: "07", title: "The Impact", depth: 7500 }] : []),
-    { id: "deep", number: showImpact ? "08" : "07", title: "The Deep", depth: 10935 },
-    { id: "resurface", number: showImpact ? "09" : "08", title: "Resurface", depth: 0 },
+    { id: "story", number: "01", title: "The Crabber", depth: 60 },
+    { id: "question", number: "02", title: "The Question", depth: 150 },
+    { id: "split", number: "03", title: "The Catch", depth: 450 },
+    { id: "scatter", number: "04", title: "The Scatter", depth: 900 },
+    { id: "lens", number: "05", title: "The Lens", depth: 1600 },
+    { id: "found", number: "06", title: "Found One?", depth: 2400 },
+    { id: "twist", number: "07", title: "Plot Twist", depth: 3000 },
+    { id: "verdict", number: "08", title: "The Verdict", depth: 3600 },
+    { id: "evidence", number: "09", title: "The Evidence", depth: 5000 },
+    { id: "impact", number: "10", title: "The Impact", depth: 7500 },
+    { id: "deep", number: "11", title: "The Deep", depth: 10935 },
+    { id: "resurface", number: "12", title: "Resurface", depth: 0 },
   ];
   const chapter = (id: string) => chapters.find((c) => c.id === id)!;
 
@@ -194,13 +241,14 @@ export default function DivePage() {
             />
             <MaskText
               as="p"
-              segments={[{ text: "See what's beneath you.", className: "font-serif italic" }]}
+              segments={[{ text: "Keep it or let it go?", className: "font-serif italic" }]}
               delay={1.45}
               className="mt-6 text-[clamp(32px,4.4vw,56px)] leading-[1.05] text-foam"
             />
             <SoftReveal delay={1.7}>
               <p className="mt-6 max-w-md text-[18px] leading-relaxed text-mist">
-                Photograph a marine animal. TIDE tells you what it is — and what it means for the ocean.
+                Snap your catch — or the turtle on the trail. TIDE names it, checks your state&apos;s rules, and tells
+                you whether to keep it, release it, or leave it be.
               </p>
             </SoftReveal>
             <SoftReveal delay={1.9}>
@@ -218,61 +266,133 @@ export default function DivePage() {
           </div>
         </section>
 
-        {/* 01 · The Question */}
-        <Chapter id="question" depth={150} number="01" title="The Question" className="min-h-[80vh]">
+        {/* 01 · The Crabber — Theodore's story */}
+        <Chapter id="story" depth={60} number="01" title="The Crabber">
+          <div className="grid items-start gap-12 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:gap-16">
+            <div>
+              <SoftReveal>
+                <p className="font-mono text-[12px] tracking-[0.16em] text-mist/70 uppercase">Theodore&apos;s story</p>
+              </SoftReveal>
+              <MaskText
+                className="mt-4 max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam"
+                segments={["I grew up on the water", { text: "in South Jersey.", className: "font-serif font-normal italic" }]}
+              />
+              <SoftReveal delay={0.1}>
+                <div className="mt-8 max-w-xl space-y-5 text-[18px] leading-relaxed text-mist">
+                  <p>
+                    I&apos;ve been fishing with my grandparents and my friends my whole life. I&apos;d go out for bass
+                    sometimes, but mostly we crabbed — lines and pots off the marsh, from the first warm mornings until
+                    we were pulling traps by moonlight.
+                  </p>
+                  <p>
+                    Every crabber knows the moment. You pull one up and hold it against the gauge.{" "}
+                    <span className="text-foam">Is it four and a half inches? Is that a sponge under her? Is this one
+                    even legal here?</span> Guess wrong and you&apos;ve either broken the law, or taken a crab that should
+                    have gone back to make more crabs.
+                  </p>
+                  <p>
+                    TIDE is the tool I wish I&apos;d had. My phone becomes the crab gauge, so I don&apos;t have to buy
+                    one. It knows the rules for the water I&apos;m standing in. And when I&apos;m fishing salt water and
+                    hook something endangered, it tells me to let it go — before it&apos;s too late.{" "}
+                    <span className="text-foam">I care about this water. I want my grandkids crabbing it too.</span>
+                  </p>
+                </div>
+              </SoftReveal>
+            </div>
+            <div className="mx-auto w-full max-w-[420px]">
+              <LivePhoto
+                still="/dive/story/night-crabbing.webp"
+                video="/dive/story/night-crabbing.mp4"
+                alt="Theodore and a friend holding up a blue crab at night"
+                caption="Night crabbing in South Jersey — the one that made it into the bushel"
+              />
+            </div>
+          </div>
+
+          {fieldPhotos.length > 0 && (
+            <div className="mt-14 grid grid-cols-2 gap-5 md:grid-cols-3">
+              {fieldPhotos.map((photo, index) => (
+                <FieldPhoto key={photo.file} src={`/dive/story/${photo.file}`} caption={photo.caption} index={index} />
+              ))}
+            </div>
+          )}
+
+          <SoftReveal delay={0.1}>
+            <figure className="glass mt-16 max-w-3xl rounded-[28px] p-7 md:p-9">
+              <p className="font-mono text-[11px] tracking-[0.16em] text-status-watch uppercase">
+                The fish that started it
+              </p>
+              <blockquote className="mt-4 font-serif text-[clamp(24px,3vw,34px)] leading-[1.2] text-foam italic">
+                “When I was a kid I brought home a pet fish, put him in the wrong kind of water, and he was gone in about
+                an hour. I cried.”
+              </blockquote>
+              <figcaption className="mt-5 text-[16px] leading-relaxed text-mist">
+                It&apos;s a funny story now. But it taught me that the right answer depends on details you can&apos;t
+                see just by looking at an animal — what water it needs, how big it has to be, whether it&apos;s carrying
+                eggs, whether it&apos;s protected. That&apos;s what TIDE sees for you.
+              </figcaption>
+            </figure>
+          </SoftReveal>
+        </Chapter>
+
+        {/* 02 · The Question */}
+        <Chapter id="question" depth={150} number="02" title="The Question" className="min-h-[80vh]">
           <SoftReveal>
-            <MaskText className="max-w-4xl text-[clamp(44px,7vw,96px)] leading-[0.95] font-semibold tracking-tight text-foam" segments={["What did you", { text: "find?", className: "font-serif font-normal italic" }]} />
+            <MaskText className="max-w-4xl text-[clamp(44px,7vw,96px)] leading-[0.95] font-semibold tracking-tight text-foam" segments={["Keep it or", { text: "let it go?", className: "font-serif font-normal italic" }]} />
           </SoftReveal>
           <SoftReveal delay={0.1}>
             <p className="mt-10 max-w-2xl text-[20px] leading-relaxed text-mist">
-              A turtle gliding past the reef. A crab in the trap. A fish on ice at the market. Most of us can&apos;t
-              name what we&apos;re looking at — let alone say whether it&apos;s thriving, protected, or on its way out.
+              Anglers and crabbers make that call dozens of times a trip. In 2023, US saltwater anglers caught about{" "}
+              <span className="text-foam">1.1 billion fish and released 65% of them</span> — every one of those was a
+              decision, made on a dock, usually from memory.
             </p>
           </SoftReveal>
           <SoftReveal delay={0.2}>
             <p className="mt-6 max-w-2xl text-[20px] leading-relaxed text-foam">
-              And the one question people actually ask — <em className="font-serif text-[1.15em]">can I eat this?</em> —
-              has an answer more complicated than any label.
+              Off the water it&apos;s the same question in a different shape: a box turtle on the road, a salamander on
+              a rainy night. <em className="font-serif text-[1.15em]">Help it, take it, or leave it?</em>
             </p>
           </SoftReveal>
+          <p className="mt-4 text-[12px] text-mist/60">Catch figures: NOAA Fisheries, Fisheries of the United States.</p>
         </Chapter>
 
-        {/* 02 · The Split */}
-        <Chapter id="split" depth={450} number="02" title="The Split">
+        {/* 03 · The Catch */}
+        <Chapter id="split" depth={450} number="03" title="The Catch">
           <SoftReveal>
-            <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Three species.", { text: "Three different answers.", className: "font-serif font-normal italic" }]} />
-            <p className="mt-6 mb-12 max-w-xl text-[18px] leading-relaxed text-mist">
-              Two are rated Least Concern. One is Vulnerable. Guess which ones you can eat — then reveal what TIDE says.
+            <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Three catches.", { text: "Three different answers.", className: "font-serif font-normal italic" }]} />
+            <p className="mt-6 mb-10 max-w-xl text-[18px] leading-relaxed text-mist">
+              Real 2026 rules, cited and dated, judged by the same engine the app uses. Guess first — then ask TIDE.
             </p>
           </SoftReveal>
-          <SpeciesSplit cards={split} />
+          <CatchSplit scenarios={catches} />
         </Chapter>
 
         {/* 03 · The Scatter */}
         <Chapter id="scatter" depth={900} number="03" title="The Scatter">
           <SoftReveal>
-            <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["The answer exists.", { text: "It's just scattered.", className: "font-serif font-normal italic" }]} />
+            <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["The rules exist.", { text: "They're just scattered.", className: "font-serif font-normal italic" }]} />
             <p className="mt-6 max-w-xl text-[18px] leading-relaxed text-mist">
-              Four authorities each hold one piece. Nobody checks all four at the fish counter. Keep scrolling.
+              Size limits live with the state. Seasons change by the date. Protections are federal. Invasive species
+              have their own orders. Nobody checks all four standing on a dock. Keep scrolling.
             </p>
           </SoftReveal>
           <SourceConverge />
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {[
               {
+                stat: <CountUp value={57.9} decimals={1} suffix="M" />,
+                label: "Americans went fishing in 2024 — a record",
+                source: "RBFF, 2025 Special Report on Fishing",
+              },
+              {
+                stat: <CountUp value={65} suffix="%" />,
+                label: "of saltwater fish caught by US anglers are released",
+                source: "NOAA Fisheries, Fisheries of the United States (2023)",
+              },
+              {
                 stat: "1 in 3",
-                label: "assessed fish stocks are overfished",
+                label: "assessed fish stocks worldwide are overfished",
                 source: "FAO, State of World Fisheries and Aquaculture 2024",
-              },
-              {
-                stat: <CountUp value={80} suffix="%+" />,
-                label: "of the ocean remains unexplored",
-                source: "NOAA Ocean Service",
-              },
-              {
-                stat: <CountUp value={8} prefix="~" suffix="%" />,
-                label: "of the ocean is protected",
-                source: "Protected Planet",
               },
             ].map((item, index) => (
               <PlaneReveal key={item.label} index={index}>
@@ -294,13 +414,13 @@ export default function DivePage() {
             <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["One photo.", { text: "The whole picture.", className: "font-serif font-normal italic" }]} />
             <p className="mt-6 max-w-xl text-[18px] leading-relaxed text-mist">
               You point and shoot. <span className="text-foam">Google Gemini</span> does the looking; TIDE does the
-              checking — against live conservation data, never guesswork.
+              checking — against your state&apos;s rules and live conservation data, never guesswork.
             </p>
           </SoftReveal>
           <PhoneStory steps={STORY_STEPS} />
         </Chapter>
 
-        {/* The field guide: all thirty species drifting past as a current you can grab */}
+        {/* The field guide: every species drifting past as a current you can grab */}
         <section aria-label="Species field guide" className="relative z-10 py-16 md:py-24">
           <div className="mx-auto mb-10 flex max-w-6xl flex-wrap items-end justify-between gap-4 px-5 md:px-10">
             <MaskText
@@ -317,29 +437,126 @@ export default function DivePage() {
           <SpeciesRiver species={explorer} />
         </section>
 
-        {/* 05 · The Verdict */}
-        <Chapter id="verdict" depth={3200} number="05" title="The Verdict">
+        {/* 06 · Found One? */}
+        <Chapter id="found" depth={2400} number="06" title="Found One?">
+          <SoftReveal>
+            <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Found one?", { text: "Here's what to do.", className: "font-serif font-normal italic" }]} />
+            <p className="mt-6 mb-12 max-w-2xl text-[18px] leading-relaxed text-mist">
+              Turtles and amphibians are some of the most threatened animals on Earth, and the people who find them
+              usually want to help. The most common way to help is also the most common mistake.
+            </p>
+          </SoftReveal>
+          <FoundQuiz image={boxTurtle ? speciesImage(boxTurtle) : null} />
+          <div className="mt-14 grid gap-5 md:grid-cols-3">
+            {[
+              { value: "41%", label: "of amphibian species are threatened with extinction", source: "IUCN, Nature 2023" },
+              { value: "54%", label: "of turtle and tortoise species are threatened", source: "IUCN Turtle Specialist Group, 2025" },
+              {
+                value: "2–3%",
+                label: "extra adult deaths a year is more than most turtle populations can sustain",
+                source: "Gibbs & Shriver, Conservation Biology 2002",
+              },
+            ].map((item, index) => (
+              <PlaneReveal key={item.label} index={index}>
+                <div className="glass h-full rounded-[24px] p-6">
+                  <p className="font-mono text-[clamp(40px,4.6vw,58px)] leading-none font-semibold text-turquoise">{item.value}</p>
+                  <p className="mt-3 text-[15px] text-foam">{item.label}</p>
+                  <p className="mt-2 text-[12px] text-mist/70">{item.source}</p>
+                </div>
+              </PlaneReveal>
+            ))}
+          </div>
+          <SoftReveal delay={0.1}>
+            <ul className="mt-10 grid gap-4 text-[15px] leading-relaxed text-mist md:grid-cols-3">
+              <li className="border-l-2 border-turquoise/40 pl-4">
+                <span className="text-foam">Snapping turtle on the road?</span> Never lift it by the tail. Slide it onto
+                a car mat and pull it across.
+              </li>
+              <li className="border-l-2 border-turquoise/40 pl-4">
+                <span className="text-foam">Hellbender under a rock?</span> Leave the rock. It&apos;s closed to all taking
+                in Pennsylvania.
+              </li>
+              <li className="border-l-2 border-turquoise/40 pl-4">
+                <span className="text-foam">Terrapin in your crab pot?</span> Let it out now, and fit an excluder — New
+                Jersey and Maryland require them.
+              </li>
+            </ul>
+          </SoftReveal>
+        </Chapter>
+
+        {/* 07 · Plot twist */}
+        <Chapter id="twist" depth={3000} number="07" title="Plot Twist">
+          <SoftReveal>
+            <p className="font-mono text-[13px] tracking-[0.2em] text-status-watch uppercase">Plot twist</p>
+            <MaskText className="mt-4 max-w-4xl text-[clamp(40px,6.2vw,84px)] leading-[0.98] font-semibold tracking-tight text-foam" segments={["We'll help you", { text: "cook it, too.", className: "font-serif font-normal italic" }]} />
+            <p className="mt-6 mb-12 max-w-2xl text-[18px] leading-relaxed text-mist">
+              TIDE isn&apos;t against keeping fish — it&apos;s against keeping the wrong ones. When your catch is legal to
+              keep and the species isn&apos;t endangered, TIDE hands you recipes. When it isn&apos;t, the recipes stay
+              locked, automatically.
+            </p>
+          </SoftReveal>
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {twist.map(({ species, recipe }, index) => (
+              <PlaneReveal key={species.slug} index={index}>
+                <article className="glass h-full overflow-hidden rounded-[26px]">
+                  <div className="relative h-44 w-full">
+                    <Image src={recipe.image} alt={recipe.title} fill sizes="(max-width: 1024px) 50vw, 25vw" className="object-cover" />
+                    <span className="absolute top-3 left-3 rounded-full bg-status-safe/90 px-2.5 py-1 text-[11px] font-semibold text-abyss">
+                      Legal to keep
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    <p className="font-mono text-[11px] tracking-[0.14em] text-mist/70 uppercase">{species.commonName}</p>
+                    <h3 className="mt-1 text-[18px] leading-snug font-semibold text-foam">{recipe.title}</h3>
+                    <p className="mt-2 text-[13px] text-mist">
+                      {recipe.time} · {recipe.difficulty}
+                    </p>
+                  </div>
+                </article>
+              </PlaneReveal>
+            ))}
+            {eel && (
+              <PlaneReveal index={3}>
+                <article className="flex h-full flex-col justify-between rounded-[26px] border border-dashed border-status-alert/40 bg-status-alert/[0.06] p-6">
+                  <div>
+                    <p className="font-mono text-[11px] tracking-[0.14em] text-status-alert uppercase">Recipes locked</p>
+                    <h3 className="mt-2 text-[20px] font-semibold text-foam">{eel.commonName}</h3>
+                    <p className="mt-3 text-[14px] leading-relaxed text-mist">
+                      Legal to keep in New Jersey at 9 inches — but globally Endangered. TIDE shows the rule, holds back
+                      the recipes, and suggests letting it go.
+                    </p>
+                  </div>
+                  <p className="mt-6 font-mono text-[12px] text-mist/70">🔒 No recipes for endangered species</p>
+                </article>
+              </PlaneReveal>
+            )}
+          </div>
+        </Chapter>
+
+        {/* 08 · The Verdict */}
+        <Chapter id="verdict" depth={3600} number="08" title="The Verdict">
           <SoftReveal>
             <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Try the rules", { text: "yourself.", className: "font-serif font-normal italic" }]} />
             <p className="mt-6 mb-12 max-w-2xl text-[18px] leading-relaxed text-mist">
-              Pick any of the {SPECIES.length} species. This is the app&apos;s own decision logic: recipes appear only
-              when a species passes every check, and disappear automatically if live data moves it to Endangered.
+              Pick any of the {SPECIES.length} species. This is the app&apos;s own logic: recipes appear only when a
+              species passes every check, and disappear automatically if live data moves it to Endangered.
             </p>
           </SoftReveal>
           <VerdictExplorer species={explorer} />
         </Chapter>
 
-        {/* 06 · The Evidence */}
-        <Chapter id="evidence" depth={5000} number="06" title="The Evidence">
+        {/* 09 · The Evidence */}
+        <Chapter id="evidence" depth={5000} number="09" title="The Evidence">
           <SoftReveal>
             <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Built on real data.", { text: "Never invented.", className: "font-serif font-normal italic" }]} />
             <p className="mt-6 mb-12 max-w-2xl text-[18px] leading-relaxed text-mist">
-              TIDE never guesses a conservation status. Where no assessment exists, it says so.
+              TIDE never guesses a conservation status or a size limit. Every rule is cited and dated; where TIDE
+              hasn&apos;t verified one, it says so and links the agency instead.
             </p>
           </SoftReveal>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { stat: <CountUp value={SPECIES.length} />, label: "species — turtles, fish, sharks, rays, crustaceans, cephalopods, mammals" },
+              { stat: <CountUp value={SPECIES.length} />, label: "species — fish, crabs, turtles, amphibians, sharks, rays, cephalopods, mammals" },
               {
                 stat: (
                   <>
@@ -352,7 +569,7 @@ export default function DivePage() {
                 stat: <CountUp value={occurrences / 1_000_000} decimals={1} suffix="M" />,
                 label: "GBIF occurrence records behind those species",
               },
-              { stat: <CountUp value={5} />, label: "outdated statuses caught by our automated drift check during development" },
+              { stat: <CountUp value={7} />, label: "outdated statuses caught by our automated drift check during development" },
             ].map((item, index) => (
               <PlaneReveal key={item.label} index={index}>
                 <div className="glass h-full rounded-[24px] p-6">
@@ -372,6 +589,7 @@ export default function DivePage() {
                 "Tailwind CSS",
                 "Framer Motion",
                 "Google Gemini vision",
+                "NJ · PA · MD fishing rules",
                 "GBIF API",
                 "IUCN Red List",
                 "Wikimedia Commons",
@@ -385,50 +603,82 @@ export default function DivePage() {
           </SoftReveal>
         </Chapter>
 
-        {/* 07 · The Impact (only once the team has supplied tracks or numbers) */}
-        {showImpact && (
-          <Chapter id="impact" depth={7500} number="07" title="The Impact">
-            <SoftReveal>
-              <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Why it", { text: "matters.", className: "font-serif font-normal italic" }]} />
-            </SoftReveal>
-            {IMPACT.length > 0 && (
-              <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {IMPACT.map((item, index) => (
-                  <PlaneReveal key={item.label} index={index}>
-                    <div className="glass h-full rounded-[24px] p-6">
-                      {item.projected && (
-                        <p className="mb-2 font-mono text-[10px] tracking-[0.16em] text-status-watch uppercase">
-                          Projected
-                        </p>
-                      )}
-                      <p className="font-mono text-[clamp(40px,4.5vw,56px)] leading-none font-semibold text-turquoise">
-                        {item.value}
-                      </p>
-                      <p className="mt-4 text-[14px] leading-relaxed text-mist">{item.label}</p>
-                    </div>
-                  </PlaneReveal>
+        {/* 10 · The Impact */}
+        <Chapter id="impact" depth={7500} number="10" title="The Impact">
+          <SoftReveal>
+            <MaskText className="max-w-4xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["What it could do", { text: "with real users.", className: "font-serif font-normal italic" }]} />
+            <p className="mt-6 mb-12 max-w-2xl text-[18px] leading-relaxed text-mist">
+              Most of the damage people do to wildlife on the water isn&apos;t malice — it&apos;s a wrong guess made in
+              good faith. Here&apos;s the scale of the problem, from published sources, and a model of what TIDE could
+              change with funding and users. The model is a projection; drag its assumptions.
+            </p>
+          </SoftReveal>
+          <div className="mb-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {BASELINES.map((item, index) => (
+              <PlaneReveal key={item.label} index={index % 3}>
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass block h-full rounded-[22px] p-5 transition-colors hover:border-turquoise/30"
+                >
+                  <p className="font-mono text-[clamp(30px,3.4vw,42px)] leading-none font-semibold text-foam">{item.value}</p>
+                  <p className="mt-2 text-[14px] leading-relaxed text-mist">{item.label}</p>
+                  <p className="mt-2 text-[11px] text-mist/60">{item.source} ↗</p>
+                </a>
+              </PlaneReveal>
+            ))}
+          </div>
+          <ImpactModel />
+          <SoftReveal delay={0.1}>
+            <div className="mt-12 grid gap-8 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+              <div>
+                <p className="font-mono text-[12px] tracking-[0.16em] text-turquoise/80 uppercase">What funding unlocks</p>
+                <p className="mt-3 text-[clamp(24px,2.6vw,32px)] leading-tight font-semibold tracking-tight text-foam">
+                  From three states to every dock in the country.
+                </p>
+              </div>
+              <ul className="grid gap-4 text-[15px] leading-relaxed text-mist sm:grid-cols-2">
+                {[
+                  ["All 50 states", "A regulations pipeline built with state agencies, instead of a hand-verified table."],
+                  ["Offline on the water", "Rules and the crab gauge cached for marshes and boats with no signal."],
+                  ["Season alerts", "A heads-up when a limit or season changes for the water you fish."],
+                  ["Sightings for science", "Opt-in reports of sturgeon, rare turtles and snakeheads, routed to state biologists."],
+                ].map(([title, body]) => (
+                  <li key={title} className="border-l-2 border-turquoise/40 pl-4">
+                    <span className="text-foam">{title}.</span> {body}
+                  </li>
                 ))}
-              </div>
-            )}
-            {TRACKS.length > 0 && (
-              <div className="mt-14">
-                <p className="mb-5 font-mono text-[12px] tracking-[0.16em] text-mist/70 uppercase">Built for</p>
-                <div className="grid gap-5 md:grid-cols-2">
-                  {TRACKS.map((track, index) => (
-                    <PlaneReveal key={track.name} index={index}>
-                      <div className="glass h-full rounded-[24px] p-6">
-                        <h3 className="text-[20px] font-semibold text-foam">{track.name}</h3>
-                        <p className="mt-2 text-[15px] leading-relaxed text-mist">{track.fit}</p>
-                      </div>
-                    </PlaneReveal>
-                  ))}
-                </div>
-              </div>
-            )}
-          </Chapter>
-        )}
+              </ul>
+            </div>
+          </SoftReveal>
+          {(IMPACT.length > 0 || TRACKS.length > 0) && (
+            <div className="mt-14 grid gap-5 md:grid-cols-2">
+              {IMPACT.map((item, index) => (
+                <PlaneReveal key={item.label} index={index}>
+                  <div className="glass h-full rounded-[24px] p-6">
+                    {item.projected && (
+                      <p className="mb-2 font-mono text-[10px] tracking-[0.16em] text-status-watch uppercase">Projected</p>
+                    )}
+                    <p className="font-mono text-[clamp(40px,4.5vw,56px)] leading-none font-semibold text-turquoise">{item.value}</p>
+                    <p className="mt-4 text-[14px] leading-relaxed text-mist">{item.label}</p>
+                  </div>
+                </PlaneReveal>
+              ))}
+              {TRACKS.map((track, index) => (
+                <PlaneReveal key={track.name} index={index}>
+                  <div className="glass h-full rounded-[24px] p-6">
+                    <p className="font-mono text-[10px] tracking-[0.16em] text-mist/70 uppercase">Built for</p>
+                    <h3 className="mt-2 text-[20px] font-semibold text-foam">{track.name}</h3>
+                    <p className="mt-2 text-[15px] leading-relaxed text-mist">{track.fit}</p>
+                  </div>
+                </PlaneReveal>
+              ))}
+            </div>
+          )}
+        </Chapter>
 
-        {/* 08 · The Deep */}
+        {/* 11 · The Deep */}
         <Chapter id="deep" depth={10935} number={chapter("deep").number} title="The Deep" className="min-h-[100dvh]">
           <div className="grid items-center gap-14 md:grid-cols-[1fr_auto]">
             <div>
@@ -444,9 +694,9 @@ export default function DivePage() {
               <SoftReveal delay={0.1}>
                 <ol className="mt-10 space-y-4">
                   {[
-                    ["Green sea turtle", "Least Concern — still Do Not Consume"],
-                    ["Atlantic cod", "Vulnerable — recipes, with sourcing advice"],
-                    ["Bluefin tuna", "Not endangered — still avoid"],
+                    ["Blue crab, 5″, no eggs, NJ", "keep it — and here's a crab cake recipe"],
+                    ["Striped bass, 26″, NJ", "release it — under the 28″ slot"],
+                    ["Box turtle on the road", "help it across, the way it was heading"],
                   ].map(([name, outcome], index) => (
                     <li key={name} className="flex gap-4">
                       <span className="font-mono text-[13px] text-turquoise">0{index + 1}</span>
@@ -528,7 +778,7 @@ export default function DivePage() {
               <div>
                 <p className="mb-4 font-mono text-[11px] tracking-[0.16em] text-mist/70 uppercase">Photography</p>
                 <p className="leading-relaxed text-mist">
-                  Reef: Richard Ling, CC BY-SA 3.0. Green sea turtle: Charles J. Sharp, CC BY-SA 4.0. Atlantic
+                  Night crabbing: Theodore, TIDE team. Reef: Richard Ling, CC BY-SA 3.0. Green sea turtle: Charles J. Sharp, CC BY-SA 4.0. Atlantic
                   bluefin tuna: public domain. Atlantic cod: Wilhelm Thomas Fiege, CC BY-SA 4.0. All via Wikimedia
                   Commons.{" "}
                   <Link href="/credits" className="text-turquoise hover:underline">

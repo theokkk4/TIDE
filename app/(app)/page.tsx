@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Camera, ImageUp } from "lucide-react";
+import { ArrowRight, Camera, ImageUp, Leaf } from "lucide-react";
 import { ButtonLink, SectionHeading } from "@/components/ui/primitives";
 import { SpeciesPhoto } from "@/components/ui/species-photo";
 import { PageTransition, Reveal } from "@/components/ui/motion";
@@ -9,7 +9,7 @@ import { getSpecies } from "@/lib/data/species";
 import { getMediaImage, getVerified, resolveStatus } from "@/lib/conservation";
 import { StatusBadge } from "@/components/ui/status-badge";
 
-const TRY_TIDE = ["green-sea-turtle", "blue-crab", "common-octopus"];
+const TRY_TIDE = ["blue-crab", "striped-bass", "eastern-box-turtle"];
 
 export default function HomePage() {
   const heroImage = getMediaImage("hero-reef")?.image ?? getVerified("green-sea-turtle")?.image ?? null;
@@ -30,15 +30,16 @@ export default function HomePage() {
 
           <header className="absolute inset-x-0 top-0 px-6 pt-[max(20px,env(safe-area-inset-top))]">
             <p className="text-[22px] leading-none font-semibold tracking-[0.36em] text-foam">TIDE</p>
-            <p className="mt-2 text-[13px] text-mist">Marine intelligence in your hands.</p>
+            <p className="mt-2 text-[13px] text-mist">Keep it or let it go?</p>
           </header>
 
           <div className="absolute inset-x-0 bottom-0 px-6 pb-6">
             <h1 className="text-balance text-[34px] leading-[1.05] font-semibold tracking-tight text-foam">
-              What did you find?
+              Caught it? Found it?
             </h1>
-            <p className="mt-3 max-w-[300px] text-[15px] leading-relaxed text-mist">
-              Take a photo and discover what lives beneath the surface.
+            <p className="mt-3 max-w-[320px] text-[15px] leading-relaxed text-mist">
+              Snap a photo. TIDE names it, checks your state&apos;s rules, and tells you whether to keep it, release it
+              or leave it be.
             </p>
           </div>
         </div>
@@ -46,12 +47,21 @@ export default function HomePage() {
         <div className="-mt-1 space-y-3 px-6">
           <ButtonLink href="/identify" size="lg" className="w-full">
             <Camera className="h-5 w-5" strokeWidth={2.2} aria-hidden />
-            Identify Marine Life
+            Check my catch
           </ButtonLink>
-          <ButtonLink href="/identify?mode=upload" variant="secondary" size="md" className="w-full">
-            <ImageUp className="h-4 w-4" strokeWidth={2} aria-hidden />
-            Upload Photo
-          </ButtonLink>
+          <div className="grid grid-cols-2 gap-3">
+            <ButtonLink href="/identify" variant="secondary" size="md" className="w-full">
+              <Leaf className="h-4 w-4" strokeWidth={2} aria-hidden />
+              Found one
+            </ButtonLink>
+            <ButtonLink href="/identify?mode=upload" variant="secondary" size="md" className="w-full">
+              <ImageUp className="h-4 w-4" strokeWidth={2} aria-hidden />
+              Upload photo
+            </ButtonLink>
+          </div>
+          <p className="pt-1 text-center text-[12px] text-mist/70">
+            Rules for New Jersey, Pennsylvania &amp; Maryland · federal protections everywhere
+          </p>
         </div>
       </section>
 
@@ -113,7 +123,7 @@ export default function HomePage() {
       <RecentIdentifications />
 
       <p className="mt-10 px-6 text-center text-[13px] text-mist/70">
-        Explore the ocean, one species at a time.
+        Built by crabbers and anglers from South Jersey.
       </p>
       <p className="mt-2 px-6 pb-4 text-center text-[11px] text-mist/50">
         <Link href="/credits" className="underline-offset-2 hover:text-mist hover:underline">

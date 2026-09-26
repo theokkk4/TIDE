@@ -31,6 +31,8 @@ export interface PointerState {
   y: number;
   /** Mouse or pen present and moving recently. Touch sets this briefly after a tap. */
   active: boolean;
+  /** Over text or controls — creatures that follow the cursor keep out of the way. */
+  overContent: boolean;
 }
 
 export interface Frame {

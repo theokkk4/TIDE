@@ -159,10 +159,10 @@ export function SpeciesSplit({ cards }: { cards: SpeciesCardData[] }) {
 /* ─────────────  Chapter 03 · four scattered sources converge  ───────────── */
 
 const SOURCES = [
-  { name: "IUCN Red List", answers: "How likely is extinction?", x: -1, y: -1 },
-  { name: "NOAA & fisheries agencies", answers: "Is the local stock healthy?", x: 1, y: -1 },
-  { name: "CITES & wildlife law", answers: "Is it legal to take?", x: -1, y: 1 },
-  { name: "Certifications & seafood guides", answers: "Is it a sustainable buy?", x: 1, y: 1 },
+  { name: "State size & bag limits", answers: "Is it big enough to keep?", x: -1, y: -1 },
+  { name: "Seasons", answers: "Is it open today?", x: 1, y: -1 },
+  { name: "Federal protections", answers: "Is it illegal to keep at all?", x: -1, y: 1 },
+  { name: "Invasive species orders", answers: "Should it go back at all?", x: 1, y: 1 },
 ];
 
 export function SourceConverge() {

@@ -1,56 +1,45 @@
 # TIDE
 
-**Marine intelligence in your hands.**
+**Keep it or let it go?**
 
-Photograph a marine animal. TIDE identifies the species, verifies it against live
-biodiversity data, explains its conservation status and the threats it faces — and tells
-you honestly whether it belongs on your plate.
+Snap your catch — or the turtle on the trail. TIDE identifies it, checks your state's
+rules, and tells you whether to keep it, release it, or leave it be. When it's legal to keep
+and the species isn't endangered, it hands you a recipe too.
 
-> See it. Identify it. Understand it. Protect it.
-
-Built for OwlHacks (theme: Deep Sea Aquatics) by Theodore, Issaka and Oliver.
+Built for OwlHacks 2026 (theme: Deep Sea Aquatics) by Theodore, Issaka and Oliver —
+starting from Theodore's summers crabbing and bass fishing in South Jersey.
 
 ---
 
-## The idea
-
-Most species apps stop at "here's what it is." TIDE's premise is that **"not endangered" is
-not the same as "safe to eat."** A species can be Least Concern globally and still be
-overfished, legally protected, or a poor choice in your region.
-
-The app keeps those questions separate everywhere:
-
-| Question | Source | Example |
-| --- | --- | --- |
-| How is the global population doing? | IUCN Red List (via GBIF) | Green sea turtle is **Least Concern** since 2023 |
-| Is it legal to take? | Curated protection data | The same turtle is **protected** under the ESA and CITES — do not consume |
-| Is the fishery sustainable here? | Curated regional fishing status | Atlantic cod is **Vulnerable** globally, healthy in the Barents Sea, overfished in the Gulf of Maine |
-
-Atlantic bluefin tuna is the sharpest case: IUCN moved it from Endangered to Least Concern
-in 2021, and sustainable-seafood programmes still say avoid it. TIDE shows both, and shows
-alternatives instead of recipes.
-
 ## What it does
 
-- **Identify** — camera capture or photo upload, analysed by Google Gemini vision, which returns
-  structured JSON with a calibrated confidence score and alternative candidates.
-- **Never overclaims** — below 75% confidence the result leads with "We aren't completely
-  sure" and lists what else it could be. Confidence is never rounded up to certainty.
-- **Verify** — every species is checked against GBIF for accepted taxonomy, occurrence
-  counts and the IUCN Red List category. Cached data is used when the network is down, and
-  the UI says which one you're looking at.
-- **Conservation** — status card with category, plain-English meaning, threats, and human
-  impact, plus clickable sources.
-- **Seafood logic** — four states (Protected / Not typically eaten / Common seafood /
-  Check local guidance) driven by data, not vibes.
-- **Recipes** — only for species that pass every check, with a sourcing advisory where it
-  matters.
-- **Alternatives** — protected or avoid-rated species surface sustainable swaps instead.
-- **Discover** — species of the week, endangered species, common seafood, protected
-  species, and sourced ocean facts.
-- **Saved** — a local species log, stored on-device.
-- **Demo Mode** — the full experience with preloaded photos, working with no network, no
-  camera permission and no API key.
+- **Identify** — camera or upload, analysed by Google Gemini vision with a calibrated
+  confidence score and look-alikes. Below 75% it leads with "We aren't completely sure."
+- **Keep or release** — for anything caught on a line or in a pot. Pick New Jersey,
+  Pennsylvania or Maryland and TIDE applies that state's size limit, slot, season, egg-bearing
+  and female rules to your catch. Every verdict lists the checks that produced it and cites
+  the official rule with the date it was checked.
+- **On-screen crab gauge** — calibrate once against any bank card (2.125″ short edge) and
+  the phone becomes a ruler with your state's legal line drawn on it.
+- **Found one?** — for turtles and amphibians: leave it, help it across the road the way it
+  was heading, or call it in (sea turtles), plus what's illegal where you are and how to stay
+  safe (snapping-turtle bites, toad toxins, Salmonella).
+- **Invasive species** — snakeheads get "don't put it back," per NJ, PA and MD rules.
+- **Recipes** — only when a species is legal to keep and passes every conservation check.
+  Endangered species (American eel) get the rule and no recipes.
+- **Conservation data** — IUCN category via GBIF for all 50 species, verified at build time.
+- **Demo Mode** — six scenarios (sponge crab, striped bass slot, snakehead, box turtle on the
+  road, hellbender, sea turtle) with no network, camera or API key.
+
+## Where the rules come from
+
+`lib/data/regulations.ts` holds keep-or-release rules for New Jersey, Pennsylvania and
+Maryland plus federal protections, each read from its official source on the date in
+`RULES_CHECKED`: the NJ and MD 2026 regulation guides, 58 Pa. Code § 79.3, the PA Fish & Boat
+Commission, NOAA Fisheries and US Fish & Wildlife. Where a state rule hasn't been verified, the
+app says so and links the agency instead of guessing a number. `lib/decision.ts` turns those
+rules into a verdict; the story site's interactive uses the same engine, so the two can't
+disagree. TIDE never estimates size from a photo — the person measures.
 
 ## Running it
 
@@ -59,7 +48,7 @@ npm install
 npm run dev
 ```
 
-Then open http://localhost:3000.
+Then open http://localhost:3000 for the app and http://localhost:3000/dive for the story site.
 
 > **zsh users:** run each command on its own line with nothing after it. Interactive zsh
 > doesn't treat a trailing `# comment` as a comment the way bash does, so
@@ -80,8 +69,9 @@ species pages work out of the box. Live AI identification needs one key (below).
 
 A scroll-driven submission page: scrolling is a dive from the surface to Challenger Deep
 (10,935 m) and back, with a live depth gauge, a chapter per idea, and an interactive piece in
-each — reveal three species' verdicts, try the seafood rules on all 30 species, drag a
-drifting river of every species photo, and use the real app running inside a phone frame.
+each — judge three real catches under NJ and MD rules, a found-turtle quiz, the recipe plot
+twist, the rules explorer for all 50 species, a drifting river of every species photo, and
+the real app running inside a phone frame.
 Every number on it is computed from the verified data.
 
 - **Living ocean.** Canvas-drawn creatures swim at their real depths: a sardine bait ball
@@ -94,10 +84,15 @@ Every number on it is computed from the verified data.
   Statuses come from the verified dataset or were checked against the IUCN Red List via GBIF
   (`lib/dive/creatures.ts`); species in the app link through to their verdict.
 - **Motion.** Lenis smooth scrolling, masked word reveals, cards that stand up out of the
-  water, zone-crossing title cards, and a CSS-only intro curtain. All of it respects
+  water, and a CSS-only intro curtain. All of it respects
   `prefers-reduced-motion`.
-- Team names, hackathon tracks and impact numbers live in `lib/dive/content.ts`. The impact
-  chapter stays hidden until tracks or numbers are added.
+- Team names and hackathon tracks live in `lib/dive/content.ts`.
+- **Theodore's chapter** tells the South Jersey crabbing story with his night-crabbing Live
+  Photo. Drop more photos at `public/dive/story/crab.jpg`, `bay.jpg` or `moon.jpg` and they
+  appear automatically.
+- **Three catches**, **Found one?** and **Plot twist** run on the app's own decision engine.
+- **The Impact** pairs sourced baselines (RBFF, NOAA, IUCN, Gibbs & Shriver, SERC) with an
+  adjustable projection model — the assumptions are sliders, labelled as projections.
 - Drop a portrait screen recording at `public/dive/demo.mp4` and the deep chapter adds a
   "Watch the demo" view alongside the live app.
 
