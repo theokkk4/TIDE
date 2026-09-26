@@ -3,12 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChefHat, ChevronDown, Clock, Info, Leaf, Users } from "lucide-react";
+import { ChefHat, ChevronDown, CircleCheck, Clock, Info, Leaf, Undo2, Users } from "lucide-react";
 import { Button, SectionHeading } from "@/components/ui/primitives";
 import { SpeciesPhoto } from "@/components/ui/species-photo";
 import type { Alternative } from "@/lib/data/alternatives";
 import type { Recipe } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useCatchVerdict } from "./catch-verdict";
 
 export function RecipeSection({
   recipes,
@@ -20,11 +21,41 @@ export function RecipeSection({
   advisory?: string;
 }) {
   const [openId, setOpenId] = useState<string | null>(null);
+  const action = useCatchVerdict()?.action ?? null;
   if (recipes.length === 0) return null;
+
+  // Recipes follow the keep-or-release call above: a fish that has to go back doesn't get one.
+  if (action === "RELEASE") {
+    return (
+      <section className="mt-8 px-6">
+        <SectionHeading eyebrow="Cook this species" title={`Ways to cook ${speciesName}`} />
+        <div className="glass flex gap-3 rounded-[24px] p-5">
+          <Undo2 className="mt-0.5 h-5 w-5 shrink-0 text-status-warn" strokeWidth={2} aria-hidden />
+          <div>
+            <p className="text-[15px] font-semibold text-foam">This one goes back, so the recipes stay put away.</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-mist">
+              They come back when you have a keeper that passes every check above.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="mt-8 px-6">
       <SectionHeading eyebrow="Cook this species" title={`Ways to cook ${speciesName}`} />
+
+      {action === "KEEP" || action === "REMOVE" ? (
+        <p className="mb-4 flex items-center gap-2 text-[13px] text-status-safe">
+          <CircleCheck className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+          {action === "KEEP" ? "It's a keeper. Here's what to do with it." : "Don't put it back. It's good eating, too."}
+        </p>
+      ) : action ? (
+        <p className="mb-4 text-[13px] leading-relaxed text-mist">
+          Make sure it&apos;s a keeper first — the size, season and egg checks are above.
+        </p>
+      ) : null}
 
       {advisory && (
         <div className="mb-4 flex gap-2.5 rounded-2xl border border-status-warn/25 bg-status-warn/10 px-4 py-3">

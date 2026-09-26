@@ -174,7 +174,7 @@ export const LOCAL_SPECIES: Species[] = [
     scientificName: "Anguilla rostrata",
     marketName: "Eel",
     category: "fish",
-    emoji: "🐍",
+    emoji: "🐟",
     iucnCode: "EN",
     statusContext:
       "Endangered on the IUCN Red List. Dams block its migrations, turbines kill adults heading to sea, and young glass eels are harvested for the global eel trade — yet it's still legally fished with limits in most states.",

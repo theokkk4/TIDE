@@ -20,7 +20,7 @@ export default function HomePage() {
         <div className="relative h-[52vh] max-h-[460px] min-h-[340px] w-full overflow-hidden">
           <SpeciesPhoto
             src={heroImage}
-            alt="Coral reef teeming with marine life"
+            alt="A coral reef with fish"
             emoji="🪸"
             className="absolute inset-0 h-full w-full"
             priority
@@ -30,7 +30,7 @@ export default function HomePage() {
 
           <header className="absolute inset-x-0 top-0 px-6 pt-[max(20px,env(safe-area-inset-top))]">
             <p className="text-[22px] leading-none font-semibold tracking-[0.36em] text-foam">TIDE</p>
-            <p className="mt-2 text-[13px] text-mist">Keep it or let it go?</p>
+            <p className="mt-2 text-[13px] text-foam/80">Keep it or let it go?</p>
           </header>
 
           <div className="absolute inset-x-0 bottom-0 px-6 pb-6">
@@ -104,7 +104,7 @@ export default function HomePage() {
                     <p className="truncate text-[15px] font-semibold text-foam">
                       {species.emoji} {species.commonName}
                     </p>
-                    <p className="mt-0.5 truncate text-[13px] text-mist">{demo.hook}</p>
+                    <p className="mt-0.5 line-clamp-2 text-[13px] leading-snug text-mist">{demo.hook}</p>
                     <div className="mt-1.5">
                       <StatusBadge status={status} size="sm" />
                     </div>
@@ -123,9 +123,12 @@ export default function HomePage() {
       <RecentIdentifications />
 
       <p className="mt-10 px-6 text-center text-[13px] text-mist/70">
-        Built by crabbers and anglers from South Jersey.
+        Made at OwlHacks 2026 by Theodore, Issaka and Oliver.
       </p>
-      <p className="mt-2 px-6 pb-4 text-center text-[11px] text-mist/50">
+      <p className="mt-2 flex justify-center gap-4 px-6 pb-4 text-center text-[11px] text-mist/50">
+        <Link href="/dive" className="underline-offset-2 hover:text-mist hover:underline">
+          Why we built it
+        </Link>
         <Link href="/credits" className="underline-offset-2 hover:text-mist hover:underline">
           Photo credits
         </Link>

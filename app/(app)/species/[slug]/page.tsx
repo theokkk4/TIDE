@@ -27,6 +27,7 @@ import {
 import { AlternativesSection, RecipeSection } from "@/components/species/seafood-sections";
 import { Reveal } from "@/components/ui/motion";
 import { KeepOrRelease } from "@/components/species/keep-or-release";
+import { CatchVerdictProvider } from "@/components/species/catch-verdict";
 import { FoundIt } from "@/components/species/found-it";
 import { encounterMode } from "@/lib/decision";
 import { ButtonLink } from "@/components/ui/primitives";
@@ -71,6 +72,7 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
       : "Lower-impact choices that are widely available.";
 
   return (
+    <CatchVerdictProvider>
     <article className="pb-6">
       <SpeciesHero
         slug={species.slug}
@@ -140,5 +142,6 @@ export default async function SpeciesPage({ params }: { params: Promise<{ slug: 
         </ButtonLink>
       </div>
     </article>
+    </CatchVerdictProvider>
   );
 }

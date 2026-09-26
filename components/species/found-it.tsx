@@ -32,7 +32,7 @@ export function FoundIt({ species }: { species: Species }) {
     <section aria-labelledby="found-heading" className="glass mx-6 overflow-hidden rounded-[28px]">
       <div className="flex items-center justify-between gap-3 px-5 pt-5">
         <p id="found-heading" className="font-mono text-[11px] tracking-[0.16em] text-turquoise uppercase">
-          Found one? Here&apos;s what to do
+          Found one?
         </p>
         <div role="radiogroup" aria-label="Which state are you in?" className="flex gap-1">
           {REGIONS.map((option) => (

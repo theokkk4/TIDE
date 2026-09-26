@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 
 const LOW_CONFIDENCE = 75;
 
+const article = (name: string) => (/^[aeiou]/i.test(name) ? "an" : "a");
+
 /**
  * Confidence is reported, never hidden. Below the threshold the app leads with
  * uncertainty and shows what else the photo could be.
@@ -25,7 +27,11 @@ export function ScanSummary({ slug }: { slug: string }) {
             {uncertain ? "We aren't completely sure" : "Identification confidence"}
           </p>
           <p className="mt-1 text-[15px] leading-snug text-foam">
-            {uncertain ? `Likely ${scan.commonName}` : `${scan.confidence}% confident this is a ${scan.commonName}`}
+            {uncertain
+              ? `Likely ${scan.commonName} — check the look-alikes below`
+              : scan.confidence >= 90
+                ? `Very likely ${article(scan.commonName)} ${scan.commonName}`
+                : `Probably ${article(scan.commonName)} ${scan.commonName}`}
           </p>
         </div>
         <div className="shrink-0 text-right">

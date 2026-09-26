@@ -20,9 +20,9 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "TIDE — Marine intelligence in your hands",
+  title: "TIDE — Keep it or let it go?",
   description:
-    "Photograph a marine animal and TIDE identifies the species, its conservation status, the threats it faces, and whether it belongs on your plate.",
+    "Snap your catch, or the turtle on the trail. TIDE identifies it with Google Gemini, checks your state's rules, and tells you whether to keep it, release it or leave it be.",
   applicationName: "TIDE",
   appleWebApp: { capable: true, title: "TIDE", statusBarStyle: "black-translucent" },
 };

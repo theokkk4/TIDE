@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   CircleCheck,
@@ -21,6 +21,7 @@ import { TONE_CLASSES } from "@/lib/status";
 import { useCurrentScanFor, useRegion } from "@/lib/storage";
 import { cn } from "@/lib/utils";
 import { ScreenGauge } from "./screen-gauge";
+import { useCatchVerdict } from "./catch-verdict";
 
 const ACTION_ICON: Record<CatchAction, typeof Fish> = {
   KEEP: CircleCheck,
@@ -102,6 +103,9 @@ export function KeepOrRelease({ species, edible }: { species: Species; edible: b
   const parsed = Number.parseFloat(length);
   const inches = Number.isFinite(parsed) && parsed > 0 ? parsed : null;
   const decision = decideCatch(species, { region, length: inches, eggs, female, date: new Date() }, edible);
+  // Let the recipes further down know whether this one is a keeper.
+  const shareVerdict = useCatchVerdict()?.setAction;
+  useEffect(() => shareVerdict?.(decision.action), [shareVerdict, decision.action]);
   const rule = decision.rule ?? ruleFor(species.slug, region);
   const needs = catchNeeds(species, rule);
   const tone = TONE_CLASSES[decision.tone];
