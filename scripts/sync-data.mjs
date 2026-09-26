@@ -99,7 +99,8 @@ function thumbVariants(src, widths = [1024, 800, 640]) {
 }
 
 function fileNameFromThumb(src) {
-  const match = src.match(/\/(?:thumb\/)?[0-9a-f]\/[0-9a-f]{2}\/([^/]+?)(?:\/\d+px-.*)?$/);
+  // Unscaled originals come back with a ?utm_source=… query that isn't part of the name.
+  const match = src.split("?")[0].match(/\/(?:thumb\/)?[0-9a-f]\/[0-9a-f]{2}\/([^/]+?)(?:\/\d+px-.*)?$/);
   return match ? decodeURIComponent(match[1]) : null;
 }
 
@@ -107,7 +108,14 @@ function stripHtml(value) {
   if (!value) return null;
   const text = value
     .replace(/<[^>]*>/g, " ")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&")
+    // Photographers sometimes append a contact address; the credit only needs the name.
+    .replace(/\s*<[^<>\s]+@[^<>\s]+>/g, "")
     .replace(/\s+/g, " ")
     .trim();
   // Commons often repeats the same credit across nested spans, which renders as
@@ -184,9 +192,41 @@ async function readJsonIfExists(file) {
 /** A cached record still counts only if the image it points at is actually on disk. */
 const FORCE_IMAGES = process.env.FORCE_IMAGES === "1";
 
-function cachedImageUsable(record) {
-  if (FORCE_IMAGES) return false;
+function imageOnDisk(record) {
   return Boolean(record?.image && existsSync(path.join(ROOT, "public", record.image.replace(/^\//, ""))));
+}
+
+function cachedImageUsable(record) {
+  return !FORCE_IMAGES && imageOnDisk(record);
+}
+
+/**
+ * A refresh must never erase data an earlier run verified. Wikipedia and GBIF both
+ * throttle, so a failed fetch falls back to the previous record instead of writing a
+ * degraded file — a forced re-sync once dropped nine photos this way.
+ */
+function keepPreviousOnFailure(record, cached) {
+  if (!cached) return record;
+
+  if (!record.gbifKey && cached.gbifKey) {
+    for (const key of ["gbifKey", "taxonomy", "iucnCode", "iucnCategory", "iucnTaxonId", "occurrenceCount"]) {
+      record[key] = cached[key];
+    }
+  } else if (!record.iucnCode && cached.iucnCode && record.gbifKey === cached.gbifKey) {
+    record.iucnCode = cached.iucnCode;
+    record.iucnCategory = cached.iucnCategory;
+    record.iucnTaxonId = cached.iucnTaxonId;
+  }
+
+  if (!record.image && imageOnDisk(cached)) {
+    record.image = cached.image;
+    record.imageCredit = cached.imageCredit;
+    record.wikipediaUrl = cached.wikipediaUrl;
+    record.summary = cached.summary;
+  }
+
+  record.noaaUrl ??= cached.noaaUrl ?? null;
+  return record;
 }
 
 /** Wikipedia redirects scientific names to the article, so try that first. */
@@ -259,15 +299,17 @@ async function syncSpecies(entry, cached) {
     if (typeof occ?.count === "number") record.occurrenceCount = occ.count;
   }
 
-  // Wikipedia rate-limits hard, so reuse anything a previous run already fetched.
-  if (cachedImageUsable(cached)) {
+  // Wikipedia rate-limits hard, so reuse anything a previous run already fetched. A photo
+  // without its credit isn't reusable: most are CC BY-SA, which requires attribution, and
+  // re-fetching image and credit together keeps the two from ever mismatching.
+  if (cachedImageUsable(cached) && cached.imageCredit) {
     record.image = cached.image;
     record.imageCredit = cached.imageCredit;
     record.wikipediaUrl = cached.wikipediaUrl;
     record.summary = cached.summary;
     const noaaCached = `https://www.fisheries.noaa.gov/species/${slug}`;
     record.noaaUrl = cached.noaaUrl ?? ((await urlWorks(noaaCached)) ? noaaCached : null);
-    return record;
+    return keepPreviousOnFailure(record, cached);
   }
 
   // Wikipedia titles are sentence case, so "Blue Crab" needs a "Blue crab" attempt too.
@@ -289,7 +331,7 @@ async function syncSpecies(entry, cached) {
   const noaaUrl = `https://www.fisheries.noaa.gov/species/${slug}`;
   if (await urlWorks(noaaUrl)) record.noaaUrl = noaaUrl;
 
-  return record;
+  return keepPreviousOnFailure(record, cached);
 }
 
 async function syncMediaImages(cachedMedia) {
@@ -298,21 +340,20 @@ async function syncMediaImages(cachedMedia) {
   const out = {};
   for (const [key, title] of Object.entries(MEDIA_IMAGES)) {
     const cached = cachedMedia?.[key];
-    if (cachedImageUsable(cached)) {
+    if (cachedImageUsable(cached) && cached.credit) {
       out[key] = cached;
       continue;
     }
     const wiki = await fetchWikiSummary([title]);
-    if (!wiki) {
-      console.log(`  ✗ dish ${key}`);
-      continue;
-    }
-    const dest = path.join(dir, `${key}.jpg`);
-    const source = wiki.thumbnail.source;
-    const ok = await downloadBestImage(source, dest, 800);
+    const ok = wiki ? await downloadBestImage(wiki.thumbnail.source, path.join(dir, `${key}.jpg`), 800) : false;
     if (ok) {
-      out[key] = { image: `/media/${key}.jpg`, credit: await fetchAttribution(source) };
-      console.log(`  ✓ dish ${key}`);
+      out[key] = { image: `/media/${key}.jpg`, credit: await fetchAttribution(wiki.thumbnail.source) };
+      console.log(`  ✓ media ${key}`);
+    } else if (imageOnDisk(cached)) {
+      out[key] = cached;
+      console.log(`  · media ${key} (refresh failed — kept previous)`);
+    } else {
+      console.log(`  ✗ media ${key}`);
     }
   }
   return out;
@@ -341,8 +382,16 @@ async function main() {
     }
   }
 
-  console.log("\nSyncing dish photography…");
+  console.log("\nSyncing dish and scene photography…");
   const media = await syncMediaImages(previous?.media);
+
+  // Credits reused from earlier runs never went through the current parser.
+  for (const record of Object.values(species)) {
+    if (record?.imageCredit) record.imageCredit = stripHtml(record.imageCredit);
+  }
+  for (const record of Object.values(media)) {
+    if (record.credit) record.credit = stripHtml(record.credit);
+  }
 
   await mkdir(OUT_DIR, { recursive: true });
   const payload = {
@@ -354,10 +403,29 @@ async function main() {
 
   const withStatus = Object.values(species).filter((s) => s?.iucnCode).length;
   const withImages = Object.values(species).filter((s) => s?.image).length;
+  const mediaTotal = Object.keys(MEDIA_IMAGES).length;
   console.log(
-    `\nDone. ${withStatus}/${list.length} IUCN categories, ${withImages}/${list.length} photos, ` +
-      `${Object.keys(media).length} dish photos.`,
+    `\nDone. ${withStatus}/${list.length} IUCN categories, ${withImages}/${list.length} species photos, ` +
+      `${Object.keys(media).length}/${mediaTotal} media photos.`,
   );
+
+  // Missing entries make the app fall back to placeholders, so say so loudly.
+  const missing = [
+    ...list.filter((entry) => !species[entry.slug]?.image).map((entry) => entry.slug),
+    ...Object.keys(MEDIA_IMAGES).filter((key) => !media[key]),
+  ];
+  if (missing.length) {
+    console.log(`\n⚠  No photo recorded for: ${missing.join(", ")}`);
+    console.log("   Usually Wikimedia rate limiting — re-run `npm run sync:data` in a minute.");
+  }
+  const uncredited = [
+    ...list.filter((entry) => species[entry.slug]?.image && !species[entry.slug].imageCredit).map((e) => e.slug),
+    ...Object.entries(media).filter(([, value]) => !value.credit).map(([key]) => key),
+  ];
+  if (uncredited.length) {
+    console.log(`\n⚠  No attribution recorded for: ${uncredited.join(", ")}`);
+    console.log("   Most photos are CC BY-SA and must be credited — re-run `npm run sync:data`.");
+  }
 
   // Curated prose must never contradict the live assessment.
   const drift = list.filter(
