@@ -18,6 +18,8 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { statusFromCode, TONE_CLASSES, type StatusMeta } from "@/lib/status";
 import type { IucnCode } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { SELECT_SPECIES_EVENT } from "./creature-layer";
+import { PlaneReveal } from "./reveal";
 
 type Tone = StatusMeta["tone"];
 
@@ -72,13 +74,13 @@ export function SpeciesSplit({ cards }: { cards: SpeciesCardData[] }) {
   return (
     <div>
       <div className="grid gap-5 md:grid-cols-3">
-        {cards.map((card) => {
+        {cards.map((card, index) => {
           const open = revealed.has(card.slug);
           return (
+            <PlaneReveal key={card.slug} index={index}>
             <motion.article
-              key={card.slug}
               layout
-              className="glass flex flex-col overflow-hidden rounded-[28px]"
+              className="glass flex h-full flex-col overflow-hidden rounded-[28px]"
             >
               <div className="relative h-52 w-full">
                 {card.image && (
@@ -125,6 +127,7 @@ export function SpeciesSplit({ cards }: { cards: SpeciesCardData[] }) {
                 </button>
               </div>
             </motion.article>
+            </PlaneReveal>
           );
         })}
       </div>
@@ -299,8 +302,20 @@ export function VerdictExplorer({ species }: { species: SpeciesCardData[] }) {
   const visible = category === "All" ? species : species.filter((s) => s.category === category);
   const current = species.find((s) => s.slug === selected) ?? species[0];
 
+  // The species river and the creature scanner both pick a species here.
+  useEffect(() => {
+    const pick = (event: Event) => {
+      const slug = (event as CustomEvent<string>).detail;
+      if (!species.some((s) => s.slug === slug)) return;
+      setCategory("All");
+      setSelected(slug);
+    };
+    window.addEventListener(SELECT_SPECIES_EVENT, pick);
+    return () => window.removeEventListener(SELECT_SPECIES_EVENT, pick);
+  }, [species]);
+
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+    <div id="verdict-explorer" className="grid scroll-mt-32 gap-6 lg:grid-cols-[1.1fr_1fr]">
       {/* min-w-0 lets the scrollable filter row shrink instead of widening the page. */}
       <div className="min-w-0">
         <div className="no-scrollbar -mx-1 mb-4 flex gap-2 overflow-x-auto px-1 pb-1" role="tablist" aria-label="Filter by group">

@@ -7,6 +7,7 @@ import { SPECIES, getSpecies } from "@/lib/data/species";
 import { getVerified, resolveStatusCode, speciesImage } from "@/lib/conservation";
 import { getSeafoodVerdict } from "@/lib/seafood";
 import { IMPACT, REPO_URL, TEAM, TRACKS } from "@/lib/dive/content";
+import { CREATURE_GUIDE, type CreatureGuide } from "@/lib/dive/creatures";
 import type { Species } from "@/lib/types";
 import { AbyssBackground, Chapter, DepthHud, DepthProvider, type ChapterMarker } from "@/components/dive/depth";
 import {
@@ -18,7 +19,10 @@ import {
   VerdictExplorer,
   type SpeciesCardData,
 } from "@/components/dive/interactives";
-import { Reveal } from "@/components/ui/motion";
+import { CreatureLayer } from "@/components/dive/creature-layer";
+import { ClipReveal, MaskText, PlaneReveal, SoftReveal } from "@/components/dive/reveal";
+import { SmoothScrollProvider } from "@/components/dive/smooth-scroll";
+import { SpeciesRiver } from "@/components/dive/species-river";
 
 export const metadata: Metadata = {
   title: "TIDE — A dive into what lives beneath the surface",
@@ -81,7 +85,7 @@ const STORY_STEPS = [
   },
   {
     title: "Identify",
-    body: "Claude vision names the species with a confidence score and look-alikes. Below 75%, TIDE says “We aren't completely sure.”",
+    body: "Google Gemini vision names the species with a confidence score and look-alikes. Below 75%, TIDE says “We aren't completely sure.”",
     image: "/dive/02-analyzing.webp",
     alt: "TIDE scanning a photo of a green sea turtle",
   },
@@ -114,6 +118,11 @@ export default function DivePage() {
     return species ? [toCard(species, context)] : [];
   });
   const explorer = SPECIES.map((species) => toCard(species));
+  // Creatures that are also TIDE species show their live-verified status, not a copy.
+  const guide: CreatureGuide[] = CREATURE_GUIDE.map((entry) => {
+    const species = entry.slug ? getSpecies(entry.slug) : undefined;
+    return species ? { ...entry, iucn: resolveStatusCode(species) } : entry;
+  });
 
   const verifiedCount = SPECIES.filter((s) => getVerified(s.slug)?.iucnCode).length;
   const occurrences = SPECIES.reduce((sum, s) => sum + (getVerified(s.slug)?.occurrenceCount ?? 0), 0);
@@ -136,8 +145,20 @@ export default function DivePage() {
   const chapter = (id: string) => chapters.find((c) => c.id === id)!;
 
   return (
+    <SmoothScrollProvider>
     <DepthProvider>
+      <div aria-hidden className="dive-curtain">
+        <p className="dive-curtain__mark">TIDE</p>
+        <p className="dive-curtain__note">0 m · OwlHacks 2026</p>
+        <svg className="dive-curtain__wave" viewBox="0 0 1200 90" preserveAspectRatio="none">
+          <path
+            fill="#0d5570"
+            d="M0 0 H1200 V40 C1125 72 1050 72 975 40 C900 8 825 8 750 40 C675 72 600 72 525 40 C450 8 375 8 300 40 C225 72 150 72 75 40 C50 30 25 22 0 20 Z"
+          />
+        </svg>
+      </div>
       <AbyssBackground />
+      <CreatureLayer guide={guide} />
       <DepthHud chapters={chapters} />
 
       <main className="relative">
@@ -147,90 +168,94 @@ export default function DivePage() {
           data-depth={0}
           className="relative z-10 flex min-h-[100dvh] items-center overflow-hidden"
         >
-          <div className="absolute inset-y-0 right-0 hidden w-[48%] md:block">
+          <ClipReveal delay={0.95} className="absolute inset-y-0 right-0 hidden w-[48%] md:block">
             <Image src="/dive/reef.webp" alt="" fill priority sizes="48vw" className="object-cover" />
             <div className="absolute inset-0 bg-[linear-gradient(90deg,#0d5570_0%,rgba(13,85,112,0.55)_28%,transparent_60%)]" />
             <div className="absolute inset-0 bg-[linear-gradient(0deg,#0d5570_0%,transparent_30%)]" />
-          </div>
+          </ClipReveal>
           <div className="absolute inset-0 md:hidden">
             <Image src="/dive/reef.webp" alt="" fill priority sizes="100vw" className="object-cover opacity-45" />
             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(13,85,112,0.4),#0d5570_85%)]" />
           </div>
 
           <div className="relative mx-auto w-full max-w-6xl px-5 pt-24 md:px-10">
-            <Reveal>
+            <SoftReveal delay={1.1}>
               <p className="font-mono text-[12px] tracking-[0.18em] text-turquoise/90 uppercase">
                 OwlHacks 2026 · Deep Sea Aquatics
               </p>
-            </Reveal>
-            <Reveal delay={0.08}>
-              <h1 className="mt-6 text-[clamp(72px,14vw,176px)] leading-[0.85] font-semibold tracking-[0.2em] text-foam">
-                TIDE
-              </h1>
-            </Reveal>
-            <Reveal delay={0.16}>
-              <p className="mt-6 font-serif text-[clamp(32px,4.4vw,56px)] leading-[1.05] text-foam italic">
-                See what&apos;s beneath you.
-              </p>
-            </Reveal>
-            <Reveal delay={0.24}>
+            </SoftReveal>
+            <MaskText
+              as="h1"
+              segments={["T I D E"]}
+              label="TIDE"
+              delay={1.15}
+              stagger={0.08}
+              className="mt-6 text-[clamp(72px,14vw,176px)] leading-[0.85] font-semibold text-foam [word-spacing:-0.06em]"
+            />
+            <MaskText
+              as="p"
+              segments={[{ text: "See what's beneath you.", className: "font-serif italic" }]}
+              delay={1.45}
+              className="mt-6 text-[clamp(32px,4.4vw,56px)] leading-[1.05] text-foam"
+            />
+            <SoftReveal delay={1.7}>
               <p className="mt-6 max-w-md text-[18px] leading-relaxed text-mist">
                 Photograph a marine animal. TIDE tells you what it is — and what it means for the ocean.
               </p>
-            </Reveal>
-            <Reveal delay={0.32}>
-              <p className="mt-16 flex items-center gap-3 font-mono text-[12px] tracking-[0.16em] text-mist/80 uppercase">
-                <span className="inline-block h-10 w-px animate-pulse bg-turquoise/70" />
-                Scroll to dive
-              </p>
-            </Reveal>
+            </SoftReveal>
+            <SoftReveal delay={1.9}>
+              <div className="mt-16 flex flex-col gap-3 font-mono text-[12px] tracking-[0.16em] text-mist/80 uppercase">
+                <p className="flex items-center gap-3">
+                  <span className="inline-block h-10 w-px animate-pulse bg-turquoise/70" />
+                  Scroll to dive
+                </p>
+                <p className="hidden text-[11px] tracking-[0.12em] text-mist/60 md:block">
+                  ◎ Hover any creature and TIDE identifies it
+                </p>
+                <p className="text-[11px] tracking-[0.12em] text-mist/60 md:hidden">◎ Tap any creature to identify it</p>
+              </div>
+            </SoftReveal>
           </div>
         </section>
 
         {/* 01 · The Question */}
         <Chapter id="question" depth={150} number="01" title="The Question" className="min-h-[80vh]">
-          <Reveal>
-            <h2 className="max-w-4xl text-[clamp(44px,7vw,96px)] leading-[0.95] font-semibold tracking-tight text-foam">
-              What did you <span className="font-serif font-normal italic">find?</span>
-            </h2>
-          </Reveal>
-          <Reveal delay={0.1}>
+          <SoftReveal>
+            <MaskText className="max-w-4xl text-[clamp(44px,7vw,96px)] leading-[0.95] font-semibold tracking-tight text-foam" segments={["What did you", { text: "find?", className: "font-serif font-normal italic" }]} />
+          </SoftReveal>
+          <SoftReveal delay={0.1}>
             <p className="mt-10 max-w-2xl text-[20px] leading-relaxed text-mist">
               A turtle gliding past the reef. A crab in the trap. A fish on ice at the market. Most of us can&apos;t
               name what we&apos;re looking at — let alone say whether it&apos;s thriving, protected, or on its way out.
             </p>
-          </Reveal>
-          <Reveal delay={0.2}>
+          </SoftReveal>
+          <SoftReveal delay={0.2}>
             <p className="mt-6 max-w-2xl text-[20px] leading-relaxed text-foam">
               And the one question people actually ask — <em className="font-serif text-[1.15em]">can I eat this?</em> —
               has an answer more complicated than any label.
             </p>
-          </Reveal>
+          </SoftReveal>
         </Chapter>
 
         {/* 02 · The Split */}
         <Chapter id="split" depth={450} number="02" title="The Split">
-          <Reveal>
-            <h2 className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam">
-              Three species. <span className="font-serif font-normal italic">Three different answers.</span>
-            </h2>
+          <SoftReveal>
+            <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Three species.", { text: "Three different answers.", className: "font-serif font-normal italic" }]} />
             <p className="mt-6 mb-12 max-w-xl text-[18px] leading-relaxed text-mist">
               Two are rated Least Concern. One is Vulnerable. Guess which ones you can eat — then reveal what TIDE says.
             </p>
-          </Reveal>
+          </SoftReveal>
           <SpeciesSplit cards={split} />
         </Chapter>
 
         {/* 03 · The Scatter */}
         <Chapter id="scatter" depth={900} number="03" title="The Scatter">
-          <Reveal>
-            <h2 className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam">
-              The answer exists. <span className="font-serif font-normal italic">It&apos;s just scattered.</span>
-            </h2>
+          <SoftReveal>
+            <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["The answer exists.", { text: "It's just scattered.", className: "font-serif font-normal italic" }]} />
             <p className="mt-6 max-w-xl text-[18px] leading-relaxed text-mist">
               Four authorities each hold one piece. Nobody checks all four at the fish counter. Keep scrolling.
             </p>
-          </Reveal>
+          </SoftReveal>
           <SourceConverge />
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {[
@@ -250,7 +275,7 @@ export default function DivePage() {
                 source: "Protected Planet",
               },
             ].map((item, index) => (
-              <Reveal key={item.label} delay={index * 0.08}>
+              <PlaneReveal key={item.label} index={index}>
                 <div className="glass rounded-[24px] p-6">
                   <p className="font-mono text-[clamp(44px,5vw,64px)] leading-none font-semibold text-turquoise">
                     {item.stat}
@@ -258,45 +283,60 @@ export default function DivePage() {
                   <p className="mt-3 text-[16px] text-foam">{item.label}</p>
                   <p className="mt-2 text-[12px] text-mist/70">{item.source}</p>
                 </div>
-              </Reveal>
+              </PlaneReveal>
             ))}
           </div>
         </Chapter>
 
         {/* 04 · The Lens */}
         <Chapter id="lens" depth={1600} number="04" title="The Lens">
-          <Reveal>
-            <h2 className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam">
-              One photo. <span className="font-serif font-normal italic">The whole picture.</span>
-            </h2>
-          </Reveal>
+          <SoftReveal>
+            <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["One photo.", { text: "The whole picture.", className: "font-serif font-normal italic" }]} />
+            <p className="mt-6 max-w-xl text-[18px] leading-relaxed text-mist">
+              You point and shoot. <span className="text-foam">Google Gemini</span> does the looking; TIDE does the
+              checking — against live conservation data, never guesswork.
+            </p>
+          </SoftReveal>
           <PhoneStory steps={STORY_STEPS} />
         </Chapter>
 
+        {/* The field guide: all thirty species drifting past as a current you can grab */}
+        <section aria-label="Species field guide" className="relative z-10 py-16 md:py-24">
+          <div className="mx-auto mb-10 flex max-w-6xl flex-wrap items-end justify-between gap-4 px-5 md:px-10">
+            <MaskText
+              as="h2"
+              className="max-w-2xl text-[clamp(32px,4.4vw,56px)] leading-[1] font-semibold tracking-tight text-foam"
+              segments={[`${SPECIES.length} species`, { text: "in the field guide.", className: "font-serif font-normal italic" }]}
+            />
+            <SoftReveal>
+              <p className="font-mono text-[12px] tracking-[0.14em] text-mist/70 uppercase">
+                Drag the current · tap one for its verdict
+              </p>
+            </SoftReveal>
+          </div>
+          <SpeciesRiver species={explorer} />
+        </section>
+
         {/* 05 · The Verdict */}
         <Chapter id="verdict" depth={3200} number="05" title="The Verdict">
-          <Reveal>
-            <h2 className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam">
-              Try the rules <span className="font-serif font-normal italic">yourself.</span>
-            </h2>
+          <SoftReveal>
+            <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Try the rules", { text: "yourself.", className: "font-serif font-normal italic" }]} />
             <p className="mt-6 mb-12 max-w-2xl text-[18px] leading-relaxed text-mist">
               Pick any of the {SPECIES.length} species. This is the app&apos;s own decision logic: recipes appear only
               when a species passes every check, and disappear automatically if live data moves it to Endangered.
             </p>
-          </Reveal>
+          </SoftReveal>
           <VerdictExplorer species={explorer} />
         </Chapter>
 
         {/* 06 · The Evidence */}
         <Chapter id="evidence" depth={5000} number="06" title="The Evidence">
-          <Reveal>
-            <h2 className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam">
-              Built on real data. <span className="font-serif font-normal italic">Never invented.</span>
-            </h2>
+          <SoftReveal>
+            <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Built on real data.", { text: "Never invented.", className: "font-serif font-normal italic" }]} />
             <p className="mt-6 mb-12 max-w-2xl text-[18px] leading-relaxed text-mist">
               TIDE never guesses a conservation status. Where no assessment exists, it says so.
             </p>
-          </Reveal>
+          </SoftReveal>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {[
               { stat: <CountUp value={SPECIES.length} />, label: "species — turtles, fish, sharks, rays, crustaceans, cephalopods, mammals" },
@@ -314,24 +354,24 @@ export default function DivePage() {
               },
               { stat: <CountUp value={5} />, label: "outdated statuses caught by our automated drift check during development" },
             ].map((item, index) => (
-              <Reveal key={item.label} delay={index * 0.08}>
+              <PlaneReveal key={item.label} index={index}>
                 <div className="glass h-full rounded-[24px] p-6">
                   <p className="font-mono text-[clamp(44px,5vw,64px)] leading-none font-semibold text-turquoise">
                     {item.stat}
                   </p>
                   <p className="mt-4 text-[14px] leading-relaxed text-mist">{item.label}</p>
                 </div>
-              </Reveal>
+              </PlaneReveal>
             ))}
           </div>
-          <Reveal delay={0.2}>
+          <SoftReveal delay={0.2}>
             <ul className="mt-10 flex flex-wrap gap-2">
               {[
                 "Next.js",
                 "TypeScript",
                 "Tailwind CSS",
                 "Framer Motion",
-                "Claude vision (Anthropic)",
+                "Google Gemini vision",
                 "GBIF API",
                 "IUCN Red List",
                 "Wikimedia Commons",
@@ -342,21 +382,19 @@ export default function DivePage() {
                 </li>
               ))}
             </ul>
-          </Reveal>
+          </SoftReveal>
         </Chapter>
 
         {/* 07 · The Impact (only once the team has supplied tracks or numbers) */}
         {showImpact && (
           <Chapter id="impact" depth={7500} number="07" title="The Impact">
-            <Reveal>
-              <h2 className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam">
-                Why it <span className="font-serif font-normal italic">matters.</span>
-              </h2>
-            </Reveal>
+            <SoftReveal>
+              <MaskText className="max-w-3xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Why it", { text: "matters.", className: "font-serif font-normal italic" }]} />
+            </SoftReveal>
             {IMPACT.length > 0 && (
               <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {IMPACT.map((item, index) => (
-                  <Reveal key={item.label} delay={index * 0.08}>
+                  <PlaneReveal key={item.label} index={index}>
                     <div className="glass h-full rounded-[24px] p-6">
                       {item.projected && (
                         <p className="mb-2 font-mono text-[10px] tracking-[0.16em] text-status-watch uppercase">
@@ -368,7 +406,7 @@ export default function DivePage() {
                       </p>
                       <p className="mt-4 text-[14px] leading-relaxed text-mist">{item.label}</p>
                     </div>
-                  </Reveal>
+                  </PlaneReveal>
                 ))}
               </div>
             )}
@@ -377,12 +415,12 @@ export default function DivePage() {
                 <p className="mb-5 font-mono text-[12px] tracking-[0.16em] text-mist/70 uppercase">Built for</p>
                 <div className="grid gap-5 md:grid-cols-2">
                   {TRACKS.map((track, index) => (
-                    <Reveal key={track.name} delay={index * 0.08}>
+                    <PlaneReveal key={track.name} index={index}>
                       <div className="glass h-full rounded-[24px] p-6">
                         <h3 className="text-[20px] font-semibold text-foam">{track.name}</h3>
                         <p className="mt-2 text-[15px] leading-relaxed text-mist">{track.fit}</p>
                       </div>
-                    </Reveal>
+                    </PlaneReveal>
                   ))}
                 </div>
               </div>
@@ -394,18 +432,16 @@ export default function DivePage() {
         <Chapter id="deep" depth={10935} number={chapter("deep").number} title="The Deep" className="min-h-[100dvh]">
           <div className="grid items-center gap-14 md:grid-cols-[1fr_auto]">
             <div>
-              <Reveal>
+              <SoftReveal>
                 <p className="font-mono text-[13px] text-mist/70">10,935 m · Challenger Deep — the deepest point on Earth</p>
-                <h2 className="mt-4 max-w-2xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam">
-                  Down here, <span className="font-serif font-normal italic">you make the light.</span>
-                </h2>
+                <MaskText className="mt-4 max-w-2xl text-[clamp(38px,5.5vw,72px)] leading-[1] font-semibold tracking-tight text-foam" segments={["Down here,", { text: "you make the light.", className: "font-serif font-normal italic" }]} />
                 <p className="mt-6 max-w-lg text-[18px] leading-relaxed text-mist">
                   {hasVideo
                     ? "Watch TIDE work end to end — or switch to the live app and try it yourself, right here."
                     : "This is the real app, running live inside the page. Tap an example, or use Demo to see a full identification."}
                 </p>
-              </Reveal>
-              <Reveal delay={0.1}>
+              </SoftReveal>
+              <SoftReveal delay={0.1}>
                 <ol className="mt-10 space-y-4">
                   {[
                     ["Green sea turtle", "Least Concern — still Do Not Consume"],
@@ -420,24 +456,22 @@ export default function DivePage() {
                     </li>
                   ))}
                 </ol>
-              </Reveal>
+              </SoftReveal>
             </div>
-            <Reveal delay={0.15} className="mx-auto">
+            <SoftReveal delay={0.15} className="mx-auto">
               <DemoPhone videoSrc={hasVideo ? "/dive/demo.mp4" : null} />
-            </Reveal>
+            </SoftReveal>
           </div>
         </Chapter>
 
         {/* Resurface */}
         <section id="resurface" data-depth={0} className="relative z-10 overflow-hidden">
           <div className="mx-auto flex min-h-[90dvh] max-w-6xl flex-col justify-center px-5 py-28 md:px-10">
-            <Reveal>
+            <SoftReveal>
               <p className="font-mono text-[12px] tracking-[0.16em] text-turquoise/90 uppercase">0 m · Resurfaced</p>
-              <h2 className="mt-8 max-w-5xl font-serif text-[clamp(44px,7.5vw,104px)] leading-[0.98] text-balance text-foam italic">
-                See it. Identify it. Understand it. Protect it.
-              </h2>
-            </Reveal>
-            <Reveal delay={0.1}>
+              <MaskText className="mt-8 max-w-5xl font-serif text-[clamp(44px,7.5vw,104px)] leading-[0.98] text-balance text-foam italic" segments={["See it. Identify it. Understand it. Protect it."]} stagger={0.07} />
+            </SoftReveal>
+            <SoftReveal delay={0.1}>
               <div className="mt-12 flex flex-wrap gap-3">
                 <Link
                   href="/"
@@ -454,8 +488,22 @@ export default function DivePage() {
                   Source on GitHub ↗
                 </a>
               </div>
-              {TEAM.length > 0 && <p className="mt-10 text-[15px] text-mist">Built by {TEAM.join(", ")}</p>}
-            </Reveal>
+              {TEAM.length > 0 && (
+                <div className="mt-14 border-t border-foam/10 pt-8">
+                  <p className="font-mono text-[11px] tracking-[0.18em] text-turquoise/80 uppercase">The crew</p>
+                  <ul className="mt-4 flex flex-wrap gap-x-10 gap-y-3">
+                    {TEAM.map((name) => (
+                      <li key={name} className="text-[clamp(24px,3vw,34px)] font-semibold tracking-tight text-foam">
+                        {name}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-4 text-[14px] text-mist">
+                    Built at OwlHacks 2026 · identification powered by Google Gemini
+                  </p>
+                </div>
+              )}
+            </SoftReveal>
           </div>
 
           <footer className="border-t border-foam/10">
@@ -494,5 +542,6 @@ export default function DivePage() {
         </section>
       </main>
     </DepthProvider>
+    </SmoothScrollProvider>
   );
 }
