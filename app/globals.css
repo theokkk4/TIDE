@@ -288,8 +288,8 @@ a {
   }
 }
 
-/* While TIDE's scanner is locked on a creature, the cursor becomes a crosshair. */
+/* Over a background creature the cursor shows it can be clicked (it opens the field guide). */
 html.dive-scan,
 html.dive-scan body {
-  cursor: crosshair;
+  cursor: pointer;
 }

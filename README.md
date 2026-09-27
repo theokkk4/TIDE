@@ -111,8 +111,8 @@ touch scrolling are never taken over. The header shows where you are ("04 / 10 Â
 The creatures are drawn on canvas and swim at their real depths â€” sardines and a green sea
 turtle near the surface, lanternfish and siphonophores in the twilight, an anglerfish whose
 lure follows your cursor in the dark, and a herd of sea pigs (*Scotoplanes globosa*) on the
-seafloor. Hover one and TIDE's scanner identifies it (`lib/dive/creatures.ts`). All motion
-respects `prefers-reduced-motion`.
+seafloor. Click one and the page glides to the field guide, opening its verdict when TIDE
+covers that species (`lib/dive/creatures.ts`). All motion respects `prefers-reduced-motion`.
 
 ## Environment variables
 

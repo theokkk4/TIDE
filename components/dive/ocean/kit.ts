@@ -69,7 +69,7 @@ export abstract class Creature {
   layer: Layer = "back";
   anchorY = 0;
   baseY = 0;
-  /** Screen position and size the scanner locks on to. */
+  /** Screen position and size, for hit-testing clicks. */
   x = 0;
   y = 0;
   radius = 30;

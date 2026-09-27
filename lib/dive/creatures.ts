@@ -1,8 +1,8 @@
 import type { IucnCode } from "@/lib/types";
 
 /**
- * Field-guide entries for the animated creatures on /dive. Hover (or tap) one and the
- * page identifies it, the way the app does.
+ * Field-guide entries for the animated creatures on /dive. Click (or tap) one and the page
+ * glides to the field guide, opening its verdict when TIDE covers the species.
  *
  * Species that are also in TIDE's dataset carry a `slug`; their status is read from the
  * verified dataset at build time, so the `iucn` values below are only used for the others.
