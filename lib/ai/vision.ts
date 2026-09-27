@@ -29,7 +29,7 @@ const IdentificationSchema = z.object({
   is_supported_animal: z
     .boolean()
     .describe(
-      "True for fish, crabs, lobsters, shrimp and other shellfish, turtles (sea, freshwater or land), frogs, toads, salamanders, newts, and other aquatic or shoreline animals. False for anything else.",
+      "True for any animal that lives in or around water: fish, sharks and rays, crabs, lobsters, shrimp and other shellfish, squid and octopus, jellyfish, marine mammals (dolphins, whales, seals, manatees, sea otters), turtles (sea, freshwater or land), frogs, toads, salamanders and newts. False for land mammals, birds, insects, people, plated food, or an image with no animal in it.",
     ),
   egg_mass_visible: z
     .enum(["yes", "no", "unknown"])
@@ -55,7 +55,7 @@ Rules:
 - Base visual_reasoning strictly on features visible in the image: shell scute pattern, fin shape and placement, colouration, body proportions, claw form, apron shape.
 - Never estimate the animal's size or length: legal size limits are decided by the person measuring, not from a photo.
 - Only report egg_mass_visible or crab_sex from what is actually visible. When unsure, say "unknown" — the person will be asked to check.
-- Set is_supported_animal to false for mammals on land, birds, insects, people, food on a plate, or images with no animal in them. Cooked or plated seafood is not a live animal.`;
+- Set is_supported_animal to true for every animal that lives in or around water, marine mammals like dolphins, whales and seals included. Set it to false for mammals that live on land, birds, insects, people, food on a plate, or images with no animal in them. Cooked or plated seafood is not a live animal.`;
 
 export type VisionFailure = "no_credentials" | "provider_error" | "unreadable";
 
