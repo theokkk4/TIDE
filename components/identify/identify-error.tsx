@@ -109,7 +109,7 @@ export function IdentifyError({
             Open Demo Mode
           </ButtonLink>
         )}
-        <Link href="/" className="text-center text-[13px] text-mist hover:text-foam">
+        <Link href="/home" className="text-center text-[13px] text-mist hover:text-foam">
           Back to home
         </Link>
       </div>
