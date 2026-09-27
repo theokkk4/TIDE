@@ -102,8 +102,8 @@ clickers send; Home and End jump to the first and last slide. Every press is one
 **Team content** lives in `lib/dive/content.ts`:
 
 - **Baby photos** — drop `oliver.jpg`, `theodore.jpg` and `issaka.jpg` into `public/dive/team/`
-  (`.png` and `.webp` work too). They appear automatically; until then each frame shows an
-  initial.
+  (`.png` and `.webp` work too). They appear automatically — beside each name on its own
+  slide and together on the chapter's opening slide; until then each frame shows an initial.
 - **More photos** — add a `gallery` to anyone's story (Oliver's has two) and they show as a
   row of prints under it.
 - **A photo beside the story** — `aside` puts one tall photo on the same slide (Issaka's
