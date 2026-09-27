@@ -1,6 +1,6 @@
 /* The deep: no daylight at all. The anglerfish's lure is the only light, and it follows you. */
 
-import { Creature, TAU, clamp, glow, lerp, place, seeded, smoothstep, spinePath, wrap, type Anchor, type Frame } from "./kit";
+import { Creature, TAU, glow, lerp, place, seeded, smoothstep, spinePath, wrap, type Anchor, type Frame } from "./kit";
 
 /* ─────────────  Humpback anglerfish: its lure follows the cursor and lights the dark  ───────────── */
 
@@ -266,41 +266,41 @@ export class Snailfish extends Creature {
   }
 }
 
-/* ─────────────  Hadal amphipods: scavengers on the floor of Challenger Deep  ───────────── */
+/* ─────────────  Sea pigs: a small herd tiptoeing across the deep seafloor  ───────────── */
 
-interface Hopper {
+interface Pig {
   ox: number;
   oy: number;
-  hop: number;
+  size: number;
   phase: number;
-  dir: number;
+  pace: number;
 }
 
-export class Amphipods extends Creature {
-  private crew: Hopper[];
+/**
+ * Scotoplanes, the sea pig: a sea cucumber that walks on water-filled tube feet, usually
+ * in herds that all face the same way, into the current. Pink, plump and unhurried.
+ */
+export class SeaPigs extends Creature {
+  private herd: Pig[];
 
   constructor(anchor: Anchor, count: number, seed: number) {
-    super(anchor, "hadal-amphipod");
+    super(anchor, "sea-pig");
     const rand = seeded(seed);
-    this.crew = Array.from({ length: count }, () => ({
-      ox: (rand() - 0.5) * 2,
+    this.herd = Array.from({ length: count }, (_, i) => ({
+      ox: (i / Math.max(1, count - 1) - 0.5) * 1.8 + (rand() - 0.5) * 0.2,
       oy: rand(),
-      hop: rand() * 3,
+      size: 0.75 + rand() * 0.5,
       phase: rand() * TAU,
-      dir: rand() > 0.5 ? 1 : -1,
+      pace: 0.7 + rand() * 0.6,
     }));
   }
 
   update(f: Frame) {
-    const spread = f.small ? 110 : 190;
-    for (const h of this.crew) {
-      h.hop -= f.dt;
-      if (h.hop < 0) {
-        h.hop = 1.5 + ((h.phase * 7) % 2.5);
-        h.dir = Math.sin(f.time + h.phase) > 0 ? 1 : -1;
-      }
-      const hopping = h.hop > 1.2;
-      h.ox = clamp(h.ox + (hopping ? h.dir * 0.5 : h.dir * 0.02) * f.dt, -1, 1);
+    const spread = f.small ? 120 : 210;
+    // The herd creeps upstream, a few pixels a second, and loops round out of sight.
+    for (const pig of this.herd) {
+      pig.ox += f.dt * 0.012 * pig.pace;
+      if (pig.ox > 1.2) pig.ox = -1.2;
     }
     this.x = f.width * this.anchor.x;
     this.y = this.baseY;
@@ -308,34 +308,77 @@ export class Amphipods extends Creature {
   }
 
   draw(f: Frame, ctx: CanvasRenderingContext2D) {
-    const spread = f.small ? 110 : 190;
-    for (const h of this.crew) {
-      const hopping = h.hop > 1.2;
-      const x = this.x + h.ox * spread;
-      const y = this.y + h.oy * 40 - (hopping ? Math.sin(((h.hop - 1.2) / 0.3) * Math.PI) * 14 : 0);
+    const spread = f.small ? 120 : 210;
+    const scale = f.small ? 1 : 1.35;
+    // Small ones behind, big ones in front.
+    const herd = [...this.herd].sort((a, b) => a.oy - b.oy);
+    for (const pig of herd) {
+      const edge = 1 - smoothstep(0.85, 1.2, Math.abs(pig.ox));
+      if (edge <= 0.01) continue;
+      const s = pig.size * scale * (0.85 + pig.oy * 0.3);
+      const x = this.x + pig.ox * spread;
+      const y = this.y + (pig.oy - 0.5) * 34;
+      const t = f.time * pig.pace * 2 + pig.phase;
+      const L = 44 * s;
+      const H = 15 * s;
       const light = this.lit(f, x, y);
-      const scale = f.small ? 1.2 : 1.6;
-      place(ctx, f.dpr, x, y, 0, h.dir * scale, scale);
-      ctx.globalAlpha = lerp(0.2, 0.9, light);
-      ctx.fillStyle = "rgba(236,214,180,0.9)";
-      // A curled, segmented body.
-      for (let s = 0; s < 6; s++) {
-        const a = -0.9 + s * 0.36;
+
+      place(ctx, f.dpr, x, y + Math.sin(t * 2) * 0.6 * s, 0, 1, 1);
+      // Pale enough to make out in the dark; the lure brings out the pink.
+      ctx.globalAlpha = lerp(0.45, 1, light) * edge;
+      ctx.lineCap = "round";
+
+      // Five pairs of stubby tube feet, stepping in a slow wave from back to front.
+      ctx.strokeStyle = "rgba(222,120,146,0.95)";
+      ctx.lineWidth = 4.2 * s;
+      for (let i = 0; i < 5; i++) {
+        const lx = -L * 0.3 + i * ((L * 0.58) / 4);
+        const step = Math.sin(t * 3 - i * 1.1);
         ctx.beginPath();
-        ctx.ellipse(Math.cos(a) * 8, Math.sin(a) * 5, 3.2 - s * 0.3, 2.4, a + 1.2, 0, TAU);
-        ctx.fill();
+        ctx.moveTo(lx, H * 0.35);
+        ctx.lineTo(lx + step * 1.8 * s, H * 0.35 + 5 * s + Math.max(0, step) * 2.2 * s);
+        ctx.stroke();
       }
-      ctx.strokeStyle = "rgba(236,214,180,0.7)";
-      ctx.lineWidth = 0.7;
+
+      // Body: a plump, translucent pink sausage, rounder at the front.
+      const body = ctx.createLinearGradient(0, -H * 0.8, 0, H * 0.6);
+      body.addColorStop(0, "rgba(255,224,232,0.97)");
+      body.addColorStop(1, "rgba(236,128,156,0.94)");
+      ctx.fillStyle = body;
       ctx.beginPath();
-      ctx.moveTo(8, -4);
-      ctx.quadraticCurveTo(14, -10 + Math.sin(f.time * 6 + h.phase) * 2, 18, -8);
-      for (let leg = 0; leg < 5; leg++) {
-        const lx = -4 + leg * 2.8;
-        ctx.moveTo(lx, 2);
-        ctx.lineTo(lx + Math.sin(f.time * 12 + leg + h.phase) * (hopping ? 2 : 0.6), 7);
+      ctx.moveTo(-L * 0.5, H * 0.05);
+      ctx.bezierCurveTo(-L * 0.5, -H * 0.72, L * 0.3, -H * 0.82, L * 0.48, -H * 0.2);
+      ctx.bezierCurveTo(L * 0.56, H * 0.1, L * 0.46, H * 0.52, L * 0.28, H * 0.52);
+      ctx.lineTo(-L * 0.36, H * 0.55);
+      ctx.bezierCurveTo(-L * 0.5, H * 0.55, -L * 0.53, H * 0.3, -L * 0.5, H * 0.05);
+      ctx.fill();
+      ctx.fillStyle = "rgba(255,246,249,0.4)";
+      ctx.beginPath();
+      ctx.ellipse(-L * 0.02, -H * 0.36, L * 0.3, H * 0.13, -0.08, 0, TAU);
+      ctx.fill();
+
+      // Two pairs of papillae on its back — the "ears" sea pigs are famous for.
+      ctx.strokeStyle = "rgba(246,172,190,0.98)";
+      ctx.lineWidth = 2.6 * s;
+      for (const [k, offset] of [0.12, 0.28].entries()) {
+        const bx = L * offset;
+        const by = -H * (0.62 - k * 0.08);
+        const sway = Math.sin(t * 1.1 + k * 1.3) * 2.2 * s;
+        ctx.beginPath();
+        ctx.moveTo(bx, by);
+        ctx.quadraticCurveTo(bx + 1.5 * s + sway, by - 9 * s, bx + 6 * s + sway, by - (14 - k * 2) * s);
+        ctx.stroke();
       }
-      ctx.stroke();
+
+      // Feeding tentacles at the front, working the mud.
+      ctx.lineWidth = 1.3 * s;
+      for (let k = 0; k < 4; k++) {
+        const angle = 0.3 + k * 0.3;
+        ctx.beginPath();
+        ctx.moveTo(L * 0.42, H * 0.34);
+        ctx.lineTo(L * 0.42 + Math.cos(angle) * 5.5 * s, H * 0.34 + Math.sin(angle) * 5.5 * s + Math.sin(t * 4 + k) * 0.8);
+        ctx.stroke();
+      }
     }
     ctx.globalAlpha = 1;
   }

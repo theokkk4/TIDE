@@ -5,11 +5,11 @@ import { Check, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const ANALYSIS_STAGES = [
-  "Analysing image",
-  "Identifying species",
-  "Checking biodiversity data",
-  "Checking conservation status",
-  "Preparing results",
+  "Reading the photo",
+  "Naming the species",
+  "Cross-checking GBIF records",
+  "Looking up its Red List status",
+  "Putting it together",
 ] as const;
 
 export function AnalyzingView({ photo, stage }: { photo: string; stage: number }) {
@@ -22,7 +22,7 @@ export function AnalyzingView({ photo, stage }: { photo: string; stage: number }
         className="relative aspect-square w-full max-w-[320px] overflow-hidden rounded-[32px] border border-foam/15"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={photo} alt="The photo being analysed" className="h-full w-full object-cover" />
+        <img src={photo} alt="The photo being identified" className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-abyss/25" />
 
         {/* Scanning sweep */}
@@ -56,7 +56,7 @@ export function AnalyzingView({ photo, stage }: { photo: string; stage: number }
         ))}
       </motion.div>
 
-      <h1 className="mt-8 text-[22px] font-semibold tracking-tight text-foam">Analysing your discovery…</h1>
+      <h1 className="mt-8 text-[22px] font-semibold tracking-tight text-foam">Taking a look…</h1>
 
       <ul className="mt-6 w-full max-w-[320px] space-y-2.5" aria-live="polite">
         {ANALYSIS_STAGES.map((label, index) => {

@@ -14,7 +14,7 @@ export function RecentIdentifications() {
 
   return (
     <section className="mt-10 px-6">
-      <SectionHeading eyebrow="Your history" title="Recently Identified" />
+      <SectionHeading eyebrow="Your history" title="Recently identified" />
 
       {recent.length === 0 ? (
         <div className="glass flex items-center gap-3 rounded-[22px] px-4 py-5">

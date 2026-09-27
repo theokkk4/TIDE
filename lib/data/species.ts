@@ -444,7 +444,7 @@ const MARINE_SPECIES: Species[] = [
     scientificName: "Xiphias gladius",
     marketName: "Swordfish",
     category: "fish",
-    emoji: "🗡️",
+    emoji: "🐟",
     iucnCode: "NT",
     statusContext:
       "Assessed as Near Threatened — just below the threatened categories globally. The North Atlantic stock is the bright spot: it was declared rebuilt in 2002 after quota cuts, a genuine fisheries success story.",
@@ -684,7 +684,7 @@ const MARINE_SPECIES: Species[] = [
     emoji: "🦀",
     iucnCode: "NE",
     statusContext:
-      "Not evaluated by the IUCN Red List. That is not a clean bill of health — it means no global assessment exists, so regional stock surveys are the real measure of how blue crab is doing.",
+      "Females carry an average of about 3 million eggs in each brood under the apron, which is why an egg-carrying 'sponge' crab always goes back.",
     seafoodClass: "COMMONLY_CONSUMED",
     seafoodSummary:
       "A well-known regional fishery with active management. Population swings are sharp, so local guidance changes year to year.",

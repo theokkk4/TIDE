@@ -9,10 +9,18 @@ import { onTick } from "@/lib/dive/ticker";
 export const easeOutExpo = (t: number) => (t >= 1 ? 1 : 1 - Math.pow(2, -10 * t));
 export const easeInOutExpo = (t: number) =>
   t <= 0 ? 0 : t >= 1 ? 1 : t < 0.5 ? Math.pow(2, 20 * t - 10) / 2 : (2 - Math.pow(2, -20 * t + 10)) / 2;
+export const easeInOutCubic = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+interface ScrollOptions {
+  offset?: number;
+  /** Seconds. Defaults to longer for longer jumps, so the depth readout visibly races. */
+  duration?: number;
+  easing?: (t: number) => number;
+}
 
 interface SmoothScroll {
-  /** Glides to an element or offset. Long jumps take longer, so the depth readout visibly races. */
-  scrollTo: (target: HTMLElement | number, options?: { offset?: number }) => void;
+  /** Glides to an element or offset. */
+  scrollTo: (target: HTMLElement | number, options?: ScrollOptions) => void;
 }
 
 function destinationOf(target: HTMLElement | number, offset = 0) {
@@ -58,8 +66,8 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
         }
         const distance = Math.abs(destination - window.scrollY);
         lenis.scrollTo(destination, {
-          duration: Math.min(3.2, 1.1 + distance / 5000),
-          easing: easeInOutExpo,
+          duration: options.duration ?? Math.min(3.2, 1.1 + distance / 5000),
+          easing: options.easing ?? easeInOutExpo,
         });
       },
     }),

@@ -1,19 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import { Images, X, RefreshCw, CameraOff } from "lucide-react";
 import { Button } from "@/components/ui/primitives";
+import { drawToDataUrl, fileToScaledDataUrl } from "@/lib/image";
 
 type CameraState = "starting" | "live" | "blocked" | "unavailable";
-
-/** Keeps uploads small enough to post quickly on venue wifi. */
-const MAX_EDGE = 1280;
-
-async function fileToScaledDataUrl(file: File): Promise<string> {
-  const bitmap = await createImageBitmap(file);
-  return drawToDataUrl(bitmap, bitmap.width, bitmap.height);
-}
 
 type CameraOutcome =
   | { ok: true; stream: MediaStream }
@@ -49,17 +43,6 @@ async function acquireCamera(): Promise<CameraOutcome> {
           notice: "No camera available on this device. Upload a photo instead.",
         };
   }
-}
-
-function drawToDataUrl(source: CanvasImageSource, width: number, height: number) {
-  const scale = Math.min(1, MAX_EDGE / Math.max(width, height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(width * scale);
-  canvas.height = Math.round(height * scale);
-  const context = canvas.getContext("2d");
-  if (!context) throw new Error("Canvas unavailable");
-  context.drawImage(source, 0, 0, canvas.width, canvas.height);
-  return canvas.toDataURL("image/jpeg", 0.82);
 }
 
 export function CameraView({
@@ -181,6 +164,12 @@ export function CameraView({
                     Try camera again
                   </Button>
                 )}
+                <Link
+                  href="/identify?sample=crab"
+                  className="pt-1 text-[13px] text-mist underline-offset-4 hover:text-foam hover:underline"
+                >
+                  No photo handy? Try ours — a blue crab from South Jersey
+                </Link>
               </div>
             )}
           </div>

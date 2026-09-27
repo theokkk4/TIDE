@@ -57,8 +57,8 @@ export function getSeafoodVerdict(species: Species, statusCode: IucnCode): Seafo
   if (severelyThreatened) {
     return {
       key: "SUSTAINABILITY_CONCERN",
-      headline: "Check Local Guidance",
-      indicator: "🟠",
+      headline: "Let It Go",
+      indicator: "🔴",
       tone: "alert",
       summary: species.seafoodSummary,
       showRecipes: false,
@@ -83,7 +83,7 @@ export function getSeafoodVerdict(species: Species, statusCode: IucnCode): Seafo
         ? undefined
         : "Global conservation status does not tell you whether this species is sustainable to catch in your region. Where it was caught, and how, decides that.",
       statusOverride: avoid
-        ? "Sustainable seafood programmes currently advise against this species, so TIDE shows alternatives instead of recipes."
+        ? "Sustainable seafood programs currently advise against this species, so TIDE shows alternatives instead of recipes."
         : undefined,
     };
   }
