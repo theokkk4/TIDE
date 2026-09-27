@@ -37,10 +37,9 @@ export const OLIVER: TeamStory = {
   photoAlt: "Oliver as a toddler, grinning on a riverbank",
   photoCaption: "Down by the river",
   paragraphs: [
-    "I've been fishing more times than I can count — usually with my family, sometimes with friends. A lot of my best memories are from those days on the water, and it's something I hold onto.",
-    "Spend enough time out there and you start to care about what's under the surface. That's why TIDE means something to me: it gives anyone a way to find out what they're looking at, and to know when it's a species that's in trouble.",
+    "Honestly I've lost count of how many times I've been fishing. Mostly with my family, sometimes with friends, and some of my favorite days ever happened out on the water.",
+    "The more time you spend out there, the more you wonder what's actually under the surface. TIDE lets anyone snap a pic and find out, and tells you when it's something that needs protecting.",
   ],
-  quote: "I don't want my grandkids to grow up without this beautiful marine life.",
   gallery: [
     {
       src: "/dive/team/oliver-net.jpg",

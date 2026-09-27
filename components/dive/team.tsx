@@ -206,28 +206,23 @@ export function TheodoreStory({
       <Person story={{ ...story, paragraphs: [] }} tilt={2.5} flip>
         <MaskText
           className="mt-6 max-w-3xl text-[clamp(30px,3.6vw,46px)] leading-[1.05] font-semibold tracking-tight text-foam"
-          segments={["I grew up on the water", { text: "in South Jersey.", className: "font-serif font-normal italic" }]}
+          segments={["Grew up on the water", { text: "in South Jersey.", className: "font-serif font-normal italic" }]}
         />
         <SoftReveal delay={0.1}>
           <div className="mt-6 max-w-xl space-y-5 text-[18px] leading-relaxed text-mist">
             <p>
-              I&apos;ve been fishing with my grandparents and my friends my whole life. I&apos;d go out for bass
-              sometimes, but mostly we crabbed — lines and pots off the marsh, from the first warm mornings until we
-              were pulling traps by moonlight.
+              I&apos;ve been fishing with my grandparents and my friends basically forever. Bass sometimes, but mostly
+              crabbing off the marsh, from the first warm days of summer until we were pulling traps by moonlight.
             </p>
             <p>
-              Every crabber knows the moment. You pull one up and hold it against the gauge.{" "}
-              <span className="text-foam">
-                Is it four and a half inches? Is that a sponge under her? Is this one even legal here?
-              </span>{" "}
-              Guess wrong and you&apos;ve either broken the law, or taken a crab that should have gone back to make more
-              crabs.
+              Every time you pull one up it&apos;s the same questions.{" "}
+              <span className="text-foam">Is it four and a half inches? Is that a sponge under her? Is it even legal here?</span>{" "}
+              Guess wrong and either you broke the law or you kept a crab that should&apos;ve gone back.
             </p>
             <p>
-              TIDE is the tool I wish I&apos;d had. My phone becomes the crab gauge, so I don&apos;t have to buy one. It
-              knows the rules for the water I&apos;m standing in. And when I&apos;m fishing salt water and hook something
-              endangered, it tells me to let it go — before it&apos;s too late.{" "}
-              <span className="text-foam">I care about this water.</span>
+              So we built the thing I always wanted. My phone is the crab gauge, it knows the rules wherever I&apos;m
+              standing, and if I hook something endangered it tells me to let it go.{" "}
+              <span className="text-foam">I really care about this water.</span>
             </p>
           </div>
         </SoftReveal>
