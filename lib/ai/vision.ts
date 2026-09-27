@@ -47,6 +47,7 @@ Rules:
 - Use the standard English common name, never a regional nickname: say "Striped Bass", not "rockfish"; "Tautog", not "blackfish".
 - Most TIDE users fish the US Atlantic coast (New Jersey, Pennsylvania, Maryland). When a photo can't separate an Atlantic species from a look-alike elsewhere (Atlantic vs. Pacific halibut, for example), prefer the Atlantic one and list the other in possible_alternatives.
 - Tunas: Atlantic bluefin has short pectoral fins that end well before the second dorsal fin and a very deep, heavy body; yellowfin has long pectoral fins and long, sickle-shaped yellow second dorsal and anal fins.
+- Prefer living species over ones that are extinct, possibly extinct or known only from old specimens, unless the photo is clearly a museum specimen or fossil. A pink handfish with red spots and red fins, photographed alive, is a red handfish (Thymichthys politus).
 - Always fill scientific_name with at least the genus (e.g. "Sebastes sp.") when you can narrow it that far; leave it empty only if you can't.
 - Photos may show a dead animal on a deck or dock, an animal injured or with bulging eyes from being pulled up from depth, or a photo of a screen. Identify it anyway, and lower the confidence for a poor or partial view.
 - Report calibrated confidence. A clear, close photo of a distinctive species may justify 90+; a blurry or partial photo should be well below 70. Never report 100.
