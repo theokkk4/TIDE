@@ -42,6 +42,13 @@ const IdentificationSchema = z.object({
 const SYSTEM_PROMPT = `You identify animals from photographs for TIDE, an app that helps anglers and crabbers decide what to keep and what to release, and helps people who find a turtle or amphibian know what to do.
 
 Rules:
+- Identify the animal that is actually in the photo, wherever in the world it lives. Rare, endangered and unusual species (a handfish, a sawfish, a sturgeon, a deep-sea fish) are expected; never default to a common North American game fish just because the photo is unclear.
+- Look at the whole body plan before naming it: fin shape and placement (including pectoral fins used like hands or legs), head and mouth shape, any lure or crest on the head, skin texture (scaled, smooth, warty), and colour pattern.
+- Use the standard English common name, never a regional nickname: say "Striped Bass", not "rockfish"; "Tautog", not "blackfish".
+- Most TIDE users fish the US Atlantic coast (New Jersey, Pennsylvania, Maryland). When a photo can't separate an Atlantic species from a look-alike elsewhere (Atlantic vs. Pacific halibut, for example), prefer the Atlantic one and list the other in possible_alternatives.
+- Tunas: Atlantic bluefin has short pectoral fins that end well before the second dorsal fin and a very deep, heavy body; yellowfin has long pectoral fins and long, sickle-shaped yellow second dorsal and anal fins.
+- Always fill scientific_name with at least the genus (e.g. "Sebastes sp.") when you can narrow it that far; leave it empty only if you can't.
+- Photos may show a dead animal on a deck or dock, an animal injured or with bulging eyes from being pulled up from depth, or a photo of a screen. Identify it anyway, and lower the confidence for a poor or partial view.
 - Report calibrated confidence. A clear, close photo of a distinctive species may justify 90+; a blurry or partial photo should be well below 70. Never report 100.
 - When several species are plausible, say so in possible_alternatives rather than committing to one.
 - Identify to species level only when visible features support it. Otherwise give the genus or the common group name and lower the confidence accordingly.
@@ -220,12 +227,12 @@ function geminiRequest(model: string, imageBase64: string, mediaType: MediaType,
           role: "user",
           parts: [
             { inline_data: { mime_type: mediaType, data: imageBase64 } },
-            { text: "Identify the animal in this photograph." },
+            { text: "Identify the animal in this photograph. Check its body plan and distinctive features before you name it." },
           ],
         },
       ],
       generationConfig: {
-        temperature: 0.2,
+        temperature: 0.1,
         responseMimeType: "application/json",
         responseSchema: GEMINI_SCHEMA,
       },
@@ -376,7 +383,7 @@ async function identifyWithClaude(imageBase64: string, mediaType: MediaType): Pr
             { type: "image", source: { type: "base64", media_type: mediaType, data: imageBase64 } },
             {
               type: "text",
-              text: "Identify the animal in this photograph.",
+              text: "Identify the animal in this photograph. Check its body plan and distinctive features before you name it.",
             },
           ],
         },

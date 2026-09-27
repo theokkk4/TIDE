@@ -51,8 +51,7 @@ export function IdentifyError({
   const Icon = kind === "no_credentials" ? KeyRound : kind === "provider_error" ? CloudOff : Fish;
   // A photo problem gets photo tips; a service problem doesn't.
   const photoProblem = kind === "unreadable";
-  // "not_supported" is about what's in the photo, so the server's short line adds nothing.
-  const body = kind === "not_supported" ? copy.fallback : (message ?? copy.fallback);
+  const body = message ?? copy.fallback;
 
   return (
     <div className="flex min-h-dvh flex-col justify-center px-6 py-12">

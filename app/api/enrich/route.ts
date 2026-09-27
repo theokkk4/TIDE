@@ -35,25 +35,36 @@ export async function GET(request: Request) {
   };
 
   if (!name) return NextResponse.json(fallback);
+  // "Sebastes sp." or "Sebastes cf. miniatus" → a name GBIF and Wikipedia both know.
+  const query = name.replace(/\s+(sp|spp|cf|aff)\.?(\s|$).*/i, "").trim() || name;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), GBIF_TIMEOUT_MS);
 
   try {
     const match = await fetchJson(
-      `https://api.gbif.org/v1/species/match?name=${encodeURIComponent(name)}`,
+      `https://api.gbif.org/v1/species/match?name=${encodeURIComponent(query)}`,
       controller.signal,
     );
 
     if (!match?.usageKey) return NextResponse.json(fallback);
 
-    const [iucn, occurrences] = await Promise.allSettled([
+    const [iucn, occurrences, wiki] = await Promise.allSettled([
       fetchJson(`https://api.gbif.org/v1/species/${match.usageKey}/iucnRedListCategory`, controller.signal),
       fetchJson(
         `https://api.gbif.org/v1/occurrence/search?taxonKey=${match.usageKey}&limit=0`,
         controller.signal,
       ),
+      // Species outside the field guide get a short summary to read, looked up by scientific name.
+      slug
+        ? Promise.resolve(null)
+        : fetchJson(
+            `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent((match.canonicalName ?? query).replace(/ /g, "_"))}`,
+            controller.signal,
+          ),
     ]);
+    const page = wiki.status === "fulfilled" ? (wiki.value as { type?: string; extract?: string; content_urls?: { desktop?: { page?: string } } } | null) : null;
+    const summary = page && page.type !== "disambiguation" && page.extract ? page.extract : null;
 
     const enrichment: GbifEnrichment = {
       gbifKey: match.usageKey,
@@ -73,6 +84,8 @@ export async function GET(request: Request) {
       iucnCode:
         iucn.status === "fulfilled" && iucn.value?.code ? (iucn.value.code as IucnCode) : fallback.iucnCode,
       live: true,
+      summary,
+      summaryUrl: summary ? (page?.content_urls?.desktop?.page ?? null) : null,
     };
 
     return NextResponse.json(enrichment);
