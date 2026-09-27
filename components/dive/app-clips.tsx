@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { Pause, Play } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { QUINT_OUT } from "./reveal";
 
 const CLIPS = [
@@ -117,6 +118,160 @@ export function AppClips() {
       {CLIPS.map((clip, index) => (
         <Clip key={clip.id} clip={clip} index={index} />
       ))}
+    </div>
+  );
+}
+
+/**
+ * The reel on the last slide, in order; after the last clip it starts over. To add a clip,
+ * put <id>.mp4, <id>.webm and a <id>.jpg poster in public/dive/app and list the id here.
+ */
+const QUEUE = ["questions", "blue-crab", "striped-bass", "box-turtle"];
+
+/**
+ * Plays QUEUE back to back, forever, for the Q&A. Two video elements take turns: while one
+ * plays, the other quietly loads the next clip, so each cut is instant — and there are never
+ * more than two decoders alive. Like the clips above, it only plays while it's on screen.
+ */
+export function ClipQueue({ className }: { className?: string }) {
+  const boxRef = useRef<HTMLDivElement>(null);
+  const firstRef = useRef<HTMLVideoElement>(null);
+  const secondRef = useRef<HTMLVideoElement>(null);
+  const control = useRef({ toggle: () => {} });
+  const reduced = useReducedMotion();
+  const [playing, setPlaying] = useState(false);
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    const box = boxRef.current;
+    const players = [firstRef.current, secondRef.current];
+    if (!box || !players[0] || !players[1]) return;
+    const [a, b] = players as [HTMLVideoElement, HTMLVideoElement];
+    const probe = document.createElement("video");
+    const type = probe.canPlayType('video/mp4; codecs="avc1.640028"') ? "mp4" : "webm";
+    const source = (index: number) => `/dive/app/${QUEUE[index % QUEUE.length]}.${type}`;
+
+    let index = 0;
+    let front = a;
+    let back = b;
+    let inView = false;
+    let userPaused = !!reduced;
+
+    for (const player of [a, b]) player.muted = true;
+    a.src = source(0);
+    b.src = source(1);
+    b.preload = "auto";
+
+    const show = () => {
+      front.style.opacity = "1";
+      back.style.opacity = "0";
+    };
+    const play = () => {
+      if (inView && !userPaused) void front.play().catch(() => undefined);
+    };
+    const onEnded = (event: Event) => {
+      if (event.target !== front) return;
+      index = (index + 1) % QUEUE.length;
+      [front, back] = [back, front];
+      front.currentTime = 0;
+      show();
+      play();
+      setCurrent(index);
+      // The one that just finished loads the clip after this one.
+      back.src = source(index + 1);
+      back.load();
+    };
+    const onPlay = (event: Event) => event.target === front && setPlaying(true);
+    const onPause = (event: Event) => event.target === front && setPlaying(false);
+    for (const player of [a, b]) {
+      player.addEventListener("ended", onEnded);
+      player.addEventListener("play", onPlay);
+      player.addEventListener("pause", onPause);
+    }
+    show();
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        if (inView) play();
+        else front.pause();
+      },
+      { threshold: 0.4 },
+    );
+    observer.observe(box);
+
+    control.current.toggle = () => {
+      if (front.paused) {
+        userPaused = false;
+        inView = true;
+        play();
+      } else {
+        userPaused = true;
+        front.pause();
+      }
+    };
+
+    return () => {
+      observer.disconnect();
+      for (const player of [a, b]) {
+        player.removeEventListener("ended", onEnded);
+        player.removeEventListener("play", onPlay);
+        player.removeEventListener("pause", onPause);
+        player.pause();
+        player.removeAttribute("src");
+        player.load();
+      }
+    };
+  }, [reduced]);
+
+  return (
+    <div className={className}>
+      <div
+        ref={boxRef}
+        className="relative mx-auto aspect-[3/5] w-full overflow-hidden rounded-[34px] border border-foam/15 bg-abyss p-2 shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9),0_0_70px_-20px_rgba(46,230,197,0.35)]"
+      >
+        <div className="relative h-full w-full overflow-hidden rounded-[26px]">
+          <video
+            ref={firstRef}
+            poster={`/dive/app/${QUEUE[0]}.jpg`}
+            muted
+            playsInline
+            preload="metadata"
+            aria-label="Screen recordings of TIDE identifying animals, playing one after another"
+            className="absolute inset-0 h-full w-full object-cover transition-opacity duration-300"
+          />
+          {/* The one waiting in the wings, loading the next clip. */}
+          <video
+            ref={secondRef}
+            muted
+            playsInline
+            preload="none"
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-300"
+          />
+        </div>
+        <button
+          type="button"
+          onClick={() => control.current.toggle()}
+          aria-label={playing ? "Pause the recordings" : "Play the recordings"}
+          className="absolute right-4 bottom-4 flex h-9 w-9 items-center justify-center rounded-full bg-abyss/70 text-foam backdrop-blur-sm transition hover:bg-abyss/90 hover:text-turquoise"
+        >
+          {playing ? (
+            <Pause className="h-3.5 w-3.5" fill="currentColor" aria-hidden />
+          ) : (
+            <Play className="h-3.5 w-3.5 translate-x-px" fill="currentColor" aria-hidden />
+          )}
+        </button>
+      </div>
+      {/* Which recording is on, as a row of dots. */}
+      <div aria-hidden className="mt-4 flex justify-center gap-1.5">
+        {QUEUE.map((id, index) => (
+          <span
+            key={id}
+            className={cn("h-1.5 rounded-full transition-all duration-300", index === current ? "w-5 bg-turquoise" : "w-1.5 bg-foam/25")}
+          />
+        ))}
+      </div>
     </div>
   );
 }

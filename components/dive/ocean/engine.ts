@@ -76,7 +76,8 @@ export function startOcean(
     frame.width = window.innerWidth;
     frame.height = window.innerHeight;
     frame.small = frame.width < 768;
-    frame.dpr = Math.min(window.devicePixelRatio || 1, frame.small ? 1.5 : 2);
+    // 1.5x is sharp enough for soft, moving shapes and holds ~45% less canvas memory than 2x.
+    frame.dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     for (const canvas of [back, front]) {
       canvas.width = Math.round(frame.width * frame.dpr);
       canvas.height = Math.round(frame.height * frame.dpr);

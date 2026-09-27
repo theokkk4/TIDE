@@ -10,6 +10,7 @@ import {
   useTransform,
   type MotionValue,
 } from "framer-motion";
+import { FRAME } from "@/lib/dive/presentation";
 import { cn } from "@/lib/utils";
 import { DrawLine } from "./reveal";
 import { useSmoothScroll } from "./smooth-scroll";
@@ -149,7 +150,7 @@ function ParticleField({ depth }: { depth: MotionValue<number> }) {
     let width = 0;
     let height = 0;
     const resize = () => {
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = width * ratio;
@@ -355,16 +356,40 @@ export function ChapterLabel({ number, title, depth }: { number: string; title: 
   );
 }
 
+
 /**
- * A chapter of the dive — and a stop in the presentation. `depth` is where in the water
- * column it sits. On wide screens each chapter is at least a screen tall with its content
- * centred, so arrow-key navigation lands on one clean "slide" at a time.
+ * One slide of the presentation. `sub` makes it its own stop inside a chapter (one person,
+ * one gallery); without it the frame is the chapter's opening slide.
+ */
+export function Frame({
+  sub = false,
+  className,
+  children,
+}: {
+  sub?: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div data-slide={sub ? "sub" : undefined} className={cn(FRAME, className)}>
+      <div data-fit className="w-full">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+/**
+ * A chapter of the dive, and a stop in the presentation. `depth` is where in the water
+ * column it sits. A chapter is one slide, unless it's `split` into Frames: then its first
+ * Frame is the opening slide and each `sub` Frame is a slide of its own.
  */
 export function Chapter({
   id,
   depth,
   number,
   title,
+  split = false,
   children,
   className,
 }: {
@@ -372,21 +397,33 @@ export function Chapter({
   depth: number;
   number?: string;
   title?: string;
+  split?: boolean;
   children: ReactNode;
   className?: string;
 }) {
+  if (split) {
+    return (
+      <section
+        id={id}
+        data-depth={depth}
+        data-slide=""
+        className={cn("relative z-10 mx-auto w-full max-w-6xl px-5 md:px-10", className)}
+      >
+        {children}
+      </section>
+    );
+  }
   return (
     <section
       id={id}
       data-depth={depth}
       data-slide=""
-      className={cn(
-        "relative z-10 mx-auto w-full max-w-6xl px-5 py-24 md:flex md:min-h-dvh md:flex-col md:justify-center md:px-10 md:py-28",
-        className,
-      )}
+      className={cn("relative z-10 mx-auto w-full max-w-6xl px-5 md:px-10", FRAME, className)}
     >
-      {number && title && <ChapterLabel number={number} title={title} depth={depth} />}
-      {children}
+      <div data-fit className="w-full">
+        {number && title && <ChapterLabel number={number} title={title} depth={depth} />}
+        {children}
+      </div>
     </section>
   );
 }
