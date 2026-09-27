@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { identifyMarineAnimal, hasVisionCredentials } from "@/lib/ai/vision";
+import { identifyMarineAnimal, hasVisionCredentials, visionProvider } from "@/lib/ai/vision";
 import { matchSpecies } from "@/lib/matching";
 import { resolveStatusCode } from "@/lib/conservation";
 import type { IdentifyResponse } from "@/lib/types";
@@ -20,6 +20,19 @@ function parseDataUrl(dataUrl: string) {
   const [, mediaType, data] = match;
   if (!SUPPORTED.includes(mediaType as SupportedType)) return null;
   return { mediaType: mediaType as SupportedType, data };
+}
+
+/**
+ * Open /api/identify in a browser to check a deployment: it says whether live identification
+ * is switched on and which provider answers. It never reveals the key.
+ */
+export function GET() {
+  const provider = visionProvider();
+  return NextResponse.json({
+    live: provider !== null,
+    provider,
+    ...(provider ? {} : { fix: "Add GEMINI_API_KEY to this deployment's environment variables, then redeploy." }),
+  });
 }
 
 export async function POST(request: Request) {

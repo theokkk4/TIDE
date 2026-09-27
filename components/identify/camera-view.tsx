@@ -60,6 +60,7 @@ export function CameraView({
   // Upload mode skips the camera entirely, so start in the state it will end up in.
   const [state, setState] = useState<CameraState>(autoOpenPicker ? "unavailable" : "starting");
   const [notice, setNotice] = useState<string | null>(null);
+  const [dragging, setDragging] = useState(false);
 
   const stopStream = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -108,22 +109,63 @@ export function CameraView({
     onCapture(dataUrl);
   };
 
+  const takeImage = useCallback(
+    async (file: Blob) => {
+      try {
+        const dataUrl = await fileToScaledDataUrl(file);
+        stopStream();
+        onCapture(dataUrl);
+      } catch {
+        setNotice("We couldn't read that image. Try a different photo.");
+      }
+    },
+    [onCapture, stopStream],
+  );
+
   const handleFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) return;
-    try {
-      const dataUrl = await fileToScaledDataUrl(file);
-      stopStream();
-      onCapture(dataUrl);
-    } catch {
-      setNotice("We couldn't read that image. Try a different photo.");
-    } finally {
-      event.target.value = "";
-    }
+    event.target.value = "";
+    if (file) await takeImage(file);
+  };
+
+  // Found one online? Copy the image and paste it anywhere on this screen.
+  useEffect(() => {
+    const onPaste = (event: ClipboardEvent) => {
+      const file = Array.from(event.clipboardData?.files ?? []).find((item) => item.type.startsWith("image/"));
+      if (!file) return;
+      event.preventDefault();
+      void takeImage(file);
+    };
+    window.addEventListener("paste", onPaste);
+    return () => window.removeEventListener("paste", onPaste);
+  }, [takeImage]);
+
+  // …or drag it straight in from another tab or a folder.
+  const onDragOver = (event: React.DragEvent) => {
+    if (!Array.from(event.dataTransfer.types).includes("Files")) return;
+    event.preventDefault();
+    setDragging(true);
+  };
+  const onDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+    setDragging(false);
+    const file = Array.from(event.dataTransfer.files).find((item) => item.type.startsWith("image/"));
+    if (file) void takeImage(file);
+    else setNotice("That wasn't an image. Try saving it first, then upload it.");
   };
 
   return (
-    <div className="relative flex min-h-dvh flex-col bg-abyss">
+    <div
+      className="relative flex min-h-dvh flex-col bg-abyss"
+      onDragOver={onDragOver}
+      onDragLeave={() => setDragging(false)}
+      onDrop={onDrop}
+    >
+      {dragging && (
+        <div className="pointer-events-none absolute inset-3 z-30 flex items-center justify-center rounded-[32px] border-2 border-dashed border-turquoise/70 bg-abyss/80 text-[16px] font-medium text-foam">
+          Drop the photo to identify it
+        </div>
+      )}
       <div className="relative flex-1 overflow-hidden">
         <video
           ref={videoRef}
@@ -164,6 +206,9 @@ export function CameraView({
                     Try camera again
                   </Button>
                 )}
+                <p className="hidden text-[12px] text-mist/70 md:block">
+                  Found one online? Copy the image and paste it here (⌘V / Ctrl+V), or drag it in.
+                </p>
                 <Link
                   href="/identify?sample=crab"
                   className="pt-1 text-[13px] text-mist underline-offset-4 hover:text-foam hover:underline"
@@ -213,6 +258,7 @@ export function CameraView({
             className="absolute inset-x-0 bottom-6 mx-auto w-fit rounded-full bg-abyss/60 px-4 py-2 text-[13px] text-foam/90 backdrop-blur-md"
           >
             Point your camera at a marine animal
+            <span className="hidden md:inline"> — or paste or drop a photo</span>
           </motion.p>
         )}
       </div>
@@ -248,7 +294,6 @@ export function CameraView({
         ref={fileInputRef}
         type="file"
         accept="image/*"
-        capture="environment"
         onChange={handleFile}
         className="sr-only"
         aria-label="Upload a photo of a marine animal"
