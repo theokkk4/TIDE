@@ -18,28 +18,59 @@ function teamPhoto(id: string) {
   return null;
 }
 
-/** A baby photo in a slightly tilted print, or — until it's added — a quiet frame with their initial. */
-function TeamPhoto({ story, tilt }: { story: Pick<TeamStory, "id" | "name" | "photoAlt" | "photoCaption">; tilt: number }) {
+/** Their photo, or — until it's added — a quiet frame with their initial. */
+function Portrait({ story, sizes, initialClassName }: { story: Pick<TeamStory, "id" | "name" | "photoAlt">; sizes: string; initialClassName: string }) {
   const src = teamPhoto(story.id);
+  return src ? (
+    <Image src={src} alt={story.photoAlt} fill sizes={sizes} className="object-cover" />
+  ) : (
+    <div aria-hidden className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_30%_20%,rgba(95,227,239,0.25),transparent_60%),linear-gradient(180deg,#0a3a5c,#04101f)]">
+      <span className={cn("font-serif leading-none text-foam/80 italic", initialClassName)}>{story.name[0]}</span>
+    </div>
+  );
+}
+
+/** A baby photo in a slightly tilted print, beside their name on their own slide. */
+function TeamPhoto({ story, tilt }: { story: Pick<TeamStory, "id" | "name" | "photoAlt" | "photoCaption">; tilt: number }) {
   return (
     <PlaneReveal>
       <figure className="mx-auto w-full max-w-[260px]" style={{ rotate: `${tilt}deg` }}>
         <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] border border-foam/15 bg-[linear-gradient(160deg,#0d5570,#072044_70%)] p-2.5 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.9)]">
           <div className="relative h-full w-full overflow-hidden rounded-[14px]">
-            {src ? (
-              <Image src={src} alt={story.photoAlt} fill sizes="260px" className="object-cover" />
-            ) : (
-              <div aria-hidden className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_30%_20%,rgba(95,227,239,0.25),transparent_60%),linear-gradient(180deg,#0a3a5c,#04101f)]">
-                <span className="font-serif text-[96px] leading-none text-foam/80 italic">{story.name[0]}</span>
-              </div>
-            )}
+            <Portrait story={story} sizes="260px" initialClassName="text-[96px]" />
           </div>
         </div>
-        {src && story.photoCaption && (
+        {teamPhoto(story.id) && story.photoCaption && (
           <figcaption className="mt-3 text-center font-mono text-[11px] text-mist/70">{story.photoCaption}</figcaption>
         )}
       </figure>
     </PlaneReveal>
+  );
+}
+
+const LINEUP_TILT = [-3, 2, -1.5];
+
+/** The chapter's opening slide: the three of us as kids, each name under its photo. */
+export function TeamLineup({ people }: { people: Pick<TeamStory, "id" | "name" | "photoAlt">[] }) {
+  return (
+    <ul className="mt-12 flex flex-wrap gap-6 md:gap-10">
+      {people.map((person, index) => (
+        <li key={person.id}>
+          <PlaneReveal index={index}>
+            <figure className="w-[132px] md:w-[168px]" style={{ rotate: `${LINEUP_TILT[index % LINEUP_TILT.length]}deg` }}>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-[18px] border border-foam/15 bg-[linear-gradient(160deg,#0d5570,#072044_70%)] p-2 shadow-[0_24px_60px_-24px_rgba(0,0,0,0.9)]">
+                <div className="relative h-full w-full overflow-hidden rounded-[11px]">
+                  <Portrait story={person} sizes="168px" initialClassName="text-[56px]" />
+                </div>
+              </div>
+              <figcaption className="mt-3 text-center font-mono text-[12px] tracking-[0.16em] text-turquoise/80 uppercase">
+                {person.name}
+              </figcaption>
+            </figure>
+          </PlaneReveal>
+        </li>
+      ))}
+    </ul>
   );
 }
 

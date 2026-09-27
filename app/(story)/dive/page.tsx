@@ -39,7 +39,7 @@ import { SmoothScrollProvider } from "@/components/dive/smooth-scroll";
 import { SpeciesRiver } from "@/components/dive/species-river";
 import { PresentationKeys } from "@/components/dive/presentation-keys";
 import { SlideFit } from "@/components/dive/slide-fit";
-import { StoryPerson, TheodoreStory } from "@/components/dive/team";
+import { StoryPerson, TeamLineup, TheodoreStory } from "@/components/dive/team";
 import { Pipeline } from "@/components/dive/pipeline";
 import { AppClips, ClipQueue } from "@/components/dive/app-clips";
 import { IdentifyCrabButton, LiveDemoProvider, LivePhone } from "@/components/dive/live-demo";
@@ -104,8 +104,6 @@ const LIVE_STEPS = [
   "TIDE matches it to its field guide and checks the name against GBIF and the IUCN Red List.",
   "Pick your state. TIDE applies the size, egg and season rules and makes the call — with a recipe only if it's a keeper.",
 ];
-
-const TEAM_ORDER = [OLIVER.name, THEODORE.name, ISSAKA.name];
 
 const story = (file: string) => existsSync(path.join(process.cwd(), "public", "dive", "story", file));
 
@@ -273,10 +271,8 @@ export default function DivePage() {
                 <p className="mt-6 max-w-xl text-[19px] leading-relaxed text-mist">
                   The ocean was part of our lives long before this hackathon.
                 </p>
-                <p className="mt-10 font-mono text-[13px] tracking-[0.16em] text-turquoise/80 uppercase">
-                  {TEAM_ORDER.join(" · ")}
-                </p>
               </SoftReveal>
+              <TeamLineup people={[OLIVER, THEODORE, ISSAKA]} />
             </Frame>
             <StoryPerson story={OLIVER} tilt={-2.5} />
             <TheodoreStory story={THEODORE} fieldPhotos={fieldPhotos} />

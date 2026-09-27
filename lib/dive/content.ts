@@ -60,7 +60,8 @@ export const THEODORE: Pick<TeamStory, "id" | "name" | "tagline" | "photoAlt" | 
   id: "theodore",
   name: "Theodore",
   tagline: "Crabbing in South Jersey",
-  photoAlt: "Theodore as a kid",
+  photoAlt: "Theodore as a toddler in a red snowsuit and blue hat, standing in deep snow",
+  photoCaption: "Snow day",
 };
 
 export const ISSAKA: TeamStory = {
