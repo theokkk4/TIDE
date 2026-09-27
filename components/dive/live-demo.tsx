@@ -6,7 +6,7 @@ import { ArrowUpRight, Home, ScanSearch } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PhoneFrame } from "./interactives";
 
-const HOME = "/";
+const HOME = "/home";
 const CRAB = "/identify?sample=crab";
 
 interface LiveDemo {

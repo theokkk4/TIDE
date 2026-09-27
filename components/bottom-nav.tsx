@@ -7,7 +7,7 @@ import { Camera, Compass, Home, Bookmark, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const TABS = [
-  { href: "/", label: "Home", icon: Home },
+  { href: "/home", label: "Home", icon: Home },
   { href: "/discover", label: "Discover", icon: Compass },
   { href: "/saved", label: "Saved", icon: Bookmark },
   { href: "/demo", label: "Demo", icon: Sparkles },
@@ -19,7 +19,7 @@ export function BottomNav() {
   // The camera experience is full-screen; a tab bar over it would fight the capture UI.
   if (pathname === "/identify") return null;
 
-  const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  const isActive = (href: string) => (href === "/home" ? pathname === "/home" : pathname.startsWith(href));
 
   return (
     <nav

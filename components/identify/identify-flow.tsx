@@ -186,7 +186,7 @@ export function IdentifyFlow({
     <CameraView
       autoOpenPicker={autoOpenPicker}
       onCapture={runIdentification}
-      onClose={() => router.push("/")}
+      onClose={() => router.push("/home")}
     />
   );
 }

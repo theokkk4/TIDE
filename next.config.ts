@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // The story is the front door; the app itself lives at /home.
+  async redirects() {
+    return [{ source: "/", destination: "/dive", permanent: false }];
+  },
 };
 
 export default nextConfig;

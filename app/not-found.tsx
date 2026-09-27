@@ -8,7 +8,7 @@ export default function NotFound() {
       <p className="mt-4 max-w-sm text-[16px] leading-relaxed text-mist">That page doesn&apos;t exist. Head back up.</p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Link
-          href="/"
+          href="/home"
           className="rounded-full bg-[linear-gradient(145deg,#5fe3ef,#2ee6c5)] px-6 py-3 text-[15px] font-semibold text-abyss"
         >
           Open TIDE

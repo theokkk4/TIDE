@@ -299,7 +299,7 @@ export function DepthHud({ chapters }: { chapters: ChapterMarker[] }) {
             </span>
           </p>
           <Link
-            href="/"
+            href="/home"
             target="_blank"
             className="hidden rounded-full border border-foam/20 px-4 py-2 text-[13px] font-medium text-foam transition-colors hover:border-turquoise/60 hover:text-turquoise sm:inline-flex"
           >

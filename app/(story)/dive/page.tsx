@@ -358,7 +358,7 @@ export default function DivePage() {
                   </SoftReveal>
                   <SoftReveal delay={0.2}>
                     <Link
-                      href="/"
+                      href="/home"
                       target="_blank"
                       className="mt-10 inline-flex items-center gap-2 rounded-full bg-[linear-gradient(145deg,#5fe3ef,#2ee6c5)] px-6 py-3.5 text-[16px] font-semibold text-abyss shadow-[0_10px_30px_-10px_rgba(46,230,197,0.8)] transition hover:brightness-105"
                     >
@@ -606,7 +606,7 @@ export default function DivePage() {
                   <SoftReveal delay={0.3}>
                     <div className="mt-10 flex flex-wrap gap-3">
                       <Link
-                        href="/"
+                        href="/home"
                         className="rounded-full bg-[linear-gradient(145deg,#5fe3ef,#2ee6c5)] px-7 py-4 text-[16px] font-semibold text-abyss shadow-[0_10px_30px_-10px_rgba(46,230,197,0.8)] transition hover:brightness-105"
                       >
                         Open TIDE
