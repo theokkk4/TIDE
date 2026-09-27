@@ -168,11 +168,27 @@ const FIELD_GUIDE = Object.entries(IdentificationSchema.shape)
  * list keeps working when a model is retired; the preview is there for when both are
  * overloaded. GEMINI_MODEL, when set, is tried before any of them.
  */
-const GEMINI_MODELS = ["gemini-flash-latest", "gemini-flash-lite-latest", "gemini-3-flash-preview"];
+const GEMINI_MODELS = [
+  "gemini-flash-latest",
+  "gemini-3.8-flash",
+  "gemini-3.1-flash-lite",
+  "gemini-3.7-flash",
+  "gemini-3.5-flash",
+  "gemini-3-flash-preview",
+  "gemini-flash-lite-latest",
+  "gemini-3.5-flash-lite",
+];
 
 /** Everything, fallbacks included, has to finish inside the route's time limit. */
-const DEADLINE_MS = 30_000;
-const ATTEMPT_MS = 14_000;
+const DEADLINE_MS = 40_000;
+const ATTEMPT_MS = 15_000;
+/**
+ * Google's models go through spells of "high demand". Rather than wait out a slow one, the
+ * next model starts alongside it after this long (or at once, if one fails), and the first
+ * good answer wins.
+ */
+const HEDGE_MS = 4_000;
+const MAX_IN_FLIGHT = 3;
 /** A model that answered 429 or 5xx is skipped for a minute, so the next photo isn't slowed by it. */
 const COOLDOWN_MS = 60_000;
 
@@ -254,9 +270,18 @@ const failure = (failure: VisionFailure, message: string): VisionResult => ({
   message,
 });
 
-async function attemptGemini(model: string, imageBase64: string, mediaType: MediaType, timeoutMs: number): Promise<Attempt> {
+async function attemptGemini(
+  model: string,
+  imageBase64: string,
+  mediaType: MediaType,
+  timeoutMs: number,
+  cancel: AbortSignal,
+): Promise<Attempt> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
+  // Another model already answered: stop waiting on this one.
+  const onCancel = () => controller.abort();
+  cancel.addEventListener("abort", onCancel);
   try {
     const response = await geminiRequest(model, imageBase64, mediaType, controller.signal);
 
@@ -284,7 +309,8 @@ async function attemptGemini(model: string, imageBase64: string, mediaType: Medi
       if (response.status === 401 || response.status === 403) {
         return { outcome: "final", detail, result: failure("no_credentials", "This Gemini API key can't use the Gemini API.") };
       }
-      return { outcome: "final", detail, result: failure("unreadable", "We couldn't analyze this image.") };
+      // Anything else is this model's problem (an unsupported option, say), so try the next one.
+      return { outcome: "retry", reason: "failed", detail };
     }
 
     const data = (await response.json()) as {
@@ -312,47 +338,81 @@ async function attemptGemini(model: string, imageBase64: string, mediaType: Medi
     return { outcome: "retry", reason: "failed", detail: "network error" };
   } finally {
     clearTimeout(timer);
+    cancel.removeEventListener("abort", onCancel);
   }
 }
 
 async function identifyWithGemini(imageBase64: string, mediaType: MediaType): Promise<VisionResult> {
   const started = Date.now();
-  let models = modelOrder();
+  const queue = modelOrder();
+  const cancel = new AbortController();
   let discovered = false;
+  let inFlight = 0;
   let last: Extract<Attempt, { outcome: "retry" }> | null = null;
 
-  for (let index = 0; index < models.length; index++) {
-    const model = models[index];
-    const remaining = DEADLINE_MS - (Date.now() - started);
-    if (remaining < 2_000) break;
+  return new Promise<VisionResult>((resolve) => {
+    let settled = false;
+    let hedge: ReturnType<typeof setTimeout> | undefined;
 
-    const attempt = await attemptGemini(model, imageBase64, mediaType, Math.min(ATTEMPT_MS, remaining));
-    if (attempt.outcome === "ok") {
-      coolingUntil.delete(model);
-      return attempt.result;
-    }
-    if (attempt.outcome === "final") {
-      console.warn(`[identify] ${model}: ${attempt.detail}`);
-      return attempt.result;
-    }
+    const finish = (result: VisionResult) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(hedge);
+      clearTimeout(deadline);
+      cancel.abort();
+      resolve(result);
+    };
+    const giveUp = () => {
+      if (last?.reason === "timeout") return finish(failure("provider_error", "Identification timed out. Try again."));
+      if (last?.reason === "gone") return finish(failure("provider_error", "None of Gemini's Flash models are available to this key."));
+      if (last?.reason === "failed") return finish(failure("unreadable", "We couldn't analyze this image."));
+      finish(failure("provider_error", "Gemini is busy right now. Try again in a moment."));
+    };
+    const deadline = setTimeout(giveUp, DEADLINE_MS);
 
-    last = attempt;
-    if (attempt.reason === "gone") unavailable.add(model);
-    if (attempt.reason === "busy" || attempt.reason === "timeout") coolingUntil.set(model, Date.now() + COOLDOWN_MS);
+    const launch = async (): Promise<void> => {
+      if (settled) return;
+      clearTimeout(hedge);
+      let model = queue.shift();
+      // Every model we know about has been retired: ask Google for a current one.
+      if (!model && !discovered) {
+        discovered = true;
+        model = (await discoverGeminiModel(geminiApiKey() ?? "")) ?? undefined;
+      }
+      const remaining = DEADLINE_MS - (Date.now() - started);
+      if (!model || remaining < 2_000) {
+        if (inFlight === 0) giveUp();
+        return;
+      }
 
-    // Every model we know about has been retired: ask Google for a current one.
-    if (index === models.length - 1 && !discovered && models.every((m) => unavailable.has(m))) {
-      discovered = true;
-      const found = await discoverGeminiModel(geminiApiKey() ?? "");
-      if (found) models = [...models, found];
-    }
-    const next = models[index + 1];
-    console.warn(`[identify] ${model}: ${attempt.detail}${next ? ` — trying ${next}` : ""}`);
-  }
+      inFlight++;
+      // If nobody has answered in a few seconds, start the next model alongside this one.
+      hedge = setTimeout(() => {
+        if (inFlight < MAX_IN_FLIGHT) void launch();
+      }, HEDGE_MS);
 
-  if (last?.reason === "timeout") return failure("provider_error", "Identification timed out. Try again.");
-  if (last?.reason === "gone") return failure("provider_error", "None of Gemini's Flash models are available to this key.");
-  return failure("provider_error", "Gemini is busy right now. Try again in a moment.");
+      const attempt = await attemptGemini(model, imageBase64, mediaType, Math.min(ATTEMPT_MS, remaining), cancel.signal);
+      inFlight--;
+      if (settled) return;
+
+      if (attempt.outcome === "ok") {
+        coolingUntil.delete(model);
+        return finish(attempt.result);
+      }
+      if (attempt.outcome === "final") {
+        console.warn(`[identify] ${model}: ${attempt.detail}`);
+        return finish(attempt.result);
+      }
+      last = attempt;
+      if (attempt.reason === "gone") unavailable.add(model);
+      if (attempt.reason === "busy" || attempt.reason === "timeout") coolingUntil.set(model, Date.now() + COOLDOWN_MS);
+      console.warn(`[identify] ${model}: ${attempt.detail} — trying the next model`);
+      // A failure starts the next model straight away.
+      void launch();
+    };
+
+    void launch();
+  });
 }
 
 /* ─────────────  Claude (fallback)  ───────────── */

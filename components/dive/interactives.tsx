@@ -84,10 +84,10 @@ export function VerdictExplorer({ species }: { species: SpeciesCardData[] }) {
   }, [species]);
 
   return (
-    <div id="verdict-explorer" className="grid scroll-mt-32 gap-6 lg:grid-cols-[1.1fr_1fr]">
-      {/* min-w-0 lets the scrollable filter row shrink instead of widening the page. */}
-      <div className="min-w-0">
-        <div className="no-scrollbar -mx-1 mb-4 flex gap-2 overflow-x-auto px-1 pb-1" role="tablist" aria-label="Filter by group">
+    // On a slide both columns share one fixed height, so the list panel and the card line up.
+    <div id="verdict-explorer" className="grid scroll-mt-32 gap-6 lg:h-[520px] lg:grid-cols-[1.1fr_1fr]">
+      <div className="flex min-h-0 min-w-0 flex-col">
+        <div className="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Filter by group">
           {categories.map((name) => (
             <button
               key={name}
@@ -96,7 +96,7 @@ export function VerdictExplorer({ species }: { species: SpeciesCardData[] }) {
               aria-selected={category === name}
               onClick={() => setCategory(name)}
               className={cn(
-                "shrink-0 rounded-full border px-3.5 py-1.5 text-[13px] capitalize transition-colors",
+                "rounded-full border px-3 py-1 text-[12.5px] capitalize transition-colors",
                 category === name
                   ? "border-turquoise/60 bg-turquoise/10 text-turquoise"
                   : "border-foam/15 text-mist hover:text-foam",
@@ -107,33 +107,39 @@ export function VerdictExplorer({ species }: { species: SpeciesCardData[] }) {
           ))}
         </div>
 
-        {/* On a slide the list scrolls inside itself, so the whole explorer fits on one screen. */}
-        <ul data-lenis-prevent className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:max-h-[440px] lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
-          {visible.map((s) => {
-            const status = statusFromCode(s.status);
-            return (
-              <li key={s.slug}>
-                <button
-                  type="button"
-                  onClick={() => setSelected(s.slug)}
-                  aria-pressed={s.slug === current.slug}
-                  className={cn(
-                    "flex w-full items-center gap-2.5 rounded-2xl border px-3 py-2.5 text-left transition-colors",
-                    s.slug === current.slug
-                      ? "border-turquoise/60 bg-turquoise/10"
-                      : "border-foam/10 bg-foam/[0.04] hover:border-foam/25",
-                  )}
-                >
-                  <span className={cn("h-2 w-2 shrink-0 rounded-full", TONE_CLASSES[status.tone].dot)} aria-hidden />
-                  <span className="min-w-0">
-                    <span className="block truncate text-[13px] font-medium text-foam">{s.name}</span>
-                    <span className="block truncate text-[11px] text-mist/70">{status.label}</span>
-                  </span>
-                </button>
-              </li>
-            );
-          })}
-        </ul>
+        {/* The index scrolls inside its panel; the edges fade instead of cutting a row in half. */}
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[28px] border border-foam/10 bg-foam/[0.03]">
+          <ul
+            data-lenis-prevent
+            className="grid grid-cols-1 content-start gap-1.5 p-3 sm:grid-cols-2 lg:min-h-0 lg:flex-1 lg:snap-y lg:overflow-y-auto lg:overscroll-contain lg:[mask-image:linear-gradient(180deg,transparent,#000_12px,#000_calc(100%-28px),transparent)] lg:[scrollbar-width:thin]"
+          >
+            {visible.map((s) => {
+              const status = statusFromCode(s.status);
+              const active = s.slug === current.slug;
+              return (
+                <li key={s.slug} className="snap-start">
+                  <button
+                    type="button"
+                    onClick={() => setSelected(s.slug)}
+                    aria-pressed={active}
+                    title={`${s.name} · ${status.label}`}
+                    className={cn(
+                      "flex w-full items-center gap-2.5 rounded-xl border px-3 py-2 text-left transition-colors",
+                      active ? "border-turquoise/50 bg-turquoise/10" : "border-transparent hover:bg-foam/[0.05]",
+                    )}
+                  >
+                    <span className={cn("h-2 w-2 shrink-0 rounded-full", TONE_CLASSES[status.tone].dot)} aria-hidden />
+                    <span className="min-w-0 flex-1 truncate text-[13.5px] font-medium text-foam">{s.name}</span>
+                    <span className="shrink-0 font-mono text-[10.5px] tracking-wide text-mist/70">{status.code}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <p className="hidden shrink-0 border-t border-foam/[0.08] py-2.5 text-center font-mono text-[10.5px] tracking-[0.14em] text-mist/60 uppercase lg:block">
+            {visible.length} species{visible.length > 20 ? " · scroll for more" : ""}
+          </p>
+        </div>
       </div>
 
       <AnimatePresence mode="wait">
@@ -143,10 +149,10 @@ export function VerdictExplorer({ species }: { species: SpeciesCardData[] }) {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.3 }}
-          className="glass overflow-hidden rounded-[28px]"
+          className="glass flex min-h-0 flex-col overflow-hidden rounded-[28px]"
           aria-live="polite"
         >
-          <div className="relative h-56 w-full">
+          <div className="relative h-48 w-full shrink-0">
             {current.image && (
               <Image src={current.image} alt={current.name} fill sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover" />
             )}
@@ -156,18 +162,19 @@ export function VerdictExplorer({ species }: { species: SpeciesCardData[] }) {
               <p className="text-[13px] text-mist italic">{current.scientificName}</p>
             </div>
           </div>
-          <div className="space-y-5 p-6">
+          <div className="flex min-h-0 flex-1 flex-col gap-4 p-6">
             <div className="flex flex-wrap items-center gap-2">
               <StatusBadge status={statusFromCode(current.status)} />
               <VerdictChip headline={current.verdictHeadline} tone={current.verdictTone} />
             </div>
-            <p className="text-[15px] leading-relaxed text-foam/85">{current.verdictSummary}</p>
+            <p className="line-clamp-4 text-[15px] leading-relaxed text-foam/85">{current.verdictSummary}</p>
             {current.fishingStatus && (
-              <p className="border-l-2 border-turquoise/40 pl-4 text-[13px] leading-relaxed text-mist">
+              <p className="line-clamp-2 border-l-2 border-turquoise/40 pl-4 text-[13px] leading-relaxed text-mist">
                 {current.fishingStatus}
               </p>
             )}
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-foam/10 pt-4">
+            {/* Pinned to the bottom, so every species' card ends on the same line. */}
+            <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-foam/10 pt-4">
               <p className="text-[13px] text-mist">
                 Recipes:{" "}
                 <span className={current.showRecipes ? "text-status-safe" : "text-status-alert"}>

@@ -206,7 +206,7 @@ export function TheodoreStory({
       <Person story={{ ...story, paragraphs: [] }} tilt={2.5} flip>
         <MaskText
           className="mt-6 max-w-3xl text-[clamp(30px,3.6vw,46px)] leading-[1.05] font-semibold tracking-tight text-foam"
-          segments={["Grew up on the water", { text: "in South Jersey.", className: "font-serif font-normal italic" }]}
+          segments={["Grew up down the Jersey Shore,", { text: "one crab trap at a time.", className: "font-serif font-normal italic" }]}
         />
         <SoftReveal delay={0.1}>
           <div className="mt-6 max-w-xl space-y-5 text-[18px] leading-relaxed text-mist">
