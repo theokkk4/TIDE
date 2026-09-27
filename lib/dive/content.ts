@@ -26,6 +26,8 @@ export interface TeamStory {
   quote?: string;
   /** More photos from their camera roll, shown in a row under the story (files in public/dive/team). */
   gallery?: { src: string; alt: string; caption: string; wide?: boolean }[];
+  /** One tall photo shown beside the story, on the same slide. */
+  aside?: { src: string; alt: string; caption: string };
 }
 
 export const OLIVER: TeamStory = {
@@ -61,14 +63,21 @@ export const THEODORE: Pick<TeamStory, "id" | "name" | "tagline" | "photoAlt" | 
   photoAlt: "Theodore as a kid",
 };
 
-// TODO(issaka): Issaka's story goes here — two or three short paragraphs in his own words,
-// plus an optional `quote` and `tagline`. Leave `paragraphs` as null until then; the page
-// shows a clearly marked placeholder instead of inventing anything.
 export const ISSAKA: TeamStory = {
   id: "issaka",
   name: "Issaka",
-  photoAlt: "Issaka as a kid",
-  paragraphs: null,
+  tagline: "Drawn to the ocean",
+  photoAlt: "Issaka as a kid in a swimming pool, grinning in orange goggles",
+  photoCaption: "Goggles on",
+  paragraphs: [
+    "I feel a deep pull toward the ocean. I think about the creatures who live there, from the fish I catch to the dolphins I see diving through the waves.",
+  ],
+  quote: "I remember trying to swim up to a dolphin as a kid, no matter how much the lifeguards blew the whistle.",
+  aside: {
+    src: "/dive/team/issaka-shore.jpg",
+    alt: "Waves breaking on an empty beach under a pink and blue sky, with a gull overhead",
+    caption: "Down at the shore",
+  },
 };
 
 /* ─────────────  The problem: FAO figures, worded as FAO states them  ───────────── */

@@ -21,6 +21,8 @@ interface ScrollOptions {
 interface SmoothScroll {
   /** Glides to an element or offset. */
   scrollTo: (target: HTMLElement | number, options?: ScrollOptions) => void;
+  /** Moves there at once — for a cut hidden behind a slide transition. */
+  jumpTo: (top: number) => void;
 }
 
 function destinationOf(target: HTMLElement | number, offset = 0) {
@@ -29,6 +31,7 @@ function destinationOf(target: HTMLElement | number, offset = 0) {
 
 const SmoothScrollContext = createContext<SmoothScroll>({
   scrollTo: (target, options) => window.scrollTo({ top: destinationOf(target, options?.offset) }),
+  jumpTo: (top) => window.scrollTo({ top, behavior: "instant" }),
 });
 
 export function useSmoothScroll() {
@@ -69,6 +72,11 @@ export function SmoothScrollProvider({ children }: { children: ReactNode }) {
           duration: options.duration ?? Math.min(3.2, 1.1 + distance / 5000),
           easing: options.easing ?? easeInOutExpo,
         });
+      },
+      jumpTo(top) {
+        const lenis = lenisRef.current;
+        if (lenis) lenis.scrollTo(top, { immediate: true, force: true });
+        else window.scrollTo({ top, behavior: "instant" });
       },
     }),
     [],

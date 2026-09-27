@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import type { TeamStory } from "@/lib/dive/content";
 import { cn } from "@/lib/utils";
 import { MaskText, PlaneReveal, SoftReveal } from "./reveal";
+import { Frame } from "./depth";
 import { FieldPhoto, LivePhoto } from "./story";
 
 const PHOTO_TYPES = ["jpg", "jpeg", "png", "webp"];
@@ -55,44 +56,68 @@ function PersonHeader({ story }: { story: Pick<TeamStory, "name" | "tagline"> })
   );
 }
 
+/** A tall photo beside the story, like a print propped against the page. */
+function AsidePhoto({ photo }: { photo: NonNullable<TeamStory["aside"]> }) {
+  return (
+    <FieldPhoto
+      src={photo.src}
+      alt={photo.alt}
+      caption={photo.caption}
+      index={1}
+      className="mx-auto w-full max-w-[220px] md:max-w-none"
+      frameClassName="aspect-[9/16]"
+      sizes="(max-width: 768px) 220px, 240px"
+    />
+  );
+}
+
+/** One person, one slide: their photo, their name and their story. */
 function Person({ story, tilt, flip = false, children }: { story: TeamStory; tilt: number; flip?: boolean; children?: ReactNode }) {
   return (
-    <article
-      data-slide="sub"
-      className={cn(
-        "grid items-center gap-10 md:gap-16",
-        flip ? "md:grid-cols-[minmax(0,1fr)_minmax(0,0.38fr)]" : "md:grid-cols-[minmax(0,0.38fr)_minmax(0,1fr)]",
-      )}
-    >
-      <div className={cn(flip && "md:order-2")}>
-        <TeamPhoto story={story} tilt={tilt} />
-      </div>
-      <div>
-        <PersonHeader story={story} />
-        {children}
-      </div>
-    </article>
+    <Frame sub>
+      <article
+        className={cn(
+          "grid items-center gap-10",
+          story.aside
+            ? "md:grid-cols-[minmax(0,0.34fr)_minmax(0,1fr)_minmax(0,0.26fr)] md:gap-12"
+            : flip
+              ? "md:grid-cols-[minmax(0,1fr)_minmax(0,0.38fr)] md:gap-16"
+              : "md:grid-cols-[minmax(0,0.38fr)_minmax(0,1fr)] md:gap-16",
+        )}
+      >
+        <div className={cn(flip && "md:order-2")}>
+          <TeamPhoto story={story} tilt={tilt} />
+        </div>
+        <div>
+          <PersonHeader story={story} />
+          {children}
+        </div>
+        {story.aside && <AsidePhoto photo={story.aside} />}
+      </article>
+    </Frame>
   );
 }
 
 /** More photos from their camera roll: a wide shot and a portrait, laid out like prints on a table. */
 function Gallery({ photos }: { photos: NonNullable<TeamStory["gallery"]> }) {
   return (
-    <div data-slide="sub" className="mt-14 grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,0.36fr)] md:gap-10">
-      {photos.map((photo, index) => (
-        <FieldPhoto
-          key={photo.src}
-          src={photo.src}
-          alt={photo.alt}
-          caption={photo.caption}
-          index={index}
-          className={cn(!photo.wide && "mx-auto w-full max-w-[300px] md:max-w-none")}
-          frameClassName={photo.wide ? "aspect-[1174/315] md:aspect-[2.3/1]" : "aspect-[4/5]"}
-          imageClassName={photo.wide ? "object-[40%_50%]" : undefined}
-          sizes={photo.wide ? "(max-width: 768px) 100vw, 780px" : "(max-width: 768px) 300px, 300px"}
-        />
-      ))}
-    </div>
+    <Frame sub className="py-6">
+      <div className="grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,0.36fr)] md:gap-10">
+        {photos.map((photo, index) => (
+          <FieldPhoto
+            key={photo.src}
+            src={photo.src}
+            alt={photo.alt}
+            caption={photo.caption}
+            index={index}
+            className={cn(!photo.wide && "mx-auto w-full max-w-[300px] md:max-w-none")}
+            frameClassName={photo.wide ? "aspect-[1174/315] md:aspect-[2.3/1]" : "aspect-[4/5]"}
+            imageClassName={photo.wide ? "object-[40%_50%]" : undefined}
+            sizes={photo.wide ? "(max-width: 768px) 100vw, 780px" : "(max-width: 768px) 300px, 300px"}
+          />
+        ))}
+      </div>
+    </Frame>
   );
 }
 
@@ -130,10 +155,10 @@ export function StoryPerson({ story, tilt, flip }: { story: TeamStory; tilt: num
   );
   if (!story.gallery?.length) return person;
   return (
-    <div>
+    <>
       {person}
       <Gallery photos={story.gallery} />
-    </div>
+    </>
   );
 }
 
@@ -146,7 +171,7 @@ export function TheodoreStory({
   fieldPhotos: { src: string; caption: string }[];
 }) {
   return (
-    <div>
+    <>
       <Person story={{ ...story, paragraphs: [] }} tilt={2.5} flip>
         <MaskText
           className="mt-6 max-w-3xl text-[clamp(30px,3.6vw,46px)] leading-[1.05] font-semibold tracking-tight text-foam"
@@ -177,34 +202,33 @@ export function TheodoreStory({
         </SoftReveal>
       </Person>
 
-      <div
-        data-slide="sub"
-        className="mt-14 grid items-start gap-6 sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.25fr)]"
-      >
-        <LivePhoto
-          still="/dive/story/night-crabbing.webp"
-          video="/dive/story/night-crabbing.mp4"
-          alt="Theodore and a friend holding up a blue crab at night"
-          caption="Night crabbing in South Jersey — the one that made it into the bushel"
-        />
-        {fieldPhotos.map((photo, index) => (
-          <FieldPhoto key={photo.src} src={photo.src} caption={photo.caption} index={index + 1} />
-        ))}
-        <SoftReveal delay={0.1} className="sm:col-span-2 md:col-span-1">
-          <figure className="glass rounded-[28px] p-7">
-            <p className="font-mono text-[11px] tracking-[0.16em] text-status-watch uppercase">The fish that started it</p>
-            <blockquote className="mt-4 font-serif text-[clamp(22px,2.4vw,30px)] leading-[1.2] text-foam italic">
-              “When I was a kid I brought home a pet fish, put him in the wrong kind of water, and he was gone in about an
-              hour. I cried.”
-            </blockquote>
-            <figcaption className="mt-5 text-[15px] leading-relaxed text-mist">
-              It&apos;s a funny story now. But it taught me that the right answer depends on details you can&apos;t see
-              just by looking at an animal — what water it needs, how big it has to be, whether it&apos;s carrying eggs,
-              whether it&apos;s protected. That&apos;s what TIDE sees for you.
-            </figcaption>
-          </figure>
-        </SoftReveal>
-      </div>
-    </div>
+      <Frame sub className="py-6">
+        <div className="grid items-start gap-6 sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1.25fr)]">
+          <LivePhoto
+            still="/dive/story/night-crabbing.webp"
+            video="/dive/story/night-crabbing.mp4"
+            alt="Theodore and a friend holding up a blue crab at night"
+            caption="Night crabbing in South Jersey — the one that made it into the bushel"
+          />
+          {fieldPhotos.map((photo, index) => (
+            <FieldPhoto key={photo.src} src={photo.src} caption={photo.caption} index={index + 1} />
+          ))}
+          <SoftReveal delay={0.1} className="sm:col-span-2 md:col-span-1">
+            <figure className="glass rounded-[28px] p-7">
+              <p className="font-mono text-[11px] tracking-[0.16em] text-status-watch uppercase">The fish that started it</p>
+              <blockquote className="mt-4 font-serif text-[clamp(22px,2.4vw,30px)] leading-[1.2] text-foam italic">
+                “When I was a kid I brought home a pet fish, put him in the wrong kind of water, and he was gone in about an
+                hour. I cried.”
+              </blockquote>
+              <figcaption className="mt-5 text-[15px] leading-relaxed text-mist">
+                It&apos;s a funny story now. But it taught me that the right answer depends on details you can&apos;t see
+                just by looking at an animal — what water it needs, how big it has to be, whether it&apos;s carrying eggs,
+                whether it&apos;s protected. That&apos;s what TIDE sees for you.
+              </figcaption>
+            </figure>
+          </SoftReveal>
+        </div>
+      </Frame>
+    </>
   );
 }

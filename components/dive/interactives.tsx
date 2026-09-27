@@ -107,7 +107,8 @@ export function VerdictExplorer({ species }: { species: SpeciesCardData[] }) {
           ))}
         </div>
 
-        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+        {/* On a slide the list scrolls inside itself, so the whole explorer fits on one screen. */}
+        <ul data-lenis-prevent className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:max-h-[440px] lg:overflow-y-auto lg:overscroll-contain lg:pr-1">
           {visible.map((s) => {
             const status = statusFromCode(s.status);
             return (

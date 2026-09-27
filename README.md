@@ -81,13 +81,23 @@ chapter sits at a depth on the way down to Challenger Deep and back up.
 | 07 | Live identification | Theodore's crab photo sent through Gemini, inside the phone. |
 | 08 | Conservation vs. seafood | Five cases, all judged by the app's own logic, then every species. |
 | 09 | Projected outcomes | Published data on one side, our 12-month targets on the other — labelled as projections, with how we'd measure each. |
-| 10 | Resurface | The closing. |
+| 10 | Resurface | The closing, the sources, then a "Questions?" slide that loops the app recordings for Q&A. |
 
-**Presenting.** → ↓ PageDown go forward and ← ↑ PageUp go back, which is what most
-presentation clickers send; Home and End jump to the first and last stop. Long chapters get
-extra stops so nothing is skipped, and the clicker keeps working after someone taps inside
-the embedded app. Typing in a field or using a slider keeps its own arrow keys. Mouse and
-touch scrolling are never taken over. The header shows where you are ("04 / 10 · The people").
+**Presenting.** Open `/dive` full screen (F11, or ⌃⌘F on a Mac) on the laptop driving the
+projector. → ↓ PageDown go forward and ← ↑ PageUp go back, which is what most presentation
+clickers send; Home and End jump to the first and last slide. Every press is one slide:
+
+- Each slide is exactly one screen tall. On a smaller projector (1366×768, 1280×720, 4:3) a
+  slide that wouldn't fit is scaled down until it does (`components/dive/slide-fit.tsx`), so
+  nothing is ever cut off.
+- Moving to a new chapter, a wave sweeps up the screen and the slide changes behind it; within
+  a chapter the screen dips to dark (`components/dive/presentation-keys.tsx`). Both are two
+  plain overlays animated with the Web Animations API, hidden between transitions.
+- The clicker keeps working after someone taps inside the embedded app. Typing in a field or
+  using a slider keeps its own arrow keys. Mouse and touch scrolling are never taken over, and
+  the header shows where you are ("04 / 10 · The people").
+- The last slide stays up through Q&A: it plays the recordings one after another and starts
+  over, and only while it's on screen.
 
 **Team content** lives in `lib/dive/content.ts`:
 
@@ -96,8 +106,13 @@ touch scrolling are never taken over. The header shows where you are ("04 / 10 �
   initial.
 - **More photos** — add a `gallery` to anyone's story (Oliver's has two) and they show as a
   row of prints under it.
-- **Issaka's story** — fill in `ISSAKA.paragraphs` (and optionally `quote` and `tagline`).
-  Until then the page shows a clearly marked "Story coming soon" box. Nothing is made up for him.
+- **A photo beside the story** — `aside` puts one tall photo on the same slide (Issaka's
+  shore photo).
+- **Stories** — each person's `paragraphs`, `quote` and `tagline`, in their own words. A story
+  set to `null` shows a clearly marked "Story coming soon" box instead of anything made up.
+- **Q&A reel** — the "Questions?" slide plays `QUEUE` in `components/dive/app-clips.tsx`
+  (`questions`, then the three scans below) back to back, forever. Add a clip by putting
+  `<id>.mp4`, `<id>.webm` and `<id>.jpg` in `public/dive/app/` and adding the id to `QUEUE`.
 - **App recordings** — chapter 05 loops three real scans from `public/dive/app/` (blue crab,
   striped bass, box turtle). Each clip plays only while it's on screen, starts from a poster
   frame, and has its own pause button; with reduced motion they wait for a tap. Each is an
