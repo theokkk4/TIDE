@@ -116,7 +116,9 @@ export async function POST(request: Request) {
       matchedSlug: null,
       source: "ai",
       error: "not_supported",
-      message: "That's outside TIDE's field guide.",
+      message: identification.species_common_name
+        ? `That looks like ${/^[aeiou]/i.test(identification.species_common_name) ? "an" : "a"} ${identification.species_common_name.toLowerCase()}. TIDE covers fish, crabs and other shellfish, turtles, frogs, toads and salamanders.`
+        : "That's outside TIDE's field guide.",
     });
   }
 

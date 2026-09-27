@@ -181,6 +181,9 @@ export interface GbifEnrichment {
   };
   occurrenceCount: number | null;
   iucnCode: IucnCode | null;
+  /** A short plain-English summary from Wikipedia, for species outside TIDE's field guide. */
+  summary?: string | null;
+  summaryUrl?: string | null;
   live: boolean;
 }
 

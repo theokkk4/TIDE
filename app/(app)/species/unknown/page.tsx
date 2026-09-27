@@ -53,6 +53,7 @@ export default function UnknownSpeciesPage() {
   if (!scan) return null;
 
   const status = enrichment?.iucnCode ? statusFromCode(enrichment.iucnCode) : null;
+  const threatened = ["CR", "EN", "VU"].includes(enrichment?.iucnCode ?? "");
 
   return (
     <PageTransition>
@@ -77,7 +78,7 @@ export default function UnknownSpeciesPage() {
             </button>
 
             <div className="absolute inset-x-0 bottom-0 px-6 pb-5">
-              <Pill className="mb-3">Outside TIDE&apos;s curated species</Pill>
+              <Pill className="mb-3">Not one of TIDE&apos;s 50 species</Pill>
               <h1 className="text-balance text-[28px] leading-[1.1] font-semibold tracking-tight text-foam">
                 {scan.commonName || "Unidentified marine animal"}
               </h1>
@@ -94,7 +95,8 @@ export default function UnknownSpeciesPage() {
                   {scan.confidence < 75 ? "We aren't completely sure" : "Identification confidence"}
                 </p>
                 <p className="mt-1 text-[15px] leading-snug text-foam">
-                  This species isn&apos;t in TIDE&apos;s curated dataset yet.
+                  {scan.confidence < 75 ? "Our best guess" : "Identified"} — but it isn&apos;t one of the 50 species in
+                  TIDE&apos;s field guide, so there are no state rules for it here yet.
                 </p>
               </div>
               <p className="shrink-0 font-mono text-[26px] leading-none font-semibold text-turquoise">
@@ -126,6 +128,33 @@ export default function UnknownSpeciesPage() {
               </div>
             )}
           </GlassCard>
+
+          {threatened && status && (
+            <div className="rounded-2xl border border-status-alert/35 bg-status-alert/10 px-4 py-3.5">
+              <p className="text-[17px] font-semibold text-status-alert">Let it go</p>
+              <p className="mt-1 text-[13px] leading-relaxed text-foam/85">
+                It&apos;s listed as {status.label} on the IUCN Red List. Release it carefully, and don&apos;t keep or
+                eat it.
+              </p>
+            </div>
+          )}
+
+          {enrichment?.summary && (
+            <GlassCard>
+              <p className="text-[11px] font-semibold tracking-[0.16em] text-mist uppercase">About this animal</p>
+              <p className="mt-3 text-[14px] leading-relaxed text-foam/90">{enrichment.summary}</p>
+              {enrichment.summaryUrl && (
+                <a
+                  href={enrichment.summaryUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-block text-[12px] text-turquoise hover:underline"
+                >
+                  Read more on Wikipedia ↗
+                </a>
+              )}
+            </GlassCard>
+          )}
 
           <GlassCard>
             <div className="flex items-center justify-between gap-3">

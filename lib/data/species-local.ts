@@ -63,7 +63,7 @@ export const LOCAL_SPECIES: Species[] = [
     ],
     humanImpact:
       "Striped bass are the great recreational comeback: a moratorium in the 1980s rebuilt the stock by 1995. Anglers now account for most of the fish removed, so how they keep and release fish decides how the stock does.",
-    aliases: ["striper", "rockfish", "striped bass", "morone saxatilis", "rock"],
+    aliases: ["striper", "striped bass", "morone saxatilis"],
   },
   {
     slug: "summer-flounder",
@@ -132,7 +132,7 @@ export const LOCAL_SPECIES: Species[] = [
       { title: "Shifting range", detail: "Warming water is pushing the population north." },
     ],
     humanImpact: "Black sea bass are moving north as the ocean warms — a stock that was a southern fish now supports fisheries in New England.",
-    aliases: ["black sea bass", "sea bass", "centropristis striata", "blackfish"],
+    aliases: ["black sea bass", "sea bass", "centropristis striata"],
   },
   {
     slug: "bluefish",
@@ -463,7 +463,7 @@ export const LOCAL_SPECIES: Species[] = [
       { title: "Harvest", detail: "Commercial and recreational take of adults, which populations replace slowly." },
     ],
     humanImpact: "Road deaths hit nesting females hardest — the turtles a population can least afford to lose.",
-    aliases: ["snapping turtle", "snapper", "common snapping turtle", "chelydra serpentina"],
+    aliases: ["snapping turtle", "common snapping turtle", "chelydra serpentina"],
   },
   {
     slug: "eastern-painted-turtle",
