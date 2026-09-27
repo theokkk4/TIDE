@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowUpRight } from "lucide-react";
-import { SPECIES, getSpecies } from "@/lib/data/species";
+import { SPECIES } from "@/lib/data/species";
 import { getVerified, resolveStatusCode, speciesImage } from "@/lib/conservation";
 import { getSeafoodVerdict } from "@/lib/seafood";
 import {
@@ -19,7 +19,7 @@ import {
   WORLD_STATS,
 } from "@/lib/dive/content";
 import { BASELINES } from "@/lib/dive/impact";
-import { CREATURE_GUIDE, type CreatureGuide } from "@/lib/dive/creatures";
+import { CREATURE_GUIDE } from "@/lib/dive/creatures";
 import type { Species } from "@/lib/types";
 import { AbyssBackground, Chapter, ChapterLabel, DepthHud, DepthProvider, type ChapterMarker } from "@/components/dive/depth";
 import { VerdictExplorer, type SpeciesCardData } from "@/components/dive/interactives";
@@ -30,6 +30,7 @@ import { SpeciesRiver } from "@/components/dive/species-river";
 import { PresentationKeys } from "@/components/dive/presentation-keys";
 import { StoryPerson, TheodoreStory } from "@/components/dive/team";
 import { Pipeline } from "@/components/dive/pipeline";
+import { AppClips } from "@/components/dive/app-clips";
 import { IdentifyCrabButton, LiveDemoProvider, LivePhone } from "@/components/dive/live-demo";
 import { Casebook } from "@/components/dive/casebook";
 
@@ -97,11 +98,6 @@ const story = (file: string) => existsSync(path.join(process.cwd(), "public", "d
 
 export default function DivePage() {
   const explorer = SPECIES.map((species) => toCard(species));
-  // Creatures that are also TIDE species show their live-verified status, not a copy.
-  const guide: CreatureGuide[] = CREATURE_GUIDE.map((entry) => {
-    const species = entry.slug ? getSpecies(entry.slug) : undefined;
-    return species ? { ...entry, iucn: resolveStatusCode(species) } : entry;
-  });
 
   const verifiedCount = SPECIES.filter((s) => getVerified(s.slug)?.iucnCode).length;
   const occurrences = SPECIES.reduce((sum, s) => sum + (getVerified(s.slug)?.occurrenceCount ?? 0), 0);
@@ -137,7 +133,7 @@ export default function DivePage() {
           </svg>
         </div>
         <AbyssBackground />
-        <CreatureLayer guide={guide} />
+        <CreatureLayer guide={CREATURE_GUIDE} />
         <DepthHud chapters={chapters} />
 
         <main className="relative">
@@ -187,10 +183,10 @@ export default function DivePage() {
                     <span className="inline-block h-10 w-px animate-pulse bg-turquoise/70" />
                     Scroll to dive<span className="hidden md:inline"> · or press →</span>
                   </p>
-                  <p className="hidden text-[11px] tracking-[0.12em] text-mist/60 md:block">
-                    ◎ Hover any creature and TIDE identifies it
+                  <p className="text-[11px] tracking-[0.12em] text-mist/60">
+                    ◎ <span className="hidden md:inline">Click</span>
+                    <span className="md:hidden">Tap</span> any creature to find it in the field guide
                   </p>
-                  <p className="text-[11px] tracking-[0.12em] text-mist/60 md:hidden">◎ Tap any creature to identify it</p>
                 </div>
               </SoftReveal>
             </div>
@@ -293,6 +289,23 @@ export default function DivePage() {
                 ))}
               </ul>
             </SoftReveal>
+
+            {/* Three real scans, recorded in the app. */}
+            <div data-slide="sub" className="mt-28 md:mt-32">
+              <div className="mb-10 flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+                <MaskText
+                  as="h3"
+                  className="text-[clamp(30px,3.6vw,46px)] leading-[1.05] font-semibold tracking-tight text-foam"
+                  segments={["Three scans,", { text: "start to finish.", className: "font-serif font-normal italic" }]}
+                />
+                <SoftReveal delay={0.1}>
+                  <p className="max-w-sm text-[15px] leading-relaxed text-mist">
+                    Recorded in TIDE: a photo goes in, the verdict comes out.
+                  </p>
+                </SoftReveal>
+              </div>
+              <AppClips />
+            </div>
           </Chapter>
 
           {/* 06 · The app and 07 · Live identification share one live phone. */}
@@ -399,7 +412,7 @@ export default function DivePage() {
           </LiveDemoProvider>
 
           {/* The field guide: every species drifting past as a current you can grab */}
-          <section aria-label="Species field guide" data-slide="" className="relative z-10 py-16 md:py-24">
+          <section id="field-guide" aria-label="Species field guide" data-slide="" className="relative z-10 py-16 md:py-24">
             <div className="mx-auto mb-10 flex max-w-6xl flex-wrap items-end justify-between gap-4 px-5 md:px-10">
               <MaskText
                 as="h2"

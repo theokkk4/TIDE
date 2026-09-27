@@ -71,7 +71,7 @@ export function VerdictExplorer({ species }: { species: SpeciesCardData[] }) {
   const visible = category === "All" ? species : species.filter((s) => s.category === category);
   const current = species.find((s) => s.slug === selected) ?? species[0];
 
-  // The species river and the creature scanner both pick a species here.
+  // The species river and the background creatures both pick a species here.
   useEffect(() => {
     const pick = (event: Event) => {
       const slug = (event as CustomEvent<string>).detail;

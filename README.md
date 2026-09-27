@@ -94,16 +94,25 @@ touch scrolling are never taken over. The header shows where you are ("04 / 10 �
 - **Baby photos** — drop `oliver.jpg`, `theodore.jpg` and `issaka.jpg` into `public/dive/team/`
   (`.png` and `.webp` work too). They appear automatically; until then each frame shows an
   initial.
+- **More photos** — add a `gallery` to anyone's story (Oliver's has two) and they show as a
+  row of prints under it.
 - **Issaka's story** — fill in `ISSAKA.paragraphs` (and optionally `quote` and `tagline`).
   Until then the page shows a clearly marked "Story coming soon" box. Nothing is made up for him.
+- **App recordings** — chapter 05 loops three real scans from `public/dive/app/` (blue crab,
+  striped bass, box turtle). Each clip plays only while it's on screen, starts from a poster
+  frame, and has its own pause button; with reduced motion they wait for a tap. Each is an
+  H.264 `.mp4` with a VP9 `.webm` fallback, cut from the screen recordings with:
+  `ffmpeg -i in.mov -an -vf "crop=960:1600:800:0,scale=480:-2,fps=30" -c:v libx264 -crf 27 -preset slow -pix_fmt yuv420p -movflags +faststart out.mp4`
+  (for the `.webm`: `-c:v libvpx-vp9 -b:v 0 -crf 38`; adjust the crop to where the app sits
+  in your recording).
 - **Demo video** — save a portrait screen recording as `public/dive/demo.mp4` and the phone in
   chapters 06–07 gets a "Recording / Live app" switch.
 
 The creatures are drawn on canvas and swim at their real depths — sardines and a green sea
 turtle near the surface, lanternfish and siphonophores in the twilight, an anglerfish whose
 lure follows your cursor in the dark, and a herd of sea pigs (*Scotoplanes globosa*) on the
-seafloor. Hover one and TIDE's scanner identifies it (`lib/dive/creatures.ts`). All motion
-respects `prefers-reduced-motion`.
+seafloor. Click one and the page glides to the field guide, opening its verdict when TIDE
+covers that species (`lib/dive/creatures.ts`). All motion respects `prefers-reduced-motion`.
 
 ## Environment variables
 

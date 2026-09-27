@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { motion, useInView, useReducedMotion } from "framer-motion";
+import { cn } from "@/lib/utils";
 import { QUINT_OUT } from "./reveal";
 
 /**
@@ -80,7 +81,26 @@ export function LivePhoto({
 }
 
 /** Extra photos from the field, shown only when the files exist in public/dive/story. */
-export function FieldPhoto({ src, caption, index }: { src: string; caption: string; index: number }) {
+export function FieldPhoto({
+  src,
+  caption,
+  index,
+  alt = caption,
+  sizes = "(max-width: 768px) 45vw, 260px",
+  className,
+  frameClassName = "aspect-[3/4]",
+  imageClassName,
+}: {
+  src: string;
+  caption: string;
+  index: number;
+  alt?: string;
+  sizes?: string;
+  className?: string;
+  /** Sets the print's shape; 3:4 by default. */
+  frameClassName?: string;
+  imageClassName?: string;
+}) {
   const reduced = useReducedMotion();
   return (
     <motion.figure
@@ -88,9 +108,10 @@ export function FieldPhoto({ src, caption, index }: { src: string; caption: stri
       whileInView={{ opacity: 1, y: 0, rotate: index % 2 ? 1.5 : -1.5 }}
       viewport={{ once: true, margin: "0px 0px -8% 0px" }}
       transition={{ duration: 1.3, ease: QUINT_OUT, delay: index * 0.1 }}
+      className={className}
     >
-      <div className="relative aspect-[3/4] overflow-hidden rounded-[22px] border border-foam/10">
-        <Image src={src} alt={caption} fill sizes="(max-width: 768px) 45vw, 260px" className="object-cover" />
+      <div className={cn("relative overflow-hidden rounded-[22px] border border-foam/10", frameClassName)}>
+        <Image src={src} alt={alt} fill sizes={sizes} className={cn("object-cover", imageClassName)} />
       </div>
       <figcaption className="mt-2 font-mono text-[11px] text-mist/70">{caption}</figcaption>
     </motion.figure>

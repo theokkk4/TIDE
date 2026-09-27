@@ -38,12 +38,11 @@ function cast(): Creature[] {
   ];
 }
 
-/** Anything a reader is reading or clicking. Scanning only happens over open water. */
+/** Anything a reader is reading or clicking. Creatures only respond over open water. */
 const CONTENT = "a, button, input, iframe, video, img, p, h1, h2, h3, li, article, figure, [data-content], .glass";
 
 export interface ScanView {
-  onTarget: (guide: string | null) => void;
-  onFrame: (target: { x: number; y: number; r: number } | null, lock: number) => void;
+  /** A creature was clicked or tapped. */
   onActivate: (guide: string) => void;
 }
 
@@ -95,7 +94,7 @@ export function startOcean(
     }
   };
 
-  /* Pointer: raw position for scanning, flagged when it's over something being read. */
+  /* Pointer: raw position for the creatures, flagged when it's over something being read. */
   let pointerKind = "mouse";
   let lastMove = -1e9;
   let touchUntil = 0;
@@ -118,28 +117,14 @@ export function startOcean(
   const onLeave = () => {
     left = true;
   };
-  const onClick = () => {
-    if (target && !overContent && pointerKind !== "touch" && target.guide) options.view.onActivate(target.guide);
-  };
-
-  /* Scanner state. */
-  let target: Creature | null = null;
-  let lockedAt = 0;
-
-  const pick = (now: number) => {
-    const touch = pointerKind === "touch";
-    const scanning = touch ? now < touchUntil : frame.pointer.active && !overContent;
-    if (!scanning) return null;
-    const { x, y } = frame.pointer;
-    if (target && target.visible && target !== angler && Math.hypot(target.x - x, target.y - y) < target.radius * 1.5) {
-      return target;
-    }
+  /** The creature under a point in open water, if any. */
+  const creatureAt = (x: number, y: number, touch: boolean) => {
     let best: Creature | null = null;
     let bestScore = Infinity;
     for (const creature of creatures) {
       if (!creature.visible || !creature.guide || creature === angler) continue;
       const d = Math.hypot(creature.x - x, creature.y - y);
-      const reach = creature.radius * 1.1 + (touch ? 40 : 14);
+      const reach = creature.radius * 1.1 + (touch ? 24 : 12);
       if (d < reach && d / reach < bestScore) {
         best = creature;
         bestScore = d / reach;
@@ -147,6 +132,16 @@ export function startOcean(
     }
     return best;
   };
+
+  // Clicking or tapping a creature opens it in the field guide. No hover card: over a
+  // creature the cursor just becomes a pointer.
+  const onClick = (event: MouseEvent) => {
+    if ((event.target as Element | null)?.closest?.(CONTENT)) return;
+    const creature = creatureAt(event.clientX, event.clientY, pointerKind === "touch");
+    if (creature?.guide) options.view.onActivate(creature.guide);
+  };
+
+  let hovering = false;
 
   const tick = (time: number, delta: number) => {
     const now = performance.now();
@@ -180,15 +175,11 @@ export function startOcean(
       creature.draw(frame, contexts[creature.layer]);
     }
 
-    const next = pick(now);
-    if (next !== target) {
-      target = next;
-      lockedAt = now;
-      options.view.onTarget(target?.guide ?? null);
-      document.documentElement.classList.toggle("dive-scan", !!target && pointerKind !== "touch");
+    const over = pointerKind !== "touch" && frame.pointer.active && !overContent && !!creatureAt(frame.pointer.x, frame.pointer.y, false);
+    if (over !== hovering) {
+      hovering = over;
+      document.documentElement.classList.toggle("dive-scan", over);
     }
-    const lock = Math.min(1, (now - lockedAt) / 420);
-    options.view.onFrame(target ? { x: target.x, y: target.y, r: Math.min(target.radius, 220) } : null, lock);
   };
 
   resize();
