@@ -24,18 +24,34 @@ export interface TeamStory {
   paragraphs: string[] | null;
   /** The line that stays with you. */
   quote?: string;
+  /** More photos from their camera roll, shown in a row under the story (files in public/dive/team). */
+  gallery?: { src: string; alt: string; caption: string; wide?: boolean }[];
 }
 
 export const OLIVER: TeamStory = {
   id: "oliver",
   name: "Oliver",
   tagline: "Fishing with family",
-  photoAlt: "Oliver as a kid",
+  photoAlt: "Oliver as a toddler, grinning on a riverbank",
+  photoCaption: "Down by the river",
   paragraphs: [
     "I've been fishing more times than I can count — usually with my family, sometimes with friends. A lot of my best memories are from those days on the water, and it's something I hold onto.",
     "Spend enough time out there and you start to care about what's under the surface. That's why TIDE means something to me: it gives anyone a way to find out what they're looking at, and to know when it's a species that's in trouble.",
   ],
   quote: "I don't want my grandkids to grow up without this beautiful marine life.",
+  gallery: [
+    {
+      src: "/dive/team/oliver-net.jpg",
+      alt: "Oliver as a boy in a sun hat, dipping a long-handled net at the edge of a river",
+      caption: "Net in hand, checking the shallows",
+      wide: true,
+    },
+    {
+      src: "/dive/team/oliver-family.jpg",
+      alt: "Oliver's family at the water's edge: a toddler holding a pool noodle in the shallows, and a baby in a carrier",
+      caption: "In the water with family",
+    },
+  ],
 };
 
 export const THEODORE: Pick<TeamStory, "id" | "name" | "tagline" | "photoAlt" | "photoCaption"> = {

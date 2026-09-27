@@ -30,6 +30,7 @@ import { SpeciesRiver } from "@/components/dive/species-river";
 import { PresentationKeys } from "@/components/dive/presentation-keys";
 import { StoryPerson, TheodoreStory } from "@/components/dive/team";
 import { Pipeline } from "@/components/dive/pipeline";
+import { AppClips } from "@/components/dive/app-clips";
 import { IdentifyCrabButton, LiveDemoProvider, LivePhone } from "@/components/dive/live-demo";
 import { Casebook } from "@/components/dive/casebook";
 
@@ -293,6 +294,23 @@ export default function DivePage() {
                 ))}
               </ul>
             </SoftReveal>
+
+            {/* Three real scans, recorded in the app. */}
+            <div data-slide="sub" className="mt-28 md:mt-32">
+              <div className="mb-10 flex flex-wrap items-end justify-between gap-x-8 gap-y-3">
+                <MaskText
+                  as="h3"
+                  className="text-[clamp(30px,3.6vw,46px)] leading-[1.05] font-semibold tracking-tight text-foam"
+                  segments={["Three scans,", { text: "start to finish.", className: "font-serif font-normal italic" }]}
+                />
+                <SoftReveal delay={0.1}>
+                  <p className="max-w-sm text-[15px] leading-relaxed text-mist">
+                    Recorded in TIDE: a photo goes in, the verdict comes out.
+                  </p>
+                </SoftReveal>
+              </div>
+              <AppClips />
+            </div>
           </Chapter>
 
           {/* 06 · The app and 07 · Live identification share one live phone. */}

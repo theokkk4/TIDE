@@ -75,9 +75,30 @@ function Person({ story, tilt, flip = false, children }: { story: TeamStory; til
   );
 }
 
+/** More photos from their camera roll: a wide shot and a portrait, laid out like prints on a table. */
+function Gallery({ photos }: { photos: NonNullable<TeamStory["gallery"]> }) {
+  return (
+    <div data-slide="sub" className="mt-14 grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,0.36fr)] md:gap-10">
+      {photos.map((photo, index) => (
+        <FieldPhoto
+          key={photo.src}
+          src={photo.src}
+          alt={photo.alt}
+          caption={photo.caption}
+          index={index}
+          className={cn(!photo.wide && "mx-auto w-full max-w-[300px] md:max-w-none")}
+          frameClassName={photo.wide ? "aspect-[1174/315] md:aspect-[2.3/1]" : "aspect-[4/5]"}
+          imageClassName={photo.wide ? "object-[40%_50%]" : undefined}
+          sizes={photo.wide ? "(max-width: 768px) 100vw, 780px" : "(max-width: 768px) 300px, 300px"}
+        />
+      ))}
+    </div>
+  );
+}
+
 /** Oliver — and anyone else whose story is plain paragraphs and a quote. */
 export function StoryPerson({ story, tilt, flip }: { story: TeamStory; tilt: number; flip?: boolean }) {
-  return (
+  const person = (
     <Person story={story} tilt={tilt} flip={flip}>
       {story.paragraphs ? (
         <>
@@ -106,6 +127,13 @@ export function StoryPerson({ story, tilt, flip }: { story: TeamStory; tilt: num
         </SoftReveal>
       )}
     </Person>
+  );
+  if (!story.gallery?.length) return person;
+  return (
+    <div>
+      {person}
+      <Gallery photos={story.gallery} />
+    </div>
   );
 }
 
