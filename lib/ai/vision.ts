@@ -61,8 +61,23 @@ export interface VisionResult {
 
 type MediaType = "image/jpeg" | "image/png" | "image/webp";
 
+/** Names a Gemini key is commonly saved under in a host's settings. GEMINI_API_KEY is the one to use. */
+const GEMINI_KEY_NAMES = ["GEMINI_API_KEY", "GOOGLE_API_KEY", "GOOGLE_GENERATIVE_AI_API_KEY", "GEMINI_KEY"];
+
+/**
+ * The Gemini key, read on the server only. Stray spaces or quotes pasted into a dashboard
+ * are trimmed, so a key that works locally works when deployed too.
+ */
+export function geminiApiKey() {
+  for (const name of GEMINI_KEY_NAMES) {
+    const value = process.env[name]?.trim().replace(/^["']+|["']+$/g, "").trim();
+    if (value) return value;
+  }
+  return null;
+}
+
 export function visionProvider(): "gemini" | "claude" | null {
-  if (process.env.GEMINI_API_KEY) return "gemini";
+  if (geminiApiKey()) return "gemini";
   if (process.env.ANTHROPIC_API_KEY) return "claude";
   return null;
 }
@@ -197,7 +212,7 @@ function geminiRequest(model: string, imageBase64: string, mediaType: MediaType,
   return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
     method: "POST",
     signal,
-    headers: { "content-type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY ?? "" },
+    headers: { "content-type": "application/json", "x-goog-api-key": geminiApiKey() ?? "" },
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: `${SYSTEM_PROMPT}\n\nFields:\n${FIELD_GUIDE}` }] },
       contents: [
@@ -320,7 +335,7 @@ async function identifyWithGemini(imageBase64: string, mediaType: MediaType): Pr
     // Every model we know about has been retired: ask Google for a current one.
     if (index === models.length - 1 && !discovered && models.every((m) => unavailable.has(m))) {
       discovered = true;
-      const found = await discoverGeminiModel(process.env.GEMINI_API_KEY ?? "");
+      const found = await discoverGeminiModel(geminiApiKey() ?? "");
       if (found) models = [...models, found];
     }
     const next = models[index + 1];
